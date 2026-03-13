@@ -387,7 +387,7 @@ export default function Home() {
             <Badge>Sobre o criador</Badge>
             <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 36, alignItems: "start" }}>
               <div style={{ display: "flex", justifyContent: "center" }}>
-                <img src="/founder-photo.jpeg" alt="Nando Voyager — Founder" style={{ width: 140, height: 140, borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(201,168,76,0.3)" }} />
+                <img src="/founder-photo.jpeg" alt="Nando Voyager — Founder" style={{ width: 220, height: 220, borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(201,168,76,0.3)" }} />
               </div>
               <div>
                 <h2 style={{ fontSize: "clamp(22px, 3.5vw, 36px)", fontWeight: 300, lineHeight: 1.2, fontFamily: SERIF, marginBottom: 24 }}>
