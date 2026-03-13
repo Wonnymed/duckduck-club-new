@@ -1,6 +1,5 @@
 "use client";
 
-import "./globals.css";
 import { useState, useEffect, useRef } from "react";
 import { Globe, ArrowRight, Menu, X, Check, ChevronDown, Compass, BookOpen, Handshake, Settings } from "lucide-react";
 
