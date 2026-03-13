@@ -536,7 +536,7 @@ export default function Home() {
             <a href="https://instagram.com/duckduck.club" target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "rgba(255,255,255,0.2)", textDecoration: "none", transition: "color 0.3s" }}
               onMouseEnter={e => (e.currentTarget.style.color = "rgba(255,255,255,0.5)")} onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.2)")}>Instagram</a>
           </div>
-          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.15)" }}>© 2025 DuckDuck Club</div>
+          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.15)" }}>© 2025–2026 DuckDuck Club</div>
         </div>
       </footer>
     </>
