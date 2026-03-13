@@ -385,20 +385,20 @@ export default function Home() {
         <div style={{ maxWidth: 1024, margin: "0 auto" }}>
           <Fade>
             <Badge>Sobre o criador</Badge>
-            <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 36, alignItems: "start" }}>
-              <div style={{ display: "flex", justifyContent: "center" }}>
+            <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 48, alignItems: "start" }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                 <img src="/founder-photo.jpeg" alt="Nando Voyager — Founder" style={{ width: 320, height: 320, minWidth: 320, borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(201,168,76,0.3)" }} />
+                <p style={{ fontSize: 18, fontWeight: 500, fontFamily: SERIF, color: "white", marginTop: 20, marginBottom: 4 }}>Nando Voyager</p>
+                <a href="https://instagram.com/nandovoyager" target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: GOLD, textDecoration: "none", opacity: 0.85, transition: "opacity 0.2s" }}
+                  onMouseEnter={e => (e.currentTarget.style.opacity = "1")} onMouseLeave={e => (e.currentTarget.style.opacity = "0.85")}>@nandovoyager</a>
               </div>
               <div>
                 <h2 style={{ fontSize: "clamp(22px, 3.5vw, 36px)", fontWeight: 300, lineHeight: 1.2, fontFamily: SERIF, marginBottom: 24 }}>
                   A DuckDuck Club nasceu da interseção entre <span style={{ fontStyle: "italic", color: GOLD }}>contexto global, operação real e construção de valor.</span>
                 </h2>
-                <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 16 }}>
+                <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 0 }}>
                   Depois de viver entre países, operar em ambientes diferentes e perceber como idioma, geopolítica, estrutura, network e execução mudam o nível do jogo, eu decidi reunir tudo isso em um ecossistema privado. A DuckDuck Club foi criada para quem quer deixar de depender de improviso, ruído e informação solta — e começar a operar com mais clareza, mais linguagem e mais capacidade prática.
                 </p>
-                <p style={{ fontSize: 18, fontWeight: 500, fontFamily: SERIF, color: "white", marginBottom: 4 }}>Nando Voyager</p>
-                <a href="https://instagram.com/nandovoyager" target="_blank" rel="noopener noreferrer" style={{ display: "inline-block", fontSize: 13, color: GOLD, textDecoration: "none", marginBottom: 0, opacity: 0.85, transition: "opacity 0.2s" }}
-                  onMouseEnter={e => (e.currentTarget.style.opacity = "1")} onMouseLeave={e => (e.currentTarget.style.opacity = "0.85")}>@nandovoyager</a>
               </div>
             </div>
           </Fade>
