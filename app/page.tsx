@@ -501,9 +501,9 @@ export default function Home() {
               { q: "Os 2 idiomas do Premium são escolhidos na entrada?", a: "Sim. Ao entrar no Premium, você define seus 2 idiomas. Extras podem ser adicionados depois por US$5/mês cada." },
               { q: "Posso adicionar idiomas no Base?", a: "Sim. No Base, idiomas funcionam como extensão opcional por +US$5/mês cada." },
               { q: "O que é o Polymarket Lab?", a: "Camada opcional para acompanhar leituras, teses e sinais ligados a prediction markets dentro da lógica do ecossistema. +US$10/mês." },
-              { q: "Como funciona o acesso depois do pagamento?", a: "Após confirmação, você segue para a ativação do acesso conforme o plano e extensões escolhidas." },
+              { q: "Como funciona o acesso depois do pagamento?", a: "Após a confirmação, você recebe o acesso imediato à plataforma e pode começar a navegar pelos canais do seu plano em minutos." },
               { q: "O pagamento é mensal?", a: "Sim. Recorrente via Stripe, com cobrança internacional." },
-              { q: "Posso cancelar?", a: "Sim. Acesso simples, sem fricção." },
+              { q: "Posso cancelar?", a: "Sim. Você pode cancelar a qualquer momento direto pela plataforma, sem burocracia." },
             ].map((item, i) => (
               <Fade key={i} delay={i * 40}><FAQItem q={item.q} a={item.a} /></Fade>
             ))}
