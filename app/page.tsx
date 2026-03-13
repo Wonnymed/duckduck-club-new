@@ -34,7 +34,7 @@ function scrollTo(id: string) {
 
 /* ─── Logo ─── */
 function Logo({ size = 36 }: { size?: number }) {
-  return <img src="/logo.jpeg" alt="DuckDuck Club" width={size} height={size} style={{ width: size, height: size, objectFit: "contain" }} />;
+  return <img src="/logo.jpeg" alt="DuckDuck Club" width={size} height={size} style={{ width: size, height: size, objectFit: "cover", borderRadius: "50%", border: "1px solid rgba(201,168,76,0.15)", background: "transparent" }} />;
 }
 
 /* ─── Shared UI ─── */
@@ -513,7 +513,7 @@ export default function Home() {
 
       {/* ═══ 9. FINAL CTA ═══ */}
       <section style={{ position: "relative", padding: "112px 24px 160px", zIndex: 1 }}>
-        <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}><div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.05) 0%, transparent 60%)" }} /></div>
+        <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}><div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 60%)" }} /></div>
         <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "center", position: "relative" }}>
           <Fade><Logo size={48} /></Fade>
           <Fade delay={100}><h2 style={{ marginTop: 32, fontSize: "clamp(28px, 5vw, 52px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 24 }}>Seu próximo nível começa <span style={{ fontStyle: "italic", color: GOLD }}>pelo ambiente certo.</span></h2></Fade>
