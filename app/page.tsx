@@ -1,22 +1,16 @@
 "use client";
 
+import "./globals.css";
 import { useState, useEffect, useRef } from "react";
 import { Globe, ArrowRight, Menu, X, Check, ChevronDown, Compass, BookOpen, Handshake, Settings } from "lucide-react";
-import Image from "next/image";
 
 const GOLD = "#C9A84C";
 const GOLD_DIM = "#A0832A";
-
-// Community screenshots
-const SCREEN1 = "/club-screen-1.png";
-const SCREEN2 = "/club-screen-2.png";
-const SCREEN3 = "/club-screen-3.png";
-
-// ★ SWAP THESE: Replace with your converted JPG/PNG URLs
+const SERIF = "'Cormorant Garamond', serif";
 
 /* ─── Fade-in on scroll ─── */
 function useFadeIn() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const [v, setV] = useState(false);
   useEffect(() => {
     const el = ref.current;
@@ -27,72 +21,75 @@ function useFadeIn() {
   }, []);
   return { ref, style: { opacity: v ? 1 : 0, transform: v ? "translateY(0)" : "translateY(24px)", transition: "opacity 0.7s cubic-bezier(.4,0,.2,1), transform 0.7s cubic-bezier(.4,0,.2,1)" } };
 }
+
 function Fade({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   const { ref, style } = useFadeIn();
   return <div ref={ref} style={{ ...style, transitionDelay: `${delay}ms` }} className={className}>{children}</div>;
 }
 
-/* ─── Logo: replace src with your real logo PNG when available ─── */
+/* ─── Logo ─── */
 function Logo({ size = 36 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M30 65 C30 65 25 58 28 48 C31 38 38 32 45 30 C48 29 50 26 49 22 C48 18 51 15 55 16 C59 17 60 21 58 24 C57 26 58 28 60 29 C66 31 72 36 74 44 C76 52 73 60 68 65 C63 70 55 72 50 72 C42 72 35 70 30 65Z" fill={GOLD} opacity="0.9"/>
-      <circle cx="52" cy="24" r="2" fill="#0A0A0A"/>
-      <rect x="46" y="76" width="8" height="16" rx="2" fill={GOLD} opacity="0.7"/>
-      <rect x="42" y="86" width="6" height="3" rx="1" fill={GOLD} opacity="0.7"/>
-      <rect x="52" y="83" width="6" height="3" rx="1" fill={GOLD} opacity="0.7"/>
-      <circle cx="50" cy="50" r="47" stroke={GOLD} strokeWidth="1.5" opacity="0.25"/>
-    </svg>
+    <img
+      src="/logo.png"
+      alt="DuckDuck Club"
+      width={size}
+      height={size}
+      style={{ width: size, height: size, objectFit: "contain" }}
+    />
   );
 }
 
 /* ─── Shared UI ─── */
 function Badge({ children }: { children: React.ReactNode }) {
-  return <span className="inline-flex items-center text-xs tracking-widest uppercase px-4 py-1.5 rounded-full border" style={{ color: GOLD, borderColor: "rgba(201,168,76,0.3)", background: "rgba(201,168,76,0.06)", letterSpacing: "0.15em", fontFamily: "var(--serif)" }}>{children}</span>;
+  return <span style={{ display: "inline-flex", alignItems: "center", fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", padding: "6px 16px", borderRadius: 9999, border: "1px solid rgba(201,168,76,0.3)", background: "rgba(201,168,76,0.06)", color: GOLD, fontFamily: SERIF }}>{children}</span>;
 }
-function GoldButton({ children, onClick, className = "" }: { children: React.ReactNode; onClick?: () => void; className?: string }) {
+
+function GoldButton({ children, onClick, style: extraStyle = {} }: { children: React.ReactNode; onClick?: () => void; style?: React.CSSProperties }) {
   return (
-    <button onClick={onClick} className={`group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg text-sm tracking-wider uppercase transition-all duration-300 ${className}`}
-      style={{ background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", fontFamily: "var(--serif)", letterSpacing: "0.12em", fontWeight: 600 }}
-      onMouseEnter={e => e.currentTarget.style.boxShadow = "0 0 40px rgba(201,168,76,0.18), 0 8px 32px rgba(0,0,0,0.4)"}
-      onMouseLeave={e => e.currentTarget.style.boxShadow = "none"}>
-      {children}<ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
+    <button onClick={onClick} style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "16px 32px", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase" as const, fontWeight: 600, fontFamily: SERIF, background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", border: "none", cursor: "pointer", transition: "box-shadow 0.3s", ...extraStyle }}
+      onMouseEnter={e => (e.currentTarget.style.boxShadow = "0 0 40px rgba(201,168,76,0.18), 0 8px 32px rgba(0,0,0,0.4)")}
+      onMouseLeave={e => (e.currentTarget.style.boxShadow = "none")}>
+      {children}<ArrowRight size={15} />
     </button>
   );
 }
-function OutlineButton({ children, onClick, className = "" }: { children: React.ReactNode; onClick?: () => void; className?: string }) {
+
+function OutlineButton({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) {
   return (
-    <button onClick={onClick} className={`group inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg text-sm tracking-wider uppercase transition-all duration-300 border w-full ${className}`}
-      style={{ color: GOLD, borderColor: "rgba(201,168,76,0.3)", background: "transparent", fontFamily: "var(--serif)", letterSpacing: "0.12em" }}
+    <button onClick={onClick} style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "14px 28px", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase" as const, fontFamily: SERIF, color: GOLD, border: "1px solid rgba(201,168,76,0.3)", background: "transparent", cursor: "pointer", transition: "all 0.3s", width: "100%" }}
       onMouseEnter={e => { e.currentTarget.style.borderColor = GOLD; e.currentTarget.style.background = "rgba(201,168,76,0.06)"; }}
       onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(201,168,76,0.3)"; e.currentTarget.style.background = "transparent"; }}>
       {children}
     </button>
   );
 }
+
 function FAQItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="rounded-xl transition-all duration-300 cursor-pointer" style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${open ? "rgba(201,168,76,0.15)" : "rgba(255,255,255,0.06)"}` }} onClick={() => setOpen(!open)}>
-      <div className="flex items-center justify-between p-5 md:p-6">
-        <h4 className="text-sm md:text-base font-medium pr-4" style={{ fontFamily: "var(--serif)", color: open ? GOLD : "white" }}>{q}</h4>
+    <div onClick={() => setOpen(!open)} style={{ borderRadius: 12, background: "rgba(255,255,255,0.02)", border: `1px solid ${open ? "rgba(201,168,76,0.15)" : "rgba(255,255,255,0.06)"}`, cursor: "pointer", transition: "border-color 0.3s" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 24px" }}>
+        <h4 style={{ fontSize: 15, fontWeight: 500, fontFamily: SERIF, color: open ? GOLD : "white", paddingRight: 16, margin: 0 }}>{q}</h4>
         <ChevronDown size={18} style={{ color: "rgba(255,255,255,0.3)", transform: open ? "rotate(180deg)" : "rotate(0)", transition: "transform 0.3s", flexShrink: 0 }} />
       </div>
-      {open && <div className="px-5 md:px-6 pb-5 md:pb-6 pt-0"><p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.45)" }}>{a}</p></div>}
+      {open && <div style={{ padding: "0 24px 20px" }}><p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", margin: 0 }}>{a}</p></div>}
     </div>
   );
 }
-function MobileNav({ open, onClose, onCheckout }: { open: boolean; onClose: () => void; onCheckout: (plan: string) => void }) {
+
+/* ─── Mobile Nav ─── */
+function MobileNav({ open, onClose, onCheckout }: { open: boolean; onClose: () => void; onCheckout: (p: string) => void }) {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex flex-col" style={{ background: "rgba(10,10,10,0.97)", backdropFilter: "blur(20px)" }}>
-      <div className="flex justify-between items-center px-6 py-5">
-        <div className="flex items-center gap-3"><Logo size={28} /><span className="text-white text-sm tracking-widest uppercase" style={{ fontFamily: "var(--serif)" }}>DuckDuck Club</span></div>
-        <button onClick={onClose}><X size={22} className="text-white/60" /></button>
+    <div style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", flexDirection: "column", background: "rgba(10,10,10,0.97)", backdropFilter: "blur(20px)" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 24px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}><Logo size={28} /><span style={{ color: "white", fontSize: 14, letterSpacing: "0.15em", textTransform: "uppercase", fontFamily: SERIF }}>DuckDuck Club</span></div>
+        <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer" }}><X size={22} color="rgba(255,255,255,0.6)" /></button>
       </div>
-      <div className="flex flex-col items-center justify-center flex-1 gap-8">
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1, gap: 32 }}>
         {[["O clube", "#about"], ["Por dentro", "#inside"], ["Acesso", "#pricing"]].map(([l, h]) => (
-          <a key={l} href={h} onClick={onClose} className="text-2xl text-white/70 hover:text-white transition-colors" style={{ fontFamily: "var(--serif)", letterSpacing: "0.1em" }}>{l}</a>
+          <a key={l} href={h} onClick={onClose} style={{ fontSize: 24, color: "rgba(255,255,255,0.7)", textDecoration: "none", fontFamily: SERIF, letterSpacing: "0.1em" }}>{l}</a>
         ))}
         <GoldButton onClick={() => { onClose(); setTimeout(() => onCheckout("base"), 200); }}>Ver meu acesso</GoldButton>
       </div>
@@ -102,54 +99,83 @@ function MobileNav({ open, onClose, onCheckout }: { open: boolean; onClose: () =
 
 /* ═══ CHECKOUT MODAL ═══ */
 const LANGS = ["English", "Spanish", "Italian", "French", "German", "Mandarin", "Korean", "Japanese"];
+
 function CheckoutModal({ plan, onClose }: { plan: string; onClose: () => void }) {
   const premium = plan === "premium";
-  const base = premium ? 29 : 15;
+  const basePrice = premium ? 29 : 15;
   const [poly, setPoly] = useState(false);
   const [langs, setLangs] = useState<string[]>([]);
   const free = premium ? 2 : 0;
   const paid = Math.max(0, langs.length - free);
-  const total = base + paid * 5 + (poly ? 10 : 0);
+  const total = basePrice + paid * 5 + (poly ? 10 : 0);
   const brl = Math.round(total * 5.2);
   const toggle = (l: string) => setLangs(p => p.includes(l) ? p.filter(x => x !== l) : [...p, l]);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.8)", backdropFilter: "blur(12px)" }} onClick={onClose}>
-      <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl" style={{ background: "#111", border: "1px solid rgba(255,255,255,0.08)" }} onClick={e => e.stopPropagation()}>
-        <button onClick={onClose} className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full" style={{ background: "rgba(255,255,255,0.05)" }}><X size={16} className="text-white/60" /></button>
-        <div className="grid md:grid-cols-5">
-          <div className="md:col-span-3 p-6 md:p-8">
-            <div className="inline-flex items-center text-[10px] tracking-widest uppercase px-3 py-1 rounded-full mb-6" style={{ color: GOLD, background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.15)", letterSpacing: "0.15em" }}>Plano {premium ? "Premium" : "Base"}</div>
-            <h3 className="text-2xl md:text-3xl font-light mb-4" style={{ fontFamily: "var(--serif)" }}>Personalize seu acesso</h3>
-            <p className="text-sm leading-relaxed mb-8" style={{ color: "rgba(255,255,255,0.45)" }}>
+    <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(12px)" }}>
+      <div onClick={e => e.stopPropagation()} style={{ position: "relative", width: "100%", maxWidth: 900, maxHeight: "90vh", overflowY: "auto", borderRadius: 16, background: "#111", border: "1px solid rgba(255,255,255,0.08)" }}>
+        <button onClick={onClose} style={{ position: "absolute", top: 16, right: 16, zIndex: 10, width: 32, height: 32, borderRadius: 9999, background: "rgba(255,255,255,0.05)", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><X size={16} color="rgba(255,255,255,0.6)" /></button>
+
+        <div style={{ display: "grid", gridTemplateColumns: "3fr 2fr" }}>
+          {/* Left */}
+          <div style={{ padding: 32 }}>
+            <div style={{ display: "inline-flex", fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", padding: "4px 12px", borderRadius: 9999, color: GOLD, background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.15)", marginBottom: 24 }}>Plano {premium ? "Premium" : "Base"}</div>
+            <h3 style={{ fontSize: 28, fontWeight: 300, fontFamily: SERIF, marginBottom: 16 }}>Personalize seu acesso</h3>
+            <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 32 }}>
               {premium ? "Seus 2 primeiros idiomas já estão incluídos. Adicione extras ou o Polymarket Lab se quiser expandir." : "Nenhum idioma incluído neste plano. Escolha quantos quiser por +US$5/mês cada, e adicione o Polymarket Lab se desejar."}
             </p>
-            <div className="rounded-xl p-5 mb-6" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
-              <div className="flex items-center justify-between">
-                <div><div className="text-sm font-medium mb-1" style={{ fontFamily: "var(--serif)" }}>Polymarket Lab</div><div className="text-xs" style={{ color: "rgba(255,255,255,0.35)" }}>+US$10/mês · aprox. R$52/mês</div></div>
-                <button onClick={() => setPoly(!poly)} className="w-12 h-6 rounded-full relative shrink-0 transition-all duration-300" style={{ background: poly ? GOLD : "rgba(255,255,255,0.1)" }}><div className="w-5 h-5 rounded-full absolute top-0.5 transition-all duration-300" style={{ background: poly ? "#0A0A0A" : "rgba(255,255,255,0.4)", left: poly ? "26px" : "2px" }} /></button>
+
+            {/* Polymarket */}
+            <div style={{ borderRadius: 12, padding: 20, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", marginBottom: 24 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 500, fontFamily: SERIF, marginBottom: 4 }}>Polymarket Lab</div>
+                  <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)" }}>+US$10/mês · aprox. R$52/mês</div>
+                </div>
+                <button onClick={() => setPoly(!poly)} style={{ width: 48, height: 24, borderRadius: 12, position: "relative", border: "none", cursor: "pointer", background: poly ? GOLD : "rgba(255,255,255,0.1)", transition: "background 0.3s" }}>
+                  <div style={{ width: 20, height: 20, borderRadius: 10, position: "absolute", top: 2, left: poly ? 26 : 2, background: poly ? "#0A0A0A" : "rgba(255,255,255,0.4)", transition: "left 0.3s" }} />
+                </button>
               </div>
             </div>
-            <div className="rounded-xl p-5" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
-              <div className="text-sm font-medium mb-2" style={{ fontFamily: "var(--serif)" }}>{premium ? "Escolha seus idiomas" : "Idiomas disponíveis"}</div>
-              <p className="text-xs mb-1" style={{ color: "rgba(255,255,255,0.35)" }}>{premium ? "2 incluídos no plano. A partir do 3º: +US$5/mês cada." : "+US$5/mês por idioma · aprox. R$26/mês cada."}</p>
-              {premium && <p className="text-xs mb-3" style={{ color: GOLD, opacity: 0.7 }}>{Math.min(langs.length, free)}/{free} incluídos selecionados</p>}
-              <div className="flex flex-wrap gap-2 mt-3">
-                {LANGS.map(l => { const on = langs.includes(l); return <button key={l} onClick={() => toggle(l)} className="text-xs px-4 py-2 rounded-full transition-all duration-200" style={{ background: on ? "rgba(201,168,76,0.12)" : "rgba(255,255,255,0.04)", border: `1px solid ${on ? "rgba(201,168,76,0.4)" : "rgba(255,255,255,0.08)"}`, color: on ? GOLD : "rgba(255,255,255,0.5)" }}>{l}</button>; })}
+
+            {/* Languages */}
+            <div style={{ borderRadius: 12, padding: 20, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <div style={{ fontSize: 14, fontWeight: 500, fontFamily: SERIF, marginBottom: 8 }}>{premium ? "Escolha seus idiomas" : "Idiomas disponíveis"}</div>
+              <p style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", marginBottom: 4 }}>{premium ? "2 incluídos no plano. A partir do 3º: +US$5/mês cada." : "+US$5/mês por idioma · aprox. R$26/mês cada."}</p>
+              {premium && <p style={{ fontSize: 12, color: GOLD, opacity: 0.7, marginBottom: 12 }}>{Math.min(langs.length, free)}/{free} incluídos selecionados</p>}
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
+                {LANGS.map(l => {
+                  const on = langs.includes(l);
+                  return <button key={l} onClick={() => toggle(l)} style={{ fontSize: 12, padding: "8px 16px", borderRadius: 9999, border: `1px solid ${on ? "rgba(201,168,76,0.4)" : "rgba(255,255,255,0.08)"}`, background: on ? "rgba(201,168,76,0.12)" : "rgba(255,255,255,0.04)", color: on ? GOLD : "rgba(255,255,255,0.5)", cursor: "pointer", transition: "all 0.2s" }}>{l}</button>;
+                })}
               </div>
             </div>
           </div>
-          <div className="md:col-span-2 p-6 md:p-8" style={{ background: "rgba(255,255,255,0.02)", borderLeft: "1px solid rgba(255,255,255,0.06)" }}>
-            <h4 className="text-sm font-medium mb-6" style={{ color: GOLD, fontFamily: "var(--serif)" }}>Seu acesso selecionado</h4>
-            <div className="space-y-5">
-              {[["Plano", premium ? "Premium" : "Base"], ["Inclui", premium ? "Tudo do Base + The Sanctum, Duck Tank, Black Book, Global Moves e 2 idiomas" : "The Portal, The Core, The Lounge e Geopolitics"], ["Idiomas", langs.length > 0 ? langs.join(", ") : "Nenhum"], ["Extensões", poly ? "Polymarket Lab" : "Nenhum"]].map(([label, value], i) => (
-                <div key={label} className={i > 0 ? "pt-4" : ""} style={i > 0 ? { borderTop: "1px solid rgba(255,255,255,0.06)" } : {}}><div className="text-[10px] uppercase tracking-widest mb-1" style={{ color: "rgba(255,255,255,0.3)", letterSpacing: "0.15em" }}>{label}</div><div className="text-sm" style={{ color: "rgba(255,255,255,0.7)" }}>{value}</div></div>
+
+          {/* Right summary */}
+          <div style={{ padding: 32, background: "rgba(255,255,255,0.02)", borderLeft: "1px solid rgba(255,255,255,0.06)" }}>
+            <h4 style={{ fontSize: 14, fontWeight: 500, color: GOLD, fontFamily: SERIF, marginBottom: 24 }}>Seu acesso selecionado</h4>
+            <div>
+              {[
+                ["Plano", premium ? "Premium" : "Base"],
+                ["Inclui", premium ? "Tudo do Base + The Sanctum, Duck Tank, Black Book, Global Moves e 2 idiomas" : "The Portal, The Core, The Lounge e Geopolitics"],
+                ["Idiomas", langs.length > 0 ? langs.join(", ") : "Nenhum"],
+                ["Extensões", poly ? "Polymarket Lab" : "Nenhum"],
+              ].map(([label, value], i) => (
+                <div key={label} style={{ paddingTop: i > 0 ? 16 : 0, marginTop: i > 0 ? 16 : 0, borderTop: i > 0 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
+                  <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.15em", color: "rgba(255,255,255,0.3)", marginBottom: 4 }}>{label}</div>
+                  <div style={{ fontSize: 14, color: "rgba(255,255,255,0.7)" }}>{value}</div>
+                </div>
               ))}
             </div>
-            <div className="mt-8 pt-5" style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-              <div className="flex items-baseline justify-between mb-1"><span className="text-sm font-medium" style={{ color: GOLD, fontFamily: "var(--serif)" }}>Total mensal</span><span className="text-2xl font-light" style={{ fontFamily: "var(--serif)" }}>US${total}</span></div>
-              <div className="text-xs mb-6" style={{ color: "rgba(255,255,255,0.3)" }}>Aprox. R${brl}/mês</div>
-              <button className="w-full py-3.5 rounded-lg text-sm tracking-wider uppercase transition-all duration-300" style={{ background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", fontFamily: "var(--serif)", letterSpacing: "0.12em", fontWeight: 600 }} onMouseEnter={e => e.currentTarget.style.boxShadow = "0 0 30px rgba(201,168,76,0.15)"} onMouseLeave={e => e.currentTarget.style.boxShadow = "none"}>Continuar para checkout</button>
-              <p className="text-[10px] mt-4 leading-relaxed text-center" style={{ color: "rgba(255,255,255,0.25)" }}>Cobrança via Stripe. Valor pode variar conforme câmbio e taxas.</p>
+            <div style={{ marginTop: 32, paddingTop: 20, borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+              <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 4 }}>
+                <span style={{ fontSize: 14, fontWeight: 500, color: GOLD, fontFamily: SERIF }}>Total mensal</span>
+                <span style={{ fontSize: 24, fontWeight: 300, fontFamily: SERIF }}>US${total}</span>
+              </div>
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginBottom: 24 }}>Aprox. R${brl}/mês</div>
+              <button style={{ width: "100%", padding: "14px 0", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, fontFamily: SERIF, background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", border: "none", cursor: "pointer" }}>Continuar para checkout</button>
+              <p style={{ fontSize: 10, marginTop: 16, textAlign: "center", color: "rgba(255,255,255,0.25)", lineHeight: 1.6 }}>Cobrança via Stripe. Valor pode variar conforme câmbio e taxas.</p>
             </div>
           </div>
         </div>
@@ -158,85 +184,105 @@ function CheckoutModal({ plan, onClose }: { plan: string; onClose: () => void })
   );
 }
 
-/* ═══ COMMUNITY SCREENSHOTS SHOWCASE ═══ */
+/* ═══ COMMUNITY SCREENSHOTS ═══ */
 function CommunityShowcase() {
+  const screens = [
+    { src: "/club-screen-1.png", alt: "The Portal & Core", rotate: -3, translateY: 12 },
+    { src: "/club-screen-2.png", alt: "The Sanctum & Duck Tank", rotate: 0, translateY: 0, featured: true },
+    { src: "/club-screen-3.png", alt: "Languages & Polymarket", rotate: 3, translateY: 12 },
+  ];
   return (
-    <div className="relative">
-      {/* Glow behind */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, rgba(201,168,76,0.04) 0%, transparent 70%)" }} />
-      
-      {/* Phone mockup container */}
-      <div className="flex justify-center gap-4 md:gap-6 items-end">
-        {/* Screen 1 */}
-        <div className="w-36 sm:w-44 md:w-52 rounded-2xl overflow-hidden shadow-2xl relative" style={{ border: "1px solid rgba(255,255,255,0.08)", transform: "rotate(-3deg) translateY(12px)" }}>
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(180deg, transparent 60%, rgba(10,10,10,0.4) 100%)", zIndex: 2 }} />
-          <Image src={SCREEN1} alt="The Portal & Core" width={390} height={844} className="w-full h-auto block" style={{ filter: "brightness(0.9)" }} />
-        </div>
-        {/* Screen 2 - center, larger */}
-        <div className="w-44 sm:w-52 md:w-60 rounded-2xl overflow-hidden shadow-2xl relative" style={{ border: "1px solid rgba(201,168,76,0.15)", zIndex: 3 }}>
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(180deg, transparent 60%, rgba(10,10,10,0.3) 100%)", zIndex: 2 }} />
-          <Image src={SCREEN2} alt="The Sanctum & Duck Tank" width={390} height={844} className="w-full h-auto block" style={{ filter: "brightness(0.95)" }} />
-        </div>
-        {/* Screen 3 */}
-        <div className="w-36 sm:w-44 md:w-52 rounded-2xl overflow-hidden shadow-2xl relative" style={{ border: "1px solid rgba(255,255,255,0.08)", transform: "rotate(3deg) translateY(12px)" }}>
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(180deg, transparent 60%, rgba(10,10,10,0.4) 100%)", zIndex: 2 }} />
-          <Image src={SCREEN3} alt="Languages & Polymarket" width={390} height={844} className="w-full h-auto block" style={{ filter: "brightness(0.9)" }} />
-        </div>
+    <div style={{ position: "relative" }}>
+      <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "radial-gradient(ellipse at center, rgba(201,168,76,0.04) 0%, transparent 70%)" }} />
+      <div style={{ display: "flex", justifyContent: "center", gap: 16, alignItems: "flex-end" }}>
+        {screens.map((s, i) => (
+          <div key={i} style={{
+            width: s.featured ? 240 : 200,
+            borderRadius: 16,
+            overflow: "hidden",
+            boxShadow: "0 25px 50px rgba(0,0,0,0.5)",
+            border: s.featured ? "1px solid rgba(201,168,76,0.15)" : "1px solid rgba(255,255,255,0.08)",
+            transform: `rotate(${s.rotate}deg) translateY(${s.translateY}px)`,
+            position: "relative",
+            zIndex: s.featured ? 3 : 1,
+          }}>
+            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 60%, rgba(10,10,10,0.4) 100%)", zIndex: 2, pointerEvents: "none" }} />
+            <img src={s.src} alt={s.alt} style={{ width: "100%", height: "auto", display: "block", filter: s.featured ? "brightness(0.95)" : "brightness(0.85)" }} />
+          </div>
+        ))}
       </div>
     </div>
   );
 }
 
-/* ═══ MAIN ═══ */
-export default function DuckDuckClub() {
+/* ═══════════════════════════════
+   MAIN PAGE
+═══════════════════════════════ */
+export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [checkout, setCheckout] = useState<string | null>(null);
-  useEffect(() => { const fn = () => setScrolled(window.scrollY > 40); window.addEventListener("scroll", fn); return () => window.removeEventListener("scroll", fn); }, []);
+
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", fn);
+    return () => window.removeEventListener("scroll", fn);
+  }, []);
+
+  const dot = (gold = false) => <div style={{ width: 6, height: 6, borderRadius: 3, background: gold ? GOLD : "rgba(255,255,255,0.25)", flexShrink: 0 }} />;
 
   return (
-    <div className="min-h-screen" style={{ "--serif": "'Cormorant Garamond', serif", "--sans": "'DM Sans', sans-serif", background: "#0A0A0A", color: "white", fontFamily: "var(--sans)" }}>
-      <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 0 }}><div className="absolute top-[-20%] left-[20%] w-[600px] h-[600px] rounded-full" style={{ background: "radial-gradient(circle, rgba(201,168,76,0.03) 0%, transparent 70%)" }} /><div className="absolute bottom-[-10%] right-[10%] w-[400px] h-[400px] rounded-full" style={{ background: "radial-gradient(circle, rgba(201,168,76,0.02) 0%, transparent 70%)" }} /></div>
-
+    <>
       <MobileNav open={menuOpen} onClose={() => setMenuOpen(false)} onCheckout={p => setCheckout(p)} />
       {checkout && <CheckoutModal plan={checkout} onClose={() => setCheckout(null)} />}
 
+      {/* Ambient glow */}
+      <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0 }}>
+        <div style={{ position: "absolute", top: "-20%", left: "20%", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.03) 0%, transparent 70%)" }} />
+        <div style={{ position: "absolute", bottom: "-10%", right: "10%", width: 400, height: 400, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.02) 0%, transparent 70%)" }} />
+      </div>
+
       {/* NAV */}
-      <nav className="fixed top-0 left-0 right-0 z-40 transition-all duration-500" style={{ background: scrolled ? "rgba(10,10,10,0.85)" : "transparent", backdropFilter: scrolled ? "blur(20px)" : "none", borderBottom: scrolled ? "1px solid rgba(255,255,255,0.04)" : "1px solid transparent" }}>
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3"><Logo size={30} /><span className="text-white text-sm tracking-widest uppercase hidden sm:inline" style={{ fontFamily: "var(--serif)", letterSpacing: "0.15em" }}>DuckDuck Club</span></div>
-          <div className="hidden md:flex items-center gap-8">
+      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 40, transition: "all 0.5s", background: scrolled ? "rgba(10,10,10,0.85)" : "transparent", backdropFilter: scrolled ? "blur(20px)" : "none", borderBottom: scrolled ? "1px solid rgba(255,255,255,0.04)" : "1px solid transparent" }}>
+        <div style={{ maxWidth: 1152, margin: "0 auto", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <Logo size={30} />
+            <span style={{ color: "white", fontSize: 14, letterSpacing: "0.15em", textTransform: "uppercase", fontFamily: SERIF }}>DuckDuck Club</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
             {[["O clube", "#about"], ["Por dentro", "#inside"], ["Acesso", "#pricing"]].map(([l, h]) => (
-              <a key={l} href={h} className="text-xs tracking-widest uppercase transition-colors" style={{ color: "rgba(255,255,255,0.4)", fontFamily: "var(--serif)", letterSpacing: "0.15em" }} onMouseEnter={e => e.currentTarget.style.color = GOLD} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.4)"}>{l}</a>
+              <a key={l} href={h} style={{ fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", textDecoration: "none", fontFamily: SERIF, transition: "color 0.3s" }}
+                onMouseEnter={e => (e.currentTarget.style.color = GOLD)} onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.4)")}>{l}</a>
             ))}
+            <button onClick={() => setCheckout("base")} style={{ fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase", padding: "10px 20px", borderRadius: 8, background: "rgba(201,168,76,0.1)", color: GOLD, border: "1px solid rgba(201,168,76,0.2)", fontFamily: SERIF, cursor: "pointer", transition: "all 0.3s" }}
+              onMouseEnter={e => { e.currentTarget.style.background = "rgba(201,168,76,0.15)"; e.currentTarget.style.borderColor = "rgba(201,168,76,0.4)"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "rgba(201,168,76,0.1)"; e.currentTarget.style.borderColor = "rgba(201,168,76,0.2)"; }}>
+              Ver meu acesso
+            </button>
           </div>
-          <div className="hidden md:block">
-            <button onClick={() => setCheckout("base")} className="text-xs tracking-widest uppercase px-5 py-2.5 rounded-lg transition-all duration-300" style={{ background: "rgba(201,168,76,0.1)", color: GOLD, border: "1px solid rgba(201,168,76,0.2)", fontFamily: "var(--serif)", letterSpacing: "0.12em" }} onMouseEnter={e => { e.currentTarget.style.background = "rgba(201,168,76,0.15)"; e.currentTarget.style.borderColor = "rgba(201,168,76,0.4)"; }} onMouseLeave={e => { e.currentTarget.style.background = "rgba(201,168,76,0.1)"; e.currentTarget.style.borderColor = "rgba(201,168,76,0.2)"; }}>Ver meu acesso</button>
-          </div>
-          <button className="md:hidden" onClick={() => setMenuOpen(true)}><Menu size={22} style={{ color: "rgba(255,255,255,0.6)" }} /></button>
+          <button onClick={() => setMenuOpen(true)} style={{ display: "none", background: "none", border: "none", cursor: "pointer" }}><Menu size={22} color="rgba(255,255,255,0.6)" /></button>
         </div>
       </nav>
 
       {/* ═══ 1. HERO ═══ */}
-      <section className="relative min-h-screen flex items-center justify-center px-6 pt-24 pb-20" style={{ zIndex: 1 }}>
-        <div className="absolute inset-0 overflow-hidden pointer-events-none"><div className="absolute top-1/3 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(201,168,76,0.06), transparent)" }} /></div>
-        <div className="max-w-4xl mx-auto text-center relative">
+      <section style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "96px 24px 80px", zIndex: 1 }}>
+        <div style={{ maxWidth: 896, margin: "0 auto", textAlign: "center" }}>
           <Fade><Badge>Ecossistema Privado</Badge></Fade>
           <Fade delay={150}>
-            <h1 className="mt-10 mb-7 text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-light leading-tight" style={{ fontFamily: "var(--serif)" }}>
-              Antes de pensar em crescer financeiramente, <span className="italic" style={{ color: GOLD }}>aumente o seu valor no jogo.</span>
+            <h1 style={{ marginTop: 40, marginBottom: 28, fontSize: "clamp(30px, 6vw, 72px)", fontWeight: 300, lineHeight: 1.1, fontFamily: SERIF }}>
+              Antes de pensar em crescer financeiramente, <span style={{ fontStyle: "italic", color: GOLD }}>aumente o seu valor no jogo.</span>
             </h1>
           </Fade>
           <Fade delay={300}>
-            <p className="max-w-2xl mx-auto text-sm md:text-base leading-relaxed mb-10" style={{ color: "rgba(255,255,255,0.45)" }}>
+            <p style={{ maxWidth: 640, margin: "0 auto 40px", fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)" }}>
               DuckDuck Club é um ecossistema privado para quem quer mais direção, mais contexto e mais valor real. Aqui você constrói repertório internacional, aprende idiomas, amplia networking e acessa temas como offshore, China import, geopolítica, investimentos, segurança digital e operação global.
             </p>
           </Fade>
-          <Fade delay={450}><GoldButton onClick={() => setCheckout("base")} className="mx-auto">Ver meu acesso</GoldButton></Fade>
+          <Fade delay={450}><GoldButton onClick={() => setCheckout("base")}>Ver meu acesso</GoldButton></Fade>
           <Fade delay={600}>
-            <div className="mt-12 flex flex-wrap justify-center gap-3">
+            <div style={{ marginTop: 48, display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 12 }}>
               {["Idiomas para acesso global", "Network, deals e matchmaking", "Offshore, China e geopolítica", "Privado, curado, sem ruído"].map(t => (
-                <span key={t} className="text-xs px-4 py-2 rounded-full border" style={{ color: "rgba(255,255,255,0.45)", borderColor: "rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.02)" }}>{t}</span>
+                <span key={t} style={{ fontSize: 12, padding: "8px 16px", borderRadius: 9999, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.02)", color: "rgba(255,255,255,0.45)" }}>{t}</span>
               ))}
             </div>
           </Fade>
@@ -244,23 +290,27 @@ export default function DuckDuckClub() {
       </section>
 
       {/* ═══ 2. O PROBLEMA ═══ */}
-      <section id="about" className="relative py-20 md:py-28 px-6" style={{ zIndex: 1 }}>
-        <div className="max-w-5xl mx-auto">
+      <section id="about" style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
+        <div style={{ maxWidth: 1024, margin: "0 auto" }}>
           <Fade>
             <Badge>O problema</Badge>
-            <h2 className="mt-6 text-2xl sm:text-3xl md:text-5xl font-light leading-tight mb-6" style={{ fontFamily: "var(--serif)" }}>
-              Ambição sem contexto, sem linguagem e sem estrutura vira <span className="italic" style={{ color: GOLD }}>desperdício de potencial.</span>
+            <h2 style={{ marginTop: 24, fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 24 }}>
+              Ambição sem contexto, sem linguagem e sem estrutura vira <span style={{ fontStyle: "italic", color: GOLD }}>desperdício de potencial.</span>
             </h2>
-            <p className="text-sm md:text-base leading-relaxed mb-10 max-w-3xl" style={{ color: "rgba(255,255,255,0.45)" }}>
+            <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 40, maxWidth: 720 }}>
               Muita gente quer crescer e acessar oportunidades maiores. Mas tenta fazer isso com informação espalhada, networking fraco, leitura rasa de cenário e pouca capacidade prática de execução. O resultado é viver ocupada, mas continuar jogando abaixo do próprio potencial.
             </p>
           </Fade>
-          <div className="grid md:grid-cols-3 gap-5">
-            {[{ t: "Muito conteúdo, pouca direção", d: "Sem leitura de cenário e geopolítica, a maioria reage tarde e decide no ruído." }, { t: "Muito potencial, pouco acesso", d: "Sem linguagem, repertório e as pessoas certas por perto, oportunidades simplesmente não chegam." }, { t: "Muita ambição, pouca estrutura", d: "Sem ferramentas, proteção e operações globais bem entendidas, o jogo fica mais caro e mais lento." }].map((item, i) => (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20 }}>
+            {[
+              { t: "Muito conteúdo, pouca direção", d: "Sem leitura de cenário e geopolítica, a maioria reage tarde e decide no ruído." },
+              { t: "Muito potencial, pouco acesso", d: "Sem linguagem, repertório e as pessoas certas por perto, oportunidades simplesmente não chegam." },
+              { t: "Muita ambição, pouca estrutura", d: "Sem ferramentas, proteção e operações globais bem entendidas, o jogo fica mais caro e mais lento." },
+            ].map((item, i) => (
               <Fade key={item.t} delay={i * 100}>
-                <div className="p-6 md:p-7 rounded-2xl h-full" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
-                  <h3 className="text-lg font-medium mb-3" style={{ fontFamily: "var(--serif)" }}>{item.t}</h3>
-                  <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.4)" }}>{item.d}</p>
+                <div style={{ padding: "24px 28px", borderRadius: 16, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", height: "100%" }}>
+                  <h3 style={{ fontSize: 18, fontWeight: 500, fontFamily: SERIF, marginBottom: 12 }}>{item.t}</h3>
+                  <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.4)", margin: 0 }}>{item.d}</p>
                 </div>
               </Fade>
             ))}
@@ -269,82 +319,78 @@ export default function DuckDuckClub() {
       </section>
 
       {/* ═══ 3. POR DENTRO ═══ */}
-      <section id="inside" className="relative py-20 md:py-28 px-6" style={{ zIndex: 1 }}>
-        <div className="max-w-5xl mx-auto">
+      <section id="inside" style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
+        <div style={{ maxWidth: 1024, margin: "0 auto" }}>
           <Fade>
             <Badge>Por dentro</Badge>
-            <h2 className="mt-6 text-2xl sm:text-3xl md:text-5xl font-light leading-tight mb-4" style={{ fontFamily: "var(--serif)" }}>O que você encontra <span className="italic" style={{ color: GOLD }}>ao entrar</span></h2>
-            <p className="text-sm md:text-base leading-relaxed mb-12 max-w-3xl" style={{ color: "rgba(255,255,255,0.45)" }}>
+            <h2 style={{ marginTop: 24, fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 16 }}>O que você encontra <span style={{ fontStyle: "italic", color: GOLD }}>ao entrar</span></h2>
+            <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 48, maxWidth: 720 }}>
               DuckDuck Club não é mais um espaço de consumo passivo. É um ecossistema construído para aumentar seu valor em quatro frentes — e dar tração real a cada uma delas.
             </p>
           </Fade>
-          <div className="grid md:grid-cols-2 gap-5">
-            {[{ icon: Compass, title: "Direção", desc: "Leitura de cenário, geopolítica, sinal e contexto para antecipar movimentos e tomar decisões com mais clareza.", tags: "cenário global · geopolítica · leitura macro · timing" }, { icon: BookOpen, title: "Valor pessoal", desc: "Idiomas, repertório, ferramentas e autodidatismo para elevar seu valor, ampliar alcance e fortalecer utilidade prática.", tags: "idiomas · repertório · tools · cultura · learning stack" }, { icon: Handshake, title: "Valor relacional", desc: "Networking, deals, matchmaking e parcerias para aproximar você de operadores, investidores e oportunidades alinhadas.", tags: "networking · deals · matchmaking · parceiros estratégicos" }, { icon: Settings, title: "Valor operacional", desc: "Offshore, China import, crypto OPSEC e estruturas internacionais para operar com mais inteligência, proteção e execução real.", tags: "offshore · China import · OPSEC · estruturas globais" }].map((item, i) => (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20 }}>
+            {[
+              { icon: Compass, title: "Direção", desc: "Leitura de cenário, geopolítica, sinal e contexto para antecipar movimentos e tomar decisões com mais clareza.", tags: "cenário global · geopolítica · leitura macro · timing" },
+              { icon: BookOpen, title: "Valor pessoal", desc: "Idiomas, repertório, ferramentas e autodidatismo para elevar seu valor, ampliar alcance e fortalecer utilidade prática.", tags: "idiomas · repertório · tools · cultura · learning stack" },
+              { icon: Handshake, title: "Valor relacional", desc: "Networking, deals, matchmaking e parcerias para aproximar você de operadores, investidores e oportunidades alinhadas.", tags: "networking · deals · matchmaking · parceiros estratégicos" },
+              { icon: Settings, title: "Valor operacional", desc: "Offshore, China import, crypto OPSEC e estruturas internacionais para operar com mais inteligência, proteção e execução real.", tags: "offshore · China import · OPSEC · estruturas globais" },
+            ].map((item, i) => (
               <Fade key={item.title} delay={i * 80}>
-                <div className="p-6 md:p-8 rounded-2xl h-full" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-5" style={{ background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.15)" }}><item.icon size={18} style={{ color: GOLD }} /></div>
-                  <h3 className="text-lg md:text-xl font-medium mb-3" style={{ fontFamily: "var(--serif)" }}>{item.title}</h3>
-                  <p className="text-sm leading-relaxed mb-4" style={{ color: "rgba(255,255,255,0.45)" }}>{item.desc}</p>
-                  <p className="text-xs" style={{ color: GOLD, opacity: 0.45 }}>{item.tags}</p>
+                <div style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", height: "100%" }}>
+                  <div style={{ width: 40, height: 40, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20, background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.15)" }}><item.icon size={18} color={GOLD} /></div>
+                  <h3 style={{ fontSize: 20, fontWeight: 500, fontFamily: SERIF, marginBottom: 12 }}>{item.title}</h3>
+                  <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 16 }}>{item.desc}</p>
+                  <p style={{ fontSize: 12, color: GOLD, opacity: 0.45, margin: 0 }}>{item.tags}</p>
                 </div>
               </Fade>
             ))}
           </div>
-          <Fade delay={350}><div className="mt-14 text-center"><GoldButton onClick={() => setCheckout("premium")} className="mx-auto">Quero acessar o clube</GoldButton></div></Fade>
+          <Fade delay={350}><div style={{ marginTop: 56, textAlign: "center" }}><GoldButton onClick={() => setCheckout("premium")}>Quero acessar o clube</GoldButton></div></Fade>
         </div>
       </section>
 
       {/* ═══ 4. COMMUNITY SCREENSHOTS ═══ */}
-      <section className="relative py-20 md:py-28 px-6 overflow-hidden" style={{ zIndex: 1 }}>
-        <div className="max-w-5xl mx-auto">
+      <section style={{ position: "relative", padding: "80px 24px 112px", overflow: "hidden", zIndex: 1 }}>
+        <div style={{ maxWidth: 1024, margin: "0 auto" }}>
           <Fade>
-            <div className="text-center mb-12">
+            <div style={{ textAlign: "center", marginBottom: 48 }}>
               <Badge>O ambiente</Badge>
-              <h2 className="mt-6 text-2xl sm:text-3xl md:text-5xl font-light leading-tight mb-4" style={{ fontFamily: "var(--serif)" }}>
-                Um ecossistema{" "}<span className="italic" style={{ color: GOLD }}>real e organizado.</span>
-              </h2>
-              <p className="text-sm md:text-base max-w-2xl mx-auto leading-relaxed" style={{ color: "rgba(255,255,255,0.4)" }}>
-                Canais estruturados, inteligência curada e espaços que funcionam — do onboarding ao nível mais operacional.
-              </p>
+              <h2 style={{ marginTop: 24, fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 16 }}>Um ecossistema <span style={{ fontStyle: "italic", color: GOLD }}>real e organizado.</span></h2>
+              <p style={{ fontSize: 15, maxWidth: 560, margin: "0 auto", lineHeight: 1.7, color: "rgba(255,255,255,0.4)" }}>Canais estruturados, inteligência curada e espaços que funcionam — do onboarding ao nível mais operacional.</p>
             </div>
           </Fade>
-          <Fade delay={200}>
-            <CommunityShowcase />
-          </Fade>
-          <Fade delay={350}>
-            <p className="text-center mt-10 text-xs" style={{ color: "rgba(255,255,255,0.25)" }}>
-              Plataforma via app e desktop · Acesso imediato após checkout
-            </p>
-          </Fade>
+          <Fade delay={200}><CommunityShowcase /></Fade>
+          <Fade delay={350}><p style={{ textAlign: "center", marginTop: 40, fontSize: 12, color: "rgba(255,255,255,0.25)" }}>Plataforma via app e desktop · Acesso imediato após checkout</p></Fade>
         </div>
       </section>
 
-      {/* ═══ 5. SOBRE O CRIADOR (with photo placeholder) ═══ */}
-      <section className="relative py-20 md:py-28 px-6" style={{ zIndex: 1 }}>
-        <div className="max-w-5xl mx-auto">
+      {/* ═══ 5. SOBRE O CRIADOR ═══ */}
+      <section style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
+        <div style={{ maxWidth: 1024, margin: "0 auto" }}>
           <Fade>
             <Badge>Sobre o criador</Badge>
-            <div className="mt-8 grid md:grid-cols-5 gap-10 md:gap-14 items-start">
-              {/* Photo */}
-              <div className="md:col-span-2 flex justify-center md:justify-start">
-                <div className="relative">
-                  <div className="w-52 h-64 md:w-60 md:h-72 rounded-2xl overflow-hidden relative" style={{ border: "1px solid rgba(201,168,76,0.15)" }}>
-                    <Image src="/founder-photo.jpg" alt="Founder" fill className="object-cover object-top" />
+            <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "2fr 3fr", gap: 56, alignItems: "start" }}>
+              <div style={{ display: "flex", justifyContent: "center" }}>
+                <div style={{ position: "relative" }}>
+                  <div style={{ width: 240, height: 288, borderRadius: 16, overflow: "hidden", border: "1px solid rgba(201,168,76,0.15)" }}>
+                    <img src="/founder-photo.jpg" alt="Fernando — Founder" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                   </div>
-                  <div className="absolute -bottom-3 -right-3 w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: "#0A0A0A", border: "1px solid rgba(201,168,76,0.2)" }}><Globe size={16} style={{ color: GOLD }} /></div>
+                  <div style={{ position: "absolute", bottom: -12, right: -12, width: 40, height: 40, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", background: "#0A0A0A", border: "1px solid rgba(201,168,76,0.2)" }}><Globe size={16} color={GOLD} /></div>
                 </div>
               </div>
-              {/* Text */}
-              <div className="md:col-span-3">
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-light leading-tight mb-6" style={{ fontFamily: "var(--serif)" }}>
-                  A DuckDuck Club nasceu da interseção entre <span className="italic" style={{ color: GOLD }}>contexto global, operação real e construção de valor.</span>
+              <div>
+                <h2 style={{ fontSize: "clamp(22px, 3.5vw, 36px)", fontWeight: 300, lineHeight: 1.2, fontFamily: SERIF, marginBottom: 24 }}>
+                  A DuckDuck Club nasceu da interseção entre <span style={{ fontStyle: "italic", color: GOLD }}>contexto global, operação real e construção de valor.</span>
                 </h2>
-                <p className="text-sm md:text-base leading-relaxed mb-8" style={{ color: "rgba(255,255,255,0.45)" }}>
+                <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 32 }}>
                   Depois de viver entre países, operar em ambientes diferentes e perceber como idioma, geopolítica, estrutura, network e execução mudam o nível do jogo, eu decidi reunir tudo isso em um ecossistema privado. A DuckDuck Club foi criada para quem quer deixar de depender de improviso, ruído e informação solta — e começar a operar com mais clareza, mais linguagem e mais capacidade prática.
                 </p>
-                <div className="grid grid-cols-2 gap-3">
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                   {["Direção para entender o jogo antes de agir", "Valor pessoal para ampliar utilidade e repertório", "Valor relacional para se aproximar das pessoas certas", "Valor operacional para transformar contexto em movimento real"].map(item => (
-                    <div key={item} className="flex items-start gap-2.5 p-3 rounded-lg" style={{ background: "rgba(255,255,255,0.02)" }}><div className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: GOLD }} /><span className="text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>{item}</span></div>
+                    <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: 12, borderRadius: 8, background: "rgba(255,255,255,0.02)" }}>
+                      {dot(true)}
+                      <span style={{ fontSize: 12, lineHeight: 1.6, color: "rgba(255,255,255,0.55)" }}>{item}</span>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -354,24 +400,24 @@ export default function DuckDuckClub() {
       </section>
 
       {/* ═══ 6. PARA VOCÊ SE... ═══ */}
-      <section className="relative py-20 md:py-28 px-6" style={{ zIndex: 1 }}>
-        <div className="max-w-5xl mx-auto">
-          <Fade><h2 className="text-2xl sm:text-3xl md:text-5xl font-light leading-tight mb-12" style={{ fontFamily: "var(--serif)" }}>Isso é para você se<span style={{ color: GOLD }}>...</span></h2></Fade>
-          <div className="grid md:grid-cols-2 gap-5">
+      <section style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
+        <div style={{ maxWidth: 1024, margin: "0 auto" }}>
+          <Fade><h2 style={{ fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 48 }}>Isso é para você se<span style={{ color: GOLD }}>...</span></h2></Fade>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
             <Fade>
-              <div className="p-6 md:p-8 rounded-2xl h-full" style={{ background: "rgba(201,168,76,0.02)", border: "1px solid rgba(201,168,76,0.1)" }}>
-                <div className="space-y-5">
+              <div style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(201,168,76,0.02)", border: "1px solid rgba(201,168,76,0.1)", height: "100%" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
                   {["Quer aumentar o próprio valor antes de aumentar o tamanho do jogo", "Valoriza contexto, curadoria e repertório internacional", "Quer construir networking útil — não só consumir conteúdo", "Quer operar melhor com mais direção, linguagem e alavancas"].map(item => (
-                    <div key={item} className="flex items-start gap-3"><Check size={16} className="mt-0.5 shrink-0" style={{ color: GOLD }} /><span className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.65)" }}>{item}</span></div>
+                    <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: 12 }}><Check size={16} color={GOLD} style={{ marginTop: 2, flexShrink: 0 }} /><span style={{ fontSize: 14, lineHeight: 1.6, color: "rgba(255,255,255,0.65)" }}>{item}</span></div>
                   ))}
                 </div>
               </div>
             </Fade>
             <Fade delay={100}>
-              <div className="p-6 md:p-8 rounded-2xl h-full" style={{ background: "rgba(255,255,255,0.015)", border: "1px solid rgba(255,255,255,0.05)" }}>
-                <div className="space-y-5">
+              <div style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(255,255,255,0.015)", border: "1px solid rgba(255,255,255,0.05)", height: "100%" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
                   {["Procura hype, promessa fácil ou atalhos mágicos", "Quer só assistir sem aplicar", "Prefere volume em vez de sinal", "Não valoriza contexto, profundidade e execução"].map(item => (
-                    <div key={item} className="flex items-start gap-3"><X size={16} className="mt-0.5 shrink-0" style={{ color: "rgba(255,255,255,0.2)" }} /><span className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.3)" }}>{item}</span></div>
+                    <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: 12 }}><X size={16} color="rgba(255,255,255,0.2)" style={{ marginTop: 2, flexShrink: 0 }} /><span style={{ fontSize: 14, lineHeight: 1.6, color: "rgba(255,255,255,0.3)" }}>{item}</span></div>
                   ))}
                 </div>
               </div>
@@ -381,55 +427,70 @@ export default function DuckDuckClub() {
       </section>
 
       {/* ═══ 7. PRICING ═══ */}
-      <section id="pricing" className="relative py-20 md:py-28 px-6" style={{ zIndex: 1 }}>
-        <div className="max-w-5xl mx-auto">
+      <section id="pricing" style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
+        <div style={{ maxWidth: 1024, margin: "0 auto" }}>
           <Fade>
-            <h2 className="text-2xl sm:text-3xl md:text-5xl font-light leading-tight mb-3" style={{ fontFamily: "var(--serif)" }}>Escolha seu nível de <span className="italic" style={{ color: GOLD }}>acesso</span></h2>
-            <p className="text-sm md:text-base leading-relaxed mb-12" style={{ color: "rgba(255,255,255,0.45)" }}>Entre pelo core ou desbloqueie a camada mais valiosa do clube.</p>
+            <h2 style={{ fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 12 }}>Escolha seu nível de <span style={{ fontStyle: "italic", color: GOLD }}>acesso</span></h2>
+            <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 48 }}>Entre pelo core ou desbloqueie a camada mais valiosa do clube.</p>
           </Fade>
-          <div className="grid md:grid-cols-2 gap-5">
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+            {/* Base */}
             <Fade>
-              <div className="p-6 md:p-8 rounded-2xl h-full flex flex-col" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <div style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", display: "flex", flexDirection: "column", height: "100%" }}>
                 <Badge>Base</Badge>
-                <h3 className="mt-5 text-sm mb-1" style={{ color: "rgba(255,255,255,0.4)" }}>A camada de direção e posicionamento</h3>
-                <div className="mt-3 mb-1"><span className="text-3xl md:text-4xl font-light" style={{ fontFamily: "var(--serif)" }}>US$15</span><span className="text-sm ml-1" style={{ color: "rgba(255,255,255,0.35)" }}>/mês</span></div>
-                <p className="text-xs mb-6" style={{ color: "rgba(255,255,255,0.25)" }}>aprox. R$79/mês</p>
-                <div className="space-y-3 mb-8 flex-1">
-                  {["The Portal", "The Core", "The Lounge", "Geopolitics"].map(item => (<div key={item} className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full" style={{ background: "rgba(255,255,255,0.25)" }} /><span className="text-sm" style={{ color: "rgba(255,255,255,0.55)" }}>{item}</span></div>))}
+                <p style={{ marginTop: 20, fontSize: 14, color: "rgba(255,255,255,0.4)", marginBottom: 4 }}>A camada de direção e posicionamento</p>
+                <div style={{ marginTop: 12, marginBottom: 4 }}><span style={{ fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 300, fontFamily: SERIF }}>US$15</span><span style={{ fontSize: 14, marginLeft: 4, color: "rgba(255,255,255,0.35)" }}>/mês</span></div>
+                <p style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", marginBottom: 24 }}>aprox. R$79/mês</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32, flex: 1 }}>
+                  {["The Portal", "The Core", "The Lounge", "Geopolitics"].map(item => (
+                    <div key={item} style={{ display: "flex", alignItems: "center", gap: 12 }}>{dot()}<span style={{ fontSize: 14, color: "rgba(255,255,255,0.55)" }}>{item}</span></div>
+                  ))}
                 </div>
                 <OutlineButton onClick={() => setCheckout("base")}>Escolher Base</OutlineButton>
               </div>
             </Fade>
+            {/* Premium */}
             <Fade delay={100}>
-              <div className="p-6 md:p-8 rounded-2xl h-full flex flex-col relative overflow-hidden" style={{ background: "rgba(201,168,76,0.03)", border: "1px solid rgba(201,168,76,0.2)" }}>
-                <div className="absolute top-0 right-0 w-40 h-40 rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%)", transform: "translate(30%, -30%)" }} />
-                <span className="inline-flex items-center text-xs tracking-widest uppercase px-4 py-1.5 rounded-full border self-start" style={{ color: GOLD, borderColor: GOLD, background: "rgba(201,168,76,0.1)", letterSpacing: "0.15em", fontFamily: "var(--serif)" }}>Premium</span>
-                <h3 className="mt-5 text-sm mb-1" style={{ color: "rgba(201,168,76,0.7)" }}>A camada mais valiosa do clube</h3>
-                <div className="mt-3 mb-1"><span className="text-3xl md:text-4xl font-light" style={{ fontFamily: "var(--serif)", color: GOLD }}>US$29</span><span className="text-sm ml-1" style={{ color: "rgba(201,168,76,0.5)" }}>/mês</span></div>
-                <p className="text-xs mb-6" style={{ color: "rgba(201,168,76,0.35)" }}>aprox. R$149/mês</p>
-                <div className="space-y-3 mb-8 flex-1">
-                  {["Tudo do Base", "The Sanctum", "Duck Tank", "Black Book", "Global Moves", "2 idiomas incluídos"].map(item => (<div key={item} className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full" style={{ background: GOLD }} /><span className="text-sm" style={{ color: "rgba(255,255,255,0.7)" }}>{item}</span></div>))}
+              <div style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(201,168,76,0.03)", border: "1px solid rgba(201,168,76,0.2)", display: "flex", flexDirection: "column", height: "100%", position: "relative", overflow: "hidden" }}>
+                <div style={{ position: "absolute", top: 0, right: 0, width: 160, height: 160, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%)", transform: "translate(30%, -30%)", pointerEvents: "none" }} />
+                <span style={{ display: "inline-flex", alignSelf: "flex-start", alignItems: "center", fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", padding: "6px 16px", borderRadius: 9999, border: `1px solid ${GOLD}`, background: "rgba(201,168,76,0.1)", color: GOLD, fontFamily: SERIF }}>Premium</span>
+                <p style={{ marginTop: 20, fontSize: 14, color: "rgba(201,168,76,0.7)", marginBottom: 4 }}>A camada mais valiosa do clube</p>
+                <div style={{ marginTop: 12, marginBottom: 4 }}><span style={{ fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 300, fontFamily: SERIF, color: GOLD }}>US$29</span><span style={{ fontSize: 14, marginLeft: 4, color: "rgba(201,168,76,0.5)" }}>/mês</span></div>
+                <p style={{ fontSize: 12, color: "rgba(201,168,76,0.35)", marginBottom: 24 }}>aprox. R$149/mês</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32, flex: 1 }}>
+                  {["Tudo do Base", "The Sanctum", "Duck Tank", "Black Book", "Global Moves", "2 idiomas incluídos"].map(item => (
+                    <div key={item} style={{ display: "flex", alignItems: "center", gap: 12 }}>{dot(true)}<span style={{ fontSize: 14, color: "rgba(255,255,255,0.7)" }}>{item}</span></div>
+                  ))}
                 </div>
-                <GoldButton onClick={() => setCheckout("premium")} className="w-full">Escolher Premium</GoldButton>
+                <GoldButton onClick={() => setCheckout("premium")} style={{ width: "100%" }}>Escolher Premium</GoldButton>
               </div>
             </Fade>
           </div>
           <Fade delay={200}>
-            <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
-              <p className="text-xs" style={{ color: "rgba(255,255,255,0.25)" }}>Cobrança internacional via Stripe. Valor final pode variar conforme câmbio.</p>
-              <div className="w-1 h-1 rounded-full hidden sm:block" style={{ background: "rgba(255,255,255,0.15)" }} />
-              <p className="text-xs" style={{ color: "rgba(255,255,255,0.25)" }}>Teste por 7 dias. Cancele com facilidade.</p>
+            <div style={{ marginTop: 32, display: "flex", alignItems: "center", gap: 24, flexWrap: "wrap" }}>
+              <p style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", margin: 0 }}>Cobrança internacional via Stripe. Valor final pode variar conforme câmbio.</p>
+              <div style={{ width: 4, height: 4, borderRadius: 2, background: "rgba(255,255,255,0.15)" }} />
+              <p style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", margin: 0 }}>Teste por 7 dias. Cancele com facilidade.</p>
             </div>
           </Fade>
         </div>
       </section>
 
       {/* ═══ 8. FAQ ═══ */}
-      <section className="relative py-20 md:py-28 px-6" style={{ zIndex: 1 }}>
-        <div className="max-w-3xl mx-auto">
-          <Fade><h2 className="text-2xl sm:text-3xl md:text-4xl font-light leading-tight mb-10" style={{ fontFamily: "var(--serif)" }}>Perguntas <span className="italic" style={{ color: GOLD }}>frequentes</span></h2></Fade>
-          <div className="space-y-3">
-            {[{ q: "O que exatamente eu recebo no Base?", a: "Acesso ao core do ecossistema: leitura de cenário, contexto, sinal e networking leve, sem ruído. Inclui The Portal, The Core, The Lounge e Geopolitics." }, { q: "O que muda no Premium?", a: "O Premium abre a camada mais valiosa do clube: The Sanctum, Duck Tank, Black Book, Global Moves e 2 idiomas incluídos. É onde vive a parte mais estratégica e operacional." }, { q: "Os 2 idiomas do Premium são escolhidos na entrada?", a: "Sim. Ao entrar no Premium, você define seus 2 idiomas. Extras podem ser adicionados depois por US$5/mês cada." }, { q: "Posso adicionar idiomas no Base?", a: "Sim. No Base, idiomas funcionam como extensão opcional por +US$5/mês cada." }, { q: "O que é o Polymarket Lab?", a: "Camada opcional para acompanhar leituras, teses e sinais ligados a prediction markets dentro da lógica do ecossistema. +US$10/mês." }, { q: "Como funciona o acesso depois do pagamento?", a: "Após confirmação, você segue para a ativação do acesso conforme o plano e extensões escolhidas." }, { q: "O pagamento é mensal?", a: "Sim. Recorrente via Stripe, com cobrança internacional." }, { q: "Posso cancelar?", a: "Sim. Acesso simples, sem fricção." }].map((item, i) => (
+      <section style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
+        <div style={{ maxWidth: 720, margin: "0 auto" }}>
+          <Fade><h2 style={{ fontSize: "clamp(24px, 3.5vw, 40px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 40 }}>Perguntas <span style={{ fontStyle: "italic", color: GOLD }}>frequentes</span></h2></Fade>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {[
+              { q: "O que exatamente eu recebo no Base?", a: "Acesso ao core do ecossistema: leitura de cenário, contexto, sinal e networking leve, sem ruído. Inclui The Portal, The Core, The Lounge e Geopolitics." },
+              { q: "O que muda no Premium?", a: "O Premium abre a camada mais valiosa do clube: The Sanctum, Duck Tank, Black Book, Global Moves e 2 idiomas incluídos. É onde vive a parte mais estratégica e operacional." },
+              { q: "Os 2 idiomas do Premium são escolhidos na entrada?", a: "Sim. Ao entrar no Premium, você define seus 2 idiomas. Extras podem ser adicionados depois por US$5/mês cada." },
+              { q: "Posso adicionar idiomas no Base?", a: "Sim. No Base, idiomas funcionam como extensão opcional por +US$5/mês cada." },
+              { q: "O que é o Polymarket Lab?", a: "Camada opcional para acompanhar leituras, teses e sinais ligados a prediction markets dentro da lógica do ecossistema. +US$10/mês." },
+              { q: "Como funciona o acesso depois do pagamento?", a: "Após confirmação, você segue para a ativação do acesso conforme o plano e extensões escolhidas." },
+              { q: "O pagamento é mensal?", a: "Sim. Recorrente via Stripe, com cobrança internacional." },
+              { q: "Posso cancelar?", a: "Sim. Acesso simples, sem fricção." },
+            ].map((item, i) => (
               <Fade key={i} delay={i * 40}><FAQItem q={item.q} a={item.a} /></Fade>
             ))}
           </div>
@@ -437,24 +498,29 @@ export default function DuckDuckClub() {
       </section>
 
       {/* ═══ 9. FINAL CTA ═══ */}
-      <section className="relative py-28 md:py-40 px-6" style={{ zIndex: 1 }}>
-        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full" style={{ background: "radial-gradient(circle, rgba(201,168,76,0.05) 0%, transparent 60%)" }} /></div>
-        <div className="max-w-3xl mx-auto text-center relative">
+      <section style={{ position: "relative", padding: "112px 24px 160px", zIndex: 1 }}>
+        <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}><div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.05) 0%, transparent 60%)" }} /></div>
+        <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "center", position: "relative" }}>
           <Fade><Logo size={48} /></Fade>
-          <Fade delay={100}><h2 className="mt-8 text-3xl sm:text-4xl md:text-5xl font-light leading-tight mb-6" style={{ fontFamily: "var(--serif)" }}>Seu próximo nível começa <span className="italic" style={{ color: GOLD }}>pelo ambiente certo.</span></h2></Fade>
-          <Fade delay={200}><p className="text-sm md:text-base max-w-lg mx-auto leading-relaxed mb-10" style={{ color: "rgba(255,255,255,0.4)" }}>Privado. Curado. Internacional.<br />Feito para quem quer operar com mais contexto, mais conexões e mais capacidade prática.</p></Fade>
-          <Fade delay={300}><GoldButton onClick={() => setCheckout("premium")} className="mx-auto">Ver meu acesso</GoldButton></Fade>
+          <Fade delay={100}><h2 style={{ marginTop: 32, fontSize: "clamp(28px, 5vw, 52px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 24 }}>Seu próximo nível começa <span style={{ fontStyle: "italic", color: GOLD }}>pelo ambiente certo.</span></h2></Fade>
+          <Fade delay={200}><p style={{ fontSize: 15, maxWidth: 480, margin: "0 auto 40px", lineHeight: 1.7, color: "rgba(255,255,255,0.4)" }}>Privado. Curado. Internacional.<br />Feito para quem quer operar com mais contexto, mais conexões e mais capacidade prática.</p></Fade>
+          <Fade delay={300}><GoldButton onClick={() => setCheckout("premium")}>Ver meu acesso</GoldButton></Fade>
         </div>
       </section>
 
       {/* FOOTER */}
-      <footer className="relative py-10 px-6" style={{ borderTop: "1px solid rgba(255,255,255,0.04)", zIndex: 1 }}>
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-3"><Logo size={22} /><span className="text-xs tracking-widest uppercase" style={{ color: "rgba(255,255,255,0.25)", fontFamily: "var(--serif)", letterSpacing: "0.15em" }}>DuckDuck Club</span></div>
-          <div className="flex gap-6">{["Termos", "Privacidade", "Contato"].map(item => (<a key={item} href="#" className="text-xs transition-colors" style={{ color: "rgba(255,255,255,0.2)" }} onMouseEnter={e => e.currentTarget.style.color = "rgba(255,255,255,0.5)"} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.2)"}>{item}</a>))}</div>
-          <div className="text-xs" style={{ color: "rgba(255,255,255,0.15)" }}>© 2025 DuckDuck Club</div>
+      <footer style={{ position: "relative", padding: "40px 24px", borderTop: "1px solid rgba(255,255,255,0.04)", zIndex: 1 }}>
+        <div style={{ maxWidth: 1024, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 24 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}><Logo size={22} /><span style={{ fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)", fontFamily: SERIF }}>DuckDuck Club</span></div>
+          <div style={{ display: "flex", gap: 24 }}>
+            {["Termos", "Privacidade", "Contato"].map(item => (
+              <a key={item} href="#" style={{ fontSize: 12, color: "rgba(255,255,255,0.2)", textDecoration: "none", transition: "color 0.3s" }}
+                onMouseEnter={e => (e.currentTarget.style.color = "rgba(255,255,255,0.5)")} onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.2)")}>{item}</a>
+            ))}
+          </div>
+          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.15)" }}>© 2025 DuckDuck Club</div>
         </div>
       </footer>
-    </div>
+    </>
   );
 }
