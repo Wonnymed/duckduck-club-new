@@ -34,7 +34,7 @@ function scrollTo(id: string) {
 
 /* ─── Logo ─── */
 function Logo({ size = 36 }: { size?: number }) {
-  return <img src="/logo.png" alt="DuckDuck Club" width={size} height={size} style={{ width: size, height: size, objectFit: "contain" }} />;
+  return <img src="/logo.jpeg" alt="DuckDuck Club" width={size} height={size} style={{ width: size, height: size, objectFit: "contain" }} />;
 }
 
 /* ─── Shared UI ─── */
@@ -381,7 +381,7 @@ export default function Home() {
               <div style={{ display: "flex", justifyContent: "center" }}>
                 <div style={{ position: "relative" }}>
                   <div style={{ width: 240, height: 288, borderRadius: 16, overflow: "hidden", border: "1px solid rgba(201,168,76,0.15)" }}>
-                    <img src="/founder-photo.jpg" alt="Fernando — Founder" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    <img src="/founder-photo.jpeg" alt="Fernando — Founder" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                   </div>
                   <div style={{ position: "absolute", bottom: -12, right: -12, width: 40, height: 40, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", background: "#0A0A0A", border: "1px solid rgba(201,168,76,0.2)" }}><Globe size={16} color={GOLD} /></div>
                 </div>
