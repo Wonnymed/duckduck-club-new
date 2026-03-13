@@ -26,17 +26,15 @@ function Fade({ children, className = "", delay = 0 }: { children: React.ReactNo
   return <div ref={ref} style={{ ...style, transitionDelay: `${delay}ms` }} className={className}>{children}</div>;
 }
 
+/* ─── Smooth scroll helper ─── */
+function scrollTo(id: string) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
 /* ─── Logo ─── */
 function Logo({ size = 36 }: { size?: number }) {
-  return (
-    <img
-      src="/logo.png"
-      alt="DuckDuck Club"
-      width={size}
-      height={size}
-      style={{ width: size, height: size, objectFit: "contain" }}
-    />
-  );
+  return <img src="/logo.png" alt="DuckDuck Club" width={size} height={size} style={{ width: size, height: size, objectFit: "contain" }} />;
 }
 
 /* ─── Shared UI ─── */
@@ -44,9 +42,13 @@ function Badge({ children }: { children: React.ReactNode }) {
   return <span style={{ display: "inline-flex", alignItems: "center", fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", padding: "6px 16px", borderRadius: 9999, border: "1px solid rgba(201,168,76,0.3)", background: "rgba(201,168,76,0.06)", color: GOLD, fontFamily: SERIF }}>{children}</span>;
 }
 
-function GoldButton({ children, onClick, style: extraStyle = {} }: { children: React.ReactNode; onClick?: () => void; style?: React.CSSProperties }) {
+function GoldButton({ children, onClick, href, style: extraStyle = {} }: { children: React.ReactNode; onClick?: () => void; href?: string; style?: React.CSSProperties }) {
+  const handleClick = () => {
+    if (href) scrollTo(href);
+    if (onClick) onClick();
+  };
   return (
-    <button onClick={onClick} style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "16px 32px", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase" as const, fontWeight: 600, fontFamily: SERIF, background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", border: "none", cursor: "pointer", transition: "box-shadow 0.3s", ...extraStyle }}
+    <button onClick={handleClick} style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "16px 32px", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase" as const, fontWeight: 600, fontFamily: SERIF, background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", border: "none", cursor: "pointer", transition: "box-shadow 0.3s", ...extraStyle }}
       onMouseEnter={e => (e.currentTarget.style.boxShadow = "0 0 40px rgba(201,168,76,0.18), 0 8px 32px rgba(0,0,0,0.4)")}
       onMouseLeave={e => (e.currentTarget.style.boxShadow = "none")}>
       {children}<ArrowRight size={15} />
@@ -78,7 +80,7 @@ function FAQItem({ q, a }: { q: string; a: string }) {
 }
 
 /* ─── Mobile Nav ─── */
-function MobileNav({ open, onClose, onCheckout }: { open: boolean; onClose: () => void; onCheckout: (p: string) => void }) {
+function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
   if (!open) return null;
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", flexDirection: "column", background: "rgba(10,10,10,0.97)", backdropFilter: "blur(20px)" }}>
@@ -87,10 +89,10 @@ function MobileNav({ open, onClose, onCheckout }: { open: boolean; onClose: () =
         <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer" }}><X size={22} color="rgba(255,255,255,0.6)" /></button>
       </div>
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1, gap: 32 }}>
-        {[["O clube", "#about"], ["Por dentro", "#inside"], ["Acesso", "#pricing"]].map(([l, h]) => (
-          <a key={l} href={h} onClick={onClose} style={{ fontSize: 24, color: "rgba(255,255,255,0.7)", textDecoration: "none", fontFamily: SERIF, letterSpacing: "0.1em" }}>{l}</a>
+        {[["O clube", "about"], ["Por dentro", "inside"], ["Acesso", "pricing"]].map(([l, h]) => (
+          <button key={l} onClick={() => { onClose(); setTimeout(() => scrollTo(h), 200); }} style={{ fontSize: 24, color: "rgba(255,255,255,0.7)", background: "none", border: "none", cursor: "pointer", fontFamily: SERIF, letterSpacing: "0.1em" }}>{l}</button>
         ))}
-        <GoldButton onClick={() => { onClose(); setTimeout(() => onCheckout("base"), 200); }}>Ver meu acesso</GoldButton>
+        <GoldButton href="pricing" onClick={onClose}>Ver meu acesso</GoldButton>
       </div>
     </div>
   );
@@ -116,15 +118,12 @@ function CheckoutModal({ plan, onClose }: { plan: string; onClose: () => void })
         <button onClick={onClose} style={{ position: "absolute", top: 16, right: 16, zIndex: 10, width: 32, height: 32, borderRadius: 9999, background: "rgba(255,255,255,0.05)", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><X size={16} color="rgba(255,255,255,0.6)" /></button>
 
         <div style={{ display: "grid", gridTemplateColumns: "3fr 2fr" }}>
-          {/* Left */}
           <div style={{ padding: 32 }}>
             <div style={{ display: "inline-flex", fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", padding: "4px 12px", borderRadius: 9999, color: GOLD, background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.15)", marginBottom: 24 }}>Plano {premium ? "Premium" : "Base"}</div>
             <h3 style={{ fontSize: 28, fontWeight: 300, fontFamily: SERIF, marginBottom: 16 }}>Personalize seu acesso</h3>
             <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 32 }}>
               {premium ? "Seus 2 primeiros idiomas já estão incluídos. Adicione extras ou o Polymarket Lab se quiser expandir." : "Nenhum idioma incluído neste plano. Escolha quantos quiser por +US$5/mês cada, e adicione o Polymarket Lab se desejar."}
             </p>
-
-            {/* Polymarket */}
             <div style={{ borderRadius: 12, padding: 20, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", marginBottom: 24 }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <div>
@@ -136,8 +135,6 @@ function CheckoutModal({ plan, onClose }: { plan: string; onClose: () => void })
                 </button>
               </div>
             </div>
-
-            {/* Languages */}
             <div style={{ borderRadius: 12, padding: 20, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
               <div style={{ fontSize: 14, fontWeight: 500, fontFamily: SERIF, marginBottom: 8 }}>{premium ? "Escolha seus idiomas" : "Idiomas disponíveis"}</div>
               <p style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", marginBottom: 4 }}>{premium ? "2 incluídos no plano. A partir do 3º: +US$5/mês cada." : "+US$5/mês por idioma · aprox. R$26/mês cada."}</p>
@@ -150,8 +147,6 @@ function CheckoutModal({ plan, onClose }: { plan: string; onClose: () => void })
               </div>
             </div>
           </div>
-
-          {/* Right summary */}
           <div style={{ padding: 32, background: "rgba(255,255,255,0.02)", borderLeft: "1px solid rgba(255,255,255,0.06)" }}>
             <h4 style={{ fontSize: 14, fontWeight: 500, color: GOLD, fontFamily: SERIF, marginBottom: 24 }}>Seu acesso selecionado</h4>
             <div>
@@ -186,23 +181,24 @@ function CheckoutModal({ plan, onClose }: { plan: string; onClose: () => void })
 /* ═══ COMMUNITY SCREENSHOTS ═══ */
 function CommunityShowcase() {
   const screens = [
-    { src: "/club-screen-1.png", alt: "The Portal & Core", rotate: -3, translateY: 12 },
-    { src: "/club-screen-2.png", alt: "The Sanctum & Duck Tank", rotate: 0, translateY: 0, featured: true },
-    { src: "/club-screen-3.png", alt: "Languages & Polymarket", rotate: 3, translateY: 12 },
+    { src: "/club-screen-1.png", alt: "The Portal & Core", rotate: -3, ty: 12, w: "28%" },
+    { src: "/club-screen-2.png", alt: "The Sanctum & Duck Tank", rotate: 0, ty: 0, w: "32%", featured: true },
+    { src: "/club-screen-3.png", alt: "Languages & Polymarket", rotate: 3, ty: 12, w: "28%" },
   ];
   return (
     <div style={{ position: "relative" }}>
       <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "radial-gradient(ellipse at center, rgba(201,168,76,0.04) 0%, transparent 70%)" }} />
-      <div style={{ display: "flex", justifyContent: "center", gap: 16, alignItems: "flex-end" }}>
+      <div style={{ display: "flex", justifyContent: "center", gap: "2%", alignItems: "flex-end" }}>
         {screens.map((s, i) => (
           <div key={i} style={{
-            width: s.featured ? 240 : 200,
+            width: s.w,
+            maxWidth: 260,
             borderRadius: 16,
             overflow: "hidden",
             boxShadow: "0 25px 50px rgba(0,0,0,0.5)",
             border: s.featured ? "1px solid rgba(201,168,76,0.15)" : "1px solid rgba(255,255,255,0.08)",
-            transform: `rotate(${s.rotate}deg) translateY(${s.translateY}px)`,
-            position: "relative",
+            transform: `rotate(${s.rotate}deg) translateY(${s.ty}px)`,
+            position: "relative" as const,
             zIndex: s.featured ? 3 : 1,
           }}>
             <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 60%, rgba(10,10,10,0.4) 100%)", zIndex: 2, pointerEvents: "none" }} />
@@ -232,7 +228,7 @@ export default function Home() {
 
   return (
     <>
-      <MobileNav open={menuOpen} onClose={() => setMenuOpen(false)} onCheckout={p => setCheckout(p)} />
+      <MobileNav open={menuOpen} onClose={() => setMenuOpen(false)} />
       {checkout && <CheckoutModal plan={checkout} onClose={() => setCheckout(null)} />}
 
       {/* Ambient glow */}
@@ -248,20 +244,30 @@ export default function Home() {
             <Logo size={30} />
             <span style={{ color: "white", fontSize: 14, letterSpacing: "0.15em", textTransform: "uppercase", fontFamily: SERIF }}>DuckDuck Club</span>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
-            {[["O clube", "#about"], ["Por dentro", "#inside"], ["Acesso", "#pricing"]].map(([l, h]) => (
-              <a key={l} href={h} style={{ fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", textDecoration: "none", fontFamily: SERIF, transition: "color 0.3s" }}
-                onMouseEnter={e => (e.currentTarget.style.color = GOLD)} onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.4)")}>{l}</a>
+          {/* Desktop nav */}
+          <div style={{ display: "flex", alignItems: "center", gap: 32 }} className="desktop-nav">
+            {[["O clube", "about"], ["Por dentro", "inside"], ["Acesso", "pricing"]].map(([l, h]) => (
+              <button key={l} onClick={() => scrollTo(h)} style={{ fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", background: "none", border: "none", cursor: "pointer", fontFamily: SERIF, transition: "color 0.3s" }}
+                onMouseEnter={e => (e.currentTarget.style.color = GOLD)} onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.4)")}>{l}</button>
             ))}
-            <button onClick={() => setCheckout("base")} style={{ fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase", padding: "10px 20px", borderRadius: 8, background: "rgba(201,168,76,0.1)", color: GOLD, border: "1px solid rgba(201,168,76,0.2)", fontFamily: SERIF, cursor: "pointer", transition: "all 0.3s" }}
+            <button onClick={() => scrollTo("pricing")} style={{ fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase", padding: "10px 20px", borderRadius: 8, background: "rgba(201,168,76,0.1)", color: GOLD, border: "1px solid rgba(201,168,76,0.2)", fontFamily: SERIF, cursor: "pointer", transition: "all 0.3s" }}
               onMouseEnter={e => { e.currentTarget.style.background = "rgba(201,168,76,0.15)"; e.currentTarget.style.borderColor = "rgba(201,168,76,0.4)"; }}
               onMouseLeave={e => { e.currentTarget.style.background = "rgba(201,168,76,0.1)"; e.currentTarget.style.borderColor = "rgba(201,168,76,0.2)"; }}>
               Ver meu acesso
             </button>
           </div>
-          <button onClick={() => setMenuOpen(true)} style={{ display: "none", background: "none", border: "none", cursor: "pointer" }}><Menu size={22} color="rgba(255,255,255,0.6)" /></button>
+          {/* Mobile hamburger */}
+          <button onClick={() => setMenuOpen(true)} className="mobile-menu" style={{ background: "none", border: "none", cursor: "pointer", display: "none" }}><Menu size={22} color="rgba(255,255,255,0.6)" /></button>
         </div>
       </nav>
+
+      {/* Responsive CSS */}
+      <style>{`
+        @media (max-width: 768px) {
+          .desktop-nav { display: none !important; }
+          .mobile-menu { display: block !important; }
+        }
+      `}</style>
 
       {/* ═══ 1. HERO ═══ */}
       <section style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "96px 24px 80px", zIndex: 1 }}>
@@ -277,7 +283,7 @@ export default function Home() {
               DuckDuck Club é um ecossistema privado para quem quer mais direção, mais contexto e mais valor real. Aqui você constrói repertório internacional, aprende idiomas, amplia networking e acessa temas como offshore, China import, geopolítica, investimentos, segurança digital e operação global.
             </p>
           </Fade>
-          <Fade delay={450}><GoldButton onClick={() => setCheckout("base")}>Ver meu acesso</GoldButton></Fade>
+          <Fade delay={450}><GoldButton href="pricing">Ver meu acesso</GoldButton></Fade>
           <Fade delay={600}>
             <div style={{ marginTop: 48, display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 12 }}>
               {["Idiomas para acesso global", "Network, deals e matchmaking", "Offshore, China e geopolítica", "Privado, curado, sem ruído"].map(t => (
@@ -300,7 +306,7 @@ export default function Home() {
               Muita gente quer crescer e acessar oportunidades maiores. Mas tenta fazer isso com informação espalhada, networking fraco, leitura rasa de cenário e pouca capacidade prática de execução. O resultado é viver ocupada, mas continuar jogando abaixo do próprio potencial.
             </p>
           </Fade>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
             {[
               { t: "Muito conteúdo, pouca direção", d: "Sem leitura de cenário e geopolítica, a maioria reage tarde e decide no ruído." },
               { t: "Muito potencial, pouco acesso", d: "Sem linguagem, repertório e as pessoas certas por perto, oportunidades simplesmente não chegam." },
@@ -317,7 +323,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ 3. POR DENTRO ═══ */}
+      {/* ═══ 3. POR DENTRO — 2x2 rectangle grid ═══ */}
       <section id="inside" style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
         <div style={{ maxWidth: 1024, margin: "0 auto" }}>
           <Fade>
@@ -327,7 +333,8 @@ export default function Home() {
               DuckDuck Club não é mais um espaço de consumo passivo. É um ecossistema construído para aumentar seu valor em quatro frentes — e dar tração real a cada uma delas.
             </p>
           </Fade>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20 }}>
+          {/* 2x2 grid of horizontal rectangles */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
             {[
               { icon: Compass, title: "Direção", desc: "Leitura de cenário, geopolítica, sinal e contexto para antecipar movimentos e tomar decisões com mais clareza.", tags: "cenário global · geopolítica · leitura macro · timing" },
               { icon: BookOpen, title: "Valor pessoal", desc: "Idiomas, repertório, ferramentas e autodidatismo para elevar seu valor, ampliar alcance e fortalecer utilidade prática.", tags: "idiomas · repertório · tools · cultura · learning stack" },
@@ -335,16 +342,18 @@ export default function Home() {
               { icon: Settings, title: "Valor operacional", desc: "Offshore, China import, crypto OPSEC e estruturas internacionais para operar com mais inteligência, proteção e execução real.", tags: "offshore · China import · OPSEC · estruturas globais" },
             ].map((item, i) => (
               <Fade key={item.title} delay={i * 80}>
-                <div style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", height: "100%" }}>
-                  <div style={{ width: 40, height: 40, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20, background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.15)" }}><item.icon size={18} color={GOLD} /></div>
-                  <h3 style={{ fontSize: 20, fontWeight: 500, fontFamily: SERIF, marginBottom: 12 }}>{item.title}</h3>
-                  <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 16 }}>{item.desc}</p>
-                  <p style={{ fontSize: 12, color: GOLD, opacity: 0.45, margin: 0 }}>{item.tags}</p>
+                <div style={{ padding: "28px 32px", borderRadius: 16, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", height: "100%", display: "flex", gap: 24, alignItems: "flex-start" }}>
+                  <div style={{ width: 44, height: 44, minWidth: 44, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.15)", marginTop: 2 }}><item.icon size={20} color={GOLD} /></div>
+                  <div>
+                    <h3 style={{ fontSize: 20, fontWeight: 500, fontFamily: SERIF, marginBottom: 8 }}>{item.title}</h3>
+                    <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 12 }}>{item.desc}</p>
+                    <p style={{ fontSize: 11, color: GOLD, opacity: 0.4, margin: 0 }}>{item.tags}</p>
+                  </div>
                 </div>
               </Fade>
             ))}
           </div>
-          <Fade delay={350}><div style={{ marginTop: 56, textAlign: "center" }}><GoldButton onClick={() => setCheckout("premium")}>Quero acessar o clube</GoldButton></div></Fade>
+          <Fade delay={350}><div style={{ marginTop: 56, textAlign: "center" }}><GoldButton href="pricing">Quero acessar o clube</GoldButton></div></Fade>
         </div>
       </section>
 
@@ -433,7 +442,6 @@ export default function Home() {
             <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 48 }}>Entre pelo core ou desbloqueie a camada mais valiosa do clube.</p>
           </Fade>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-            {/* Base */}
             <Fade>
               <div style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", display: "flex", flexDirection: "column", height: "100%" }}>
                 <Badge>Base</Badge>
@@ -448,7 +456,6 @@ export default function Home() {
                 <OutlineButton onClick={() => setCheckout("base")}>Escolher Base</OutlineButton>
               </div>
             </Fade>
-            {/* Premium */}
             <Fade delay={100}>
               <div style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(201,168,76,0.03)", border: "1px solid rgba(201,168,76,0.2)", display: "flex", flexDirection: "column", height: "100%", position: "relative", overflow: "hidden" }}>
                 <div style={{ position: "absolute", top: 0, right: 0, width: 160, height: 160, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%)", transform: "translate(30%, -30%)", pointerEvents: "none" }} />
@@ -503,7 +510,7 @@ export default function Home() {
           <Fade><Logo size={48} /></Fade>
           <Fade delay={100}><h2 style={{ marginTop: 32, fontSize: "clamp(28px, 5vw, 52px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 24 }}>Seu próximo nível começa <span style={{ fontStyle: "italic", color: GOLD }}>pelo ambiente certo.</span></h2></Fade>
           <Fade delay={200}><p style={{ fontSize: 15, maxWidth: 480, margin: "0 auto 40px", lineHeight: 1.7, color: "rgba(255,255,255,0.4)" }}>Privado. Curado. Internacional.<br />Feito para quem quer operar com mais contexto, mais conexões e mais capacidade prática.</p></Fade>
-          <Fade delay={300}><GoldButton onClick={() => setCheckout("premium")}>Ver meu acesso</GoldButton></Fade>
+          <Fade delay={300}><GoldButton href="pricing">Ver meu acesso</GoldButton></Fade>
         </div>
       </section>
 
