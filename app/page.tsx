@@ -398,9 +398,11 @@ export default function Home() {
                 <h2 style={{ fontSize: "clamp(22px, 3.5vw, 36px)", fontWeight: 300, lineHeight: 1.2, fontFamily: SERIF, marginBottom: 24 }}>
                   A DuckDuck Club nasceu da interseção entre <span style={{ fontStyle: "italic", color: GOLD }}>contexto global, operação real e construção de valor.</span>
                 </h2>
-                <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 32 }}>
+                <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 16 }}>
                   Depois de viver entre países, operar em ambientes diferentes e perceber como idioma, geopolítica, estrutura, network e execução mudam o nível do jogo, eu decidi reunir tudo isso em um ecossistema privado. A DuckDuck Club foi criada para quem quer deixar de depender de improviso, ruído e informação solta — e começar a operar com mais clareza, mais linguagem e mais capacidade prática.
                 </p>
+                <a href="https://instagram.com/nandovoyager" target="_blank" rel="noopener noreferrer" style={{ display: "inline-block", fontSize: 13, color: GOLD, textDecoration: "none", marginBottom: 32, opacity: 0.85, transition: "opacity 0.2s" }}
+                  onMouseEnter={e => (e.currentTarget.style.opacity = "1")} onMouseLeave={e => (e.currentTarget.style.opacity = "0.85")}>@nandovoyager</a>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                   {["Direção para entender o jogo antes de agir", "Valor pessoal para ampliar utilidade e repertório", "Valor relacional para se aproximar das pessoas certas", "Valor operacional para transformar contexto em movimento real"].map(item => (
                     <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: 12, borderRadius: 8, background: "rgba(255,255,255,0.02)" }}>
