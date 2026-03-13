@@ -485,8 +485,6 @@ export default function Home() {
           <Fade delay={200}>
             <div style={{ marginTop: 32, display: "flex", alignItems: "center", gap: 24, flexWrap: "wrap" }}>
               <p style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", margin: 0 }}>Cobrança internacional via Stripe. Valor final pode variar conforme câmbio.</p>
-              <div style={{ width: 4, height: 4, borderRadius: 2, background: "rgba(255,255,255,0.15)" }} />
-              <p style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", margin: 0 }}>Teste por 7 dias. Cancele com facilidade.</p>
             </div>
           </Fade>
         </div>
