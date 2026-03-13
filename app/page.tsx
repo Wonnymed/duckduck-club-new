@@ -118,7 +118,7 @@ function CheckoutModal({ plan, onClose }: { plan: string; onClose: () => void })
       <div onClick={e => e.stopPropagation()} style={{ position: "relative", width: "100%", maxWidth: 900, maxHeight: "90vh", overflowY: "auto", borderRadius: 16, background: "#111", border: "1px solid rgba(255,255,255,0.08)" }}>
         <button onClick={onClose} style={{ position: "absolute", top: 16, right: 16, zIndex: 10, width: 32, height: 32, borderRadius: 9999, background: "rgba(255,255,255,0.05)", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><X size={16} color="rgba(255,255,255,0.6)" /></button>
 
-        <div style={{ display: "grid", gridTemplateColumns: "3fr 2fr" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
           <div style={{ padding: 32 }}>
             <div style={{ display: "inline-flex", fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", padding: "4px 12px", borderRadius: 9999, color: GOLD, background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.15)", marginBottom: 24 }}>Plano {premium ? "Premium" : "Base"}</div>
             <h3 style={{ fontSize: 28, fontWeight: 300, fontFamily: SERIF, marginBottom: 16 }}>Personalize seu acesso</h3>
