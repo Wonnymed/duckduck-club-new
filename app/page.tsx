@@ -246,7 +246,7 @@ export default function Home() {
           </div>
           {/* Desktop nav */}
           <div style={{ display: "flex", alignItems: "center", gap: 32 }} className="desktop-nav">
-            {[["O clube", "about"], ["Por dentro", "inside"], ["Acesso", "pricing"]].map(([l, h]) => (
+            {[["O clube", "about"], ["Por dentro", "inside"]].map(([l, h]) => (
               <button key={l} onClick={() => scrollTo(h)} style={{ fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", background: "none", border: "none", cursor: "pointer", fontFamily: SERIF, transition: "color 0.3s" }}
                 onMouseEnter={e => (e.currentTarget.style.color = GOLD)} onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.4)")}>{l}</button>
             ))}
