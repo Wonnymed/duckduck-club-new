@@ -441,13 +441,18 @@ export default function Home() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20 }}>
             <Fade>
               <div style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", display: "flex", flexDirection: "column", height: "100%" }}>
-                <Badge>Base</Badge>
+                <span style={{ display: "inline-flex", alignSelf: "flex-start", alignItems: "center", fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", padding: "6px 16px", borderRadius: 9999, border: "1px solid rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.6)", fontFamily: SERIF }}>Base</span>
                 <p style={{ marginTop: 20, fontSize: 14, color: "rgba(255,255,255,0.4)", marginBottom: 4 }}>A camada de direção e posicionamento</p>
                 <div style={{ marginTop: 12, marginBottom: 4 }}><span style={{ fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 300, fontFamily: SERIF }}>US$15</span><span style={{ fontSize: 14, marginLeft: 4, color: "rgba(255,255,255,0.35)" }}>/mês</span></div>
                 <p style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", marginBottom: 24 }}>aprox. R$79/mês</p>
                 <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32, flex: 1 }}>
-                  {["The Portal", "The Core", "The Lounge", "Geopolitics"].map(item => (
-                    <div key={item} style={{ display: "flex", alignItems: "center", gap: 12 }}>{dot()}<span style={{ fontSize: 14, color: "rgba(255,255,255,0.55)" }}>{item}</span></div>
+                  {[
+                    ["The Portal", "onboarding e direção"],
+                    ["The Core", "strategy & intel"],
+                    ["The Lounge", "networking"],
+                    ["Geopolitics", "leitura de cenário"],
+                  ].map(([name, sub]) => (
+                    <div key={name} style={{ display: "flex", alignItems: "center", gap: 12 }}>{dot()}<span style={{ fontSize: 14, color: "rgba(255,255,255,0.55)" }}>{name} <span style={{ color: "rgba(255,255,255,0.25)", fontSize: 12 }}>({sub})</span></span></div>
                   ))}
                 </div>
                 <OutlineButton onClick={() => setCheckout("base")}>Escolher Base</OutlineButton>
@@ -456,13 +461,21 @@ export default function Home() {
             <Fade delay={100}>
               <div style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(201,168,76,0.03)", border: "1px solid rgba(201,168,76,0.2)", display: "flex", flexDirection: "column", height: "100%", position: "relative", overflow: "hidden" }}>
                 <div style={{ position: "absolute", top: 0, right: 0, width: 160, height: 160, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%)", transform: "translate(30%, -30%)", pointerEvents: "none" }} />
+                <p style={{ fontSize: 11, color: GOLD, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8, marginTop: 0 }}>Mais popular</p>
                 <span style={{ display: "inline-flex", alignSelf: "flex-start", alignItems: "center", fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", padding: "6px 16px", borderRadius: 9999, border: `1px solid ${GOLD}`, background: "rgba(201,168,76,0.1)", color: GOLD, fontFamily: SERIF }}>Premium</span>
                 <p style={{ marginTop: 20, fontSize: 14, color: "rgba(201,168,76,0.7)", marginBottom: 4 }}>A camada mais valiosa do clube</p>
                 <div style={{ marginTop: 12, marginBottom: 4 }}><span style={{ fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 300, fontFamily: SERIF, color: GOLD }}>US$29</span><span style={{ fontSize: 14, marginLeft: 4, color: "rgba(201,168,76,0.5)" }}>/mês</span></div>
                 <p style={{ fontSize: 12, color: "rgba(201,168,76,0.35)", marginBottom: 24 }}>aprox. R$149/mês</p>
                 <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32, flex: 1 }}>
-                  {["Tudo do Base", "The Sanctum", "Duck Tank", "Black Book", "Global Moves", "2 idiomas incluídos"].map(item => (
-                    <div key={item} style={{ display: "flex", alignItems: "center", gap: 12 }}>{dot(true)}<span style={{ fontSize: 14, color: "rgba(255,255,255,0.7)" }}>{item}</span></div>
+                  {[
+                    ["Tudo do Base", null],
+                    ["The Sanctum", "offshore, crypto, China"],
+                    ["Duck Tank", "deals e projetos"],
+                    ["Black Book", "case studies"],
+                    ["Global Moves", "vida internacional"],
+                    ["2 idiomas incluídos", null],
+                  ].map(([name, sub]) => (
+                    <div key={name} style={{ display: "flex", alignItems: "center", gap: 12 }}>{dot(true)}<span style={{ fontSize: 14, color: "rgba(255,255,255,0.7)" }}>{name}{sub && <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 12 }}> ({sub})</span>}</span></div>
                   ))}
                 </div>
                 <GoldButton onClick={() => setCheckout("premium")} style={{ width: "100%" }}>Escolher Premium</GoldButton>
