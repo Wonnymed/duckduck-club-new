@@ -385,7 +385,7 @@ export default function Home() {
         <div style={{ maxWidth: 1024, margin: "0 auto" }}>
           <Fade>
             <Badge>Sobre o criador</Badge>
-            <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "2fr 3fr", gap: 56, alignItems: "start" }}>
+            <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 56, alignItems: "start" }}>
               <div style={{ display: "flex", justifyContent: "center" }}>
                 <div style={{ position: "relative" }}>
                   <div style={{ width: 240, height: 288, borderRadius: 16, overflow: "hidden", border: "1px solid rgba(201,168,76,0.15)" }}>
