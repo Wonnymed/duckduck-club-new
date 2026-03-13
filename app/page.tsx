@@ -338,24 +338,23 @@ export default function Home() {
             <Badge>Por dentro</Badge>
             <h2 style={{ marginTop: 24, fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 16 }}>O que você encontra <span style={{ fontStyle: "italic", color: GOLD }}>ao entrar</span></h2>
             <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 48, maxWidth: 720 }}>
-              DuckDuck Club não é mais um espaço de consumo passivo. É um ecossistema construído para aumentar seu valor em quatro frentes — e dar tração real a cada uma delas.
+              Quatro frentes de valor real. Cada uma desenhada para te colocar em uma posição melhor do que você estava ontem.
             </p>
           </Fade>
           {/* 2x2 grid of horizontal rectangles */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
             {[
-              { icon: Compass, title: "Direção", desc: "Leitura de cenário, geopolítica, sinal e contexto para antecipar movimentos e tomar decisões com mais clareza.", tags: "cenário global · geopolítica · leitura macro · timing" },
-              { icon: BookOpen, title: "Valor pessoal", desc: "Idiomas, repertório, ferramentas e autodidatismo para elevar seu valor, ampliar alcance e fortalecer utilidade prática.", tags: "idiomas · repertório · tools · cultura · learning stack" },
-              { icon: Handshake, title: "Valor relacional", desc: "Networking, deals, matchmaking e parcerias para aproximar você de operadores, investidores e oportunidades alinhadas.", tags: "networking · deals · matchmaking · parceiros estratégicos" },
-              { icon: Settings, title: "Valor operacional", desc: "Offshore, China import, crypto OPSEC e estruturas internacionais para operar com mais inteligência, proteção e execução real.", tags: "offshore · China import · OPSEC · estruturas globais" },
+              { icon: Compass, title: "Direção", desc: "Geopolítica, leitura de cenário e contexto estratégico para você antecipar movimentos — enquanto a maioria ainda está reagindo." },
+              { icon: BookOpen, title: "Valor pessoal", desc: "Idiomas, repertório e ferramentas práticas para ampliar seu alcance, sua utilidade e o tipo de oportunidade que chega até você." },
+              { icon: Handshake, title: "Valor relacional", desc: "Networking, deals e matchmaking que conectam você a operadores, investidores e oportunidades que não circulam no mainstream." },
+              { icon: Settings, title: "Valor operacional", desc: "Offshore, China import, crypto OPSEC e estruturas internacionais — não como teoria, mas como execução real com proteção." },
             ].map((item, i) => (
               <Fade key={item.title} delay={i * 80}>
                 <div style={{ padding: "28px 32px", borderRadius: 16, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", height: "100%", display: "flex", gap: 24, alignItems: "flex-start" }}>
                   <div style={{ width: 44, height: 44, minWidth: 44, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.15)", marginTop: 2 }}><item.icon size={20} color={GOLD} /></div>
                   <div>
                     <h3 style={{ fontSize: 20, fontWeight: 500, fontFamily: SERIF, marginBottom: 8 }}>{item.title}</h3>
-                    <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 12 }}>{item.desc}</p>
-                    <p style={{ fontSize: 11, color: GOLD, opacity: 0.4, margin: 0 }}>{item.tags}</p>
+                    <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 0 }}>{item.desc}</p>
                   </div>
                 </div>
               </Fade>
