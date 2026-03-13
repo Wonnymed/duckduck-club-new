@@ -106,6 +106,7 @@ function CheckoutModal({ plan, onClose }: { plan: string; onClose: () => void })
   const basePrice = premium ? 29 : 15;
   const [poly, setPoly] = useState(false);
   const [langs, setLangs] = useState<string[]>([]);
+  const [payMethod, setPayMethod] = useState<'card' | 'pix' | 'crypto'>('card');
   const free = premium ? 2 : 0;
   const paid = Math.max(0, langs.length - free);
   const total = basePrice + paid * 5 + (poly ? 10 : 0);
@@ -168,7 +169,14 @@ function CheckoutModal({ plan, onClose }: { plan: string; onClose: () => void })
                 <span style={{ fontSize: 24, fontWeight: 300, fontFamily: SERIF }}>US${total}</span>
               </div>
               <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginBottom: 24 }}>Aprox. R${brl}/mês</div>
-              <button style={{ width: "100%", padding: "14px 0", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, fontFamily: SERIF, background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", border: "none", cursor: "pointer" }}>Continuar para checkout</button>
+              <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+                {([["card", "Cartão"], ["pix", "Pix"], ["crypto", "Crypto"]] as const).map(([method, label]) => (
+                  <button key={method} onClick={() => setPayMethod(method)} style={{ flex: 1, padding: "10px 0", borderRadius: 8, fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: SERIF, cursor: "pointer", transition: "all 0.2s", background: payMethod === method ? "rgba(201,168,76,0.1)" : "rgba(255,255,255,0.03)", border: `1px solid ${payMethod === method ? GOLD : "rgba(255,255,255,0.08)"}`, color: payMethod === method ? GOLD : "rgba(255,255,255,0.45)" }}>{label}</button>
+                ))}
+              </div>
+              <button style={{ width: "100%", padding: "14px 0", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, fontFamily: SERIF, background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", border: "none", cursor: "pointer" }}>
+                {payMethod === "card" ? "Continuar para checkout" : payMethod === "pix" ? "Gerar pagamento via Pix" : "Pagar com crypto"}
+              </button>
               <p style={{ fontSize: 10, marginTop: 16, textAlign: "center", color: "rgba(255,255,255,0.25)", lineHeight: 1.6 }}>Cobrança via Stripe. Valor pode variar conforme câmbio e taxas.</p>
             </div>
           </div>
