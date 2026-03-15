@@ -101,17 +101,41 @@ function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
 /* ═══ CHECKOUT MODAL ═══ */
 const LANGS = ["English", "Spanish", "Italian", "French", "German", "Mandarin", "Korean", "Japanese"];
 
+const CARD_LINKS: Record<string, string> = {
+  "base-15": "https://app.duckduck.club/checkout/base-access",
+  "base-20": "https://app.duckduck.club/checkout/base-access-1-idioma",
+  "base-25": "https://app.duckduck.club/checkout/base-access-2-idiomas",
+  "premium-29": "https://app.duckduck.club/checkout/premium-access",
+  "premium-34": "https://app.duckduck.club/checkout/premium-access-1-idioma",
+};
+
+function resolveCheckoutLink(plan: string, extraLanguages: number): string {
+  const normalizedExtra = plan === "premium"
+    ? Math.min(extraLanguages, 1)
+    : Math.min(extraLanguages, 2);
+  const key = plan === "premium"
+    ? `premium-${29 + normalizedExtra * 5}`
+    : `base-${15 + normalizedExtra * 5}`;
+  return CARD_LINKS[key] ?? "#";
+}
+
 function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: () => void; onWhatsApp: (plan: string, method: string, totalUSD: number) => void }) {
   const premium = plan === "premium";
   const basePrice = premium ? 29 : 15;
   const [poly, setPoly] = useState(false);
   const [langs, setLangs] = useState<string[]>([]);
   const [payMethod, setPayMethod] = useState<'card' | 'pix' | 'crypto'>('card');
-  const free = premium ? 2 : 0;
-  const paid = Math.max(0, langs.length - free);
-  const total = basePrice + paid * 5 + (poly ? 10 : 0);
+  const freeIncluded = premium ? 2 : 0;
+  const maxLangs = premium ? 3 : 2; // 2 free + 1 extra for premium; 0 free + 2 extra for base
+  const extraLanguages = Math.max(0, langs.length - freeIncluded);
+  const normalizedExtra = Math.min(extraLanguages, premium ? 1 : 2);
+  const total = basePrice + normalizedExtra * 5 + (poly ? 10 : 0);
   const brl = Math.round(total * 5.2);
-  const toggle = (l: string) => setLangs(p => p.includes(l) ? p.filter(x => x !== l) : [...p, l]);
+  const toggle = (l: string) => setLangs(p => {
+    if (p.includes(l)) return p.filter(x => x !== l);
+    if (p.length >= maxLangs) return p; // lock at max
+    return [...p, l];
+  });
 
   return (
     <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(12px)" }}>
@@ -123,7 +147,7 @@ function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: (
             <div style={{ display: "inline-flex", fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", padding: "4px 12px", borderRadius: 9999, color: GOLD, background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.15)", marginBottom: 24 }}>Plano {premium ? "Premium" : "Base"}</div>
             <h3 style={{ fontSize: 28, fontWeight: 300, fontFamily: SERIF, marginBottom: 16 }}>Personalize seu acesso</h3>
             <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 32 }}>
-              {premium ? "Seus 2 primeiros idiomas já estão incluídos. Adicione extras ou o Polymarket Lab se quiser expandir." : "Nenhum idioma incluído neste plano. Escolha quantos quiser por +US$5/mês cada, e adicione o Polymarket Lab se desejar."}
+              {premium ? "Seus 2 primeiros idiomas já estão incluídos. Adicione extras ou o Polymarket Lab se quiser expandir." : "Nenhum idioma incluído. Escolha até 2 por +US$5/mês cada."}
             </p>
             <div style={{ borderRadius: 12, padding: 20, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", marginBottom: 24 }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -138,12 +162,13 @@ function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: (
             </div>
             <div style={{ borderRadius: 12, padding: 20, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
               <div style={{ fontSize: 14, fontWeight: 500, fontFamily: SERIF, marginBottom: 8 }}>{premium ? "Escolha seus idiomas" : "Idiomas disponíveis"}</div>
-              <p style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", marginBottom: 4 }}>{premium ? "2 incluídos no plano. A partir do 3º: +US$5/mês cada." : "+US$5/mês por idioma · aprox. R$26/mês cada."}</p>
-              {premium && <p style={{ fontSize: 12, color: GOLD, opacity: 0.7, marginBottom: 12 }}>{Math.min(langs.length, free)}/{free} incluídos selecionados</p>}
+              <p style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", marginBottom: 4 }}>{premium ? "2 idiomas incluídos. Adicione até 1 extra por +US$5/mês." : "+US$5/mês por idioma · aprox. R$26/mês cada."}</p>
+              {premium && <p style={{ fontSize: 12, color: GOLD, opacity: 0.7, marginBottom: 12 }}>{Math.min(langs.length, freeIncluded)}/{freeIncluded} incluídos selecionados</p>}
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
                 {LANGS.map(l => {
                   const on = langs.includes(l);
-                  return <button key={l} onClick={() => toggle(l)} style={{ fontSize: 12, padding: "8px 16px", borderRadius: 9999, border: `1px solid ${on ? "rgba(201,168,76,0.4)" : "rgba(255,255,255,0.08)"}`, background: on ? "rgba(201,168,76,0.12)" : "rgba(255,255,255,0.04)", color: on ? GOLD : "rgba(255,255,255,0.5)", cursor: "pointer", transition: "all 0.2s" }}>{l}</button>;
+                  const blocked = !on && langs.length >= maxLangs;
+                  return <button key={l} onClick={() => toggle(l)} disabled={blocked} style={{ fontSize: 12, padding: "8px 16px", borderRadius: 9999, border: `1px solid ${on ? "rgba(201,168,76,0.4)" : "rgba(255,255,255,0.08)"}`, background: on ? "rgba(201,168,76,0.12)" : "rgba(255,255,255,0.04)", color: on ? GOLD : blocked ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.5)", cursor: blocked ? "not-allowed" : "pointer", opacity: blocked ? 0.4 : 1, transition: "all 0.2s" }}>{l}</button>;
                 })}
               </div>
             </div>
@@ -174,7 +199,7 @@ function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: (
                   <button key={method} onClick={() => setPayMethod(method)} style={{ flex: 1, padding: "10px 0", borderRadius: 8, fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: SERIF, cursor: "pointer", transition: "all 0.2s", background: payMethod === method ? "rgba(201,168,76,0.1)" : "rgba(255,255,255,0.03)", border: `1px solid ${payMethod === method ? GOLD : "rgba(255,255,255,0.08)"}`, color: payMethod === method ? GOLD : "rgba(255,255,255,0.45)" }}>{label}</button>
                 ))}
               </div>
-              <button onClick={() => { if (payMethod === "card") { /* Stripe será integrado depois */ } else { onWhatsApp(plan, payMethod, total); onClose(); } }} style={{ width: "100%", padding: "14px 0", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, fontFamily: SERIF, background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", border: "none", cursor: "pointer" }}>
+              <button onClick={() => { if (payMethod === "card") { window.open(resolveCheckoutLink(plan, extraLanguages), "_blank"); } else { onWhatsApp(plan, payMethod, total); onClose(); } }} style={{ width: "100%", padding: "14px 0", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, fontFamily: SERIF, background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", border: "none", cursor: "pointer" }}>
                 {payMethod === "card" ? "Continuar para checkout" : payMethod === "pix" ? "Gerar pagamento via Pix" : "Pagar com crypto"}
               </button>
               <p style={{ fontSize: 10, marginTop: 16, textAlign: "center", color: "rgba(255,255,255,0.25)", lineHeight: 1.6 }}>Cobrança via Stripe. Valor pode variar conforme câmbio e taxas.</p>
