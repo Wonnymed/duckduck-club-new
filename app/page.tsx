@@ -1,14 +1,88 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { motion, useScroll, useTransform, useInView } from "framer-motion";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { motion, useScroll, useTransform, useInView, AnimatePresence } from "framer-motion";
 import { ArrowRight, Menu, X, Check, ChevronDown, Compass, BookOpen, Handshake, Settings } from "lucide-react";
 
 const GOLD = "#C9A84C";
 const GOLD_DIM = "#A0832A";
 const SERIF = "'Cormorant Garamond', serif";
 
-/* ─── Fade-in on scroll (framer-motion) ─── */
+/* ─── Loading Screen ─── */
+function LoadingScreen({ onComplete }: { onComplete: () => void }) {
+  const [phase, setPhase] = useState(0);
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setPhase(1), 400);
+    const t2 = setTimeout(() => setPhase(2), 1200);
+    const t3 = setTimeout(() => setPhase(3), 2000);
+    const t4 = setTimeout(() => onComplete(), 2600);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
+  }, [onComplete]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.8, ease: "easeInOut" }}
+      style={{ position: "fixed", inset: 0, zIndex: 100, background: "#0A0A0A", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 20 }}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.5 }}
+        animate={{ opacity: phase >= 1 ? 1 : 0, scale: phase >= 1 ? 1 : 0.5 }}
+        transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+      >
+        <img src="/logo.jpeg" alt="DuckDuck Club" style={{ width: 64, height: 64, objectFit: "contain", borderRadius: "50%", border: "1px solid rgba(201,168,76,0.2)" }} />
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: phase >= 2 ? 1 : 0, y: phase >= 2 ? 0 : 10 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        style={{ fontSize: 16, letterSpacing: "0.3em", textTransform: "uppercase", color: GOLD, fontFamily: SERIF }}
+      >
+        DuckDuck Club
+      </motion.div>
+      <motion.div
+        initial={{ width: 0 }}
+        animate={{ width: phase >= 2 ? 60 : 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(201,168,76,0.4), transparent)" }}
+      />
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: phase >= 3 ? 0.5 : 0 }}
+        transition={{ duration: 0.4 }}
+        style={{ fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)" }}
+      >
+        Private ecosystem
+      </motion.div>
+    </motion.div>
+  );
+}
+
+/* ─── Text Reveal word by word ─── */
+function TextReveal({ text, gold = false, italic = false, delay = 0 }: { text: string; gold?: boolean; italic?: boolean; delay?: number }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const words = text.split(" ");
+  return (
+    <span ref={ref} style={{ display: "inline" }}>
+      {words.map((word, i) => (
+        <motion.span
+          key={i}
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.5, delay: delay + i * 0.08, ease: [0.25, 0.1, 0.25, 1] }}
+          style={{ display: "inline-block", marginRight: "0.3em", color: gold ? GOLD : "inherit", fontStyle: italic ? "italic" : "normal" }}
+        >
+          {word}
+        </motion.span>
+      ))}
+    </span>
+  );
+}
+
+/* ─── Fade-in on scroll ─── */
 function Fade({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
@@ -30,11 +104,11 @@ function AnimatedDivider() {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true });
   return (
-    <div ref={ref} style={{ display: "flex", justifyContent: "center", padding: "8px 0" }}>
+    <div ref={ref} style={{ display: "flex", justifyContent: "center", padding: "16px 0" }}>
       <motion.div
         initial={{ width: 0 }}
         animate={isInView ? { width: 80 } : { width: 0 }}
-        transition={{ duration: 1, ease: "easeOut" }}
+        transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
         style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(201,168,76,0.3), transparent)" }}
       />
     </div>
@@ -65,11 +139,10 @@ function GoldButton({ children, onClick, href, style: extraStyle = {} }: { child
   return (
     <motion.button
       onClick={handleClick}
-      whileHover={{ scale: 1.03 }}
+      whileHover={{ scale: 1.03, boxShadow: "0 0 40px rgba(201,168,76,0.2)" }}
       whileTap={{ scale: 0.97 }}
-      style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "16px 32px", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase" as const, fontWeight: 600, fontFamily: SERIF, background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", border: "none", cursor: "pointer", transition: "box-shadow 0.3s", ...extraStyle }}
-      onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => (e.currentTarget.style.boxShadow = "0 0 40px rgba(201,168,76,0.18), 0 8px 32px rgba(0,0,0,0.4)")}
-      onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => (e.currentTarget.style.boxShadow = "none")}
+      transition={{ duration: 0.2 }}
+      style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "16px 32px", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase" as const, fontWeight: 600, fontFamily: SERIF, background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", border: "none", cursor: "pointer", ...extraStyle }}
     >
       {children}<ArrowRight size={15} />
     </motion.button>
@@ -80,9 +153,10 @@ function OutlineButton({ children, onClick }: { children: React.ReactNode; onCli
   return (
     <motion.button
       onClick={onClick}
-      whileHover={{ scale: 1.03 }}
+      whileHover={{ scale: 1.03, boxShadow: "0 0 40px rgba(201,168,76,0.2)" }}
       whileTap={{ scale: 0.97 }}
-      style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "14px 28px", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase" as const, fontFamily: SERIF, color: GOLD, border: "1px solid rgba(201,168,76,0.3)", background: "transparent", cursor: "pointer", transition: "all 0.3s", width: "100%" }}
+      transition={{ duration: 0.2 }}
+      style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "14px 28px", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase" as const, fontFamily: SERIF, color: GOLD, border: "1px solid rgba(201,168,76,0.3)", background: "transparent", cursor: "pointer", width: "100%" }}
       onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => { e.currentTarget.style.borderColor = GOLD; e.currentTarget.style.background = "rgba(201,168,76,0.06)"; }}
       onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => { e.currentTarget.style.borderColor = "rgba(201,168,76,0.3)"; e.currentTarget.style.background = "transparent"; }}
     >
@@ -135,12 +209,8 @@ const CARD_LINKS: Record<string, string> = {
 };
 
 function resolveCheckoutLink(plan: string, extraLanguages: number): string {
-  const normalizedExtra = plan === "premium"
-    ? Math.min(extraLanguages, 1)
-    : Math.min(extraLanguages, 2);
-  const key = plan === "premium"
-    ? `premium-${29 + normalizedExtra * 5}`
-    : `base-${15 + normalizedExtra * 5}`;
+  const normalizedExtra = plan === "premium" ? Math.min(extraLanguages, 1) : Math.min(extraLanguages, 2);
+  const key = plan === "premium" ? `premium-${29 + normalizedExtra * 5}` : `base-${15 + normalizedExtra * 5}`;
   return CARD_LINKS[key] ?? "#";
 }
 
@@ -166,7 +236,6 @@ function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: (
     <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(12px)" }}>
       <div onClick={e => e.stopPropagation()} style={{ position: "relative", width: "100%", maxWidth: 900, maxHeight: "90vh", overflowY: "auto", borderRadius: 16, background: "#111", border: "1px solid rgba(255,255,255,0.08)" }}>
         <button onClick={onClose} style={{ position: "absolute", top: 16, right: 16, zIndex: 10, width: 32, height: 32, borderRadius: 9999, background: "rgba(255,255,255,0.05)", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><X size={16} color="rgba(255,255,255,0.6)" /></button>
-
         <div className="checkout-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
           <div style={{ padding: 32 }}>
             <div style={{ display: "inline-flex", fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", padding: "4px 12px", borderRadius: 9999, color: GOLD, background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.15)", marginBottom: 24 }}>Plano {premium ? "Premium" : "Base"}</div>
@@ -240,51 +309,37 @@ function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: (
 function WhatsAppFormModal({ plan, method, totalUSD, onClose }: { plan: string; method: string; totalUSD: number; onClose: () => void }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-
   const planLabel = plan === "premium" ? "Premium" : "Base";
   const methodLabel = method === "pix" ? "Pix" : "Crypto";
-
   const handleSubmit = () => {
     if (!name.trim() || !email.trim()) return;
-    const message = encodeURIComponent(
-      "Olá, quero entrar no DuckDuck Club.\n\n" +
-      "Plano: " + planLabel + " (US$" + totalUSD + "/mês)\n" +
-      "Método de pagamento: " + methodLabel + "\n" +
-      "Nome: " + name.trim() + "\n" +
-      "Email: " + email.trim()
-    );
+    const message = encodeURIComponent("Olá, quero entrar no DuckDuck Club.\n\nPlano: " + planLabel + " (US$" + totalUSD + "/mês)\nMétodo de pagamento: " + methodLabel + "\nNome: " + name.trim() + "\nEmail: " + email.trim());
     window.open("https://wa.me/15615966097?text=" + message, "_blank");
     onClose();
   };
-
   return (
     <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 60, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, background: "rgba(0,0,0,0.85)", backdropFilter: "blur(16px)" }}>
       <div onClick={e => e.stopPropagation()} style={{ maxWidth: 480, width: "100%", borderRadius: 16, background: "#111", border: "1px solid rgba(255,255,255,0.08)", padding: 32, position: "relative" }}>
         <button onClick={onClose} style={{ position: "absolute", top: 16, right: 16, width: 32, height: 32, borderRadius: 9999, background: "rgba(255,255,255,0.05)", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><X size={16} color="rgba(255,255,255,0.6)" /></button>
-
-        <h3 style={{ fontSize: 24, fontWeight: 300, fontFamily: "'Cormorant Garamond', serif", marginBottom: 8 }}>Finalize seu acesso</h3>
+        <h3 style={{ fontSize: 24, fontWeight: 300, fontFamily: SERIF, marginBottom: 8 }}>Finalize seu acesso</h3>
         <p style={{ fontSize: 14, color: "rgba(255,255,255,0.45)", marginBottom: 28 }}>Pix e crypto com atendimento direto via WhatsApp.</p>
-
         <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
           <div style={{ flex: 1, padding: 14, borderRadius: 10, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
             <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.15em", color: "rgba(255,255,255,0.3)", marginBottom: 6 }}>Plano</div>
-            <div style={{ fontSize: 15, color: "white", fontFamily: "'Cormorant Garamond', serif" }}>{planLabel} · US${totalUSD}/mês</div>
+            <div style={{ fontSize: 15, color: "white", fontFamily: SERIF }}>{planLabel} · US${totalUSD}/mês</div>
           </div>
           <div style={{ flex: 1, padding: 14, borderRadius: 10, background: "rgba(201,168,76,0.04)", border: "1px solid rgba(201,168,76,0.12)" }}>
             <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.15em", color: "rgba(255,255,255,0.3)", marginBottom: 6 }}>Pagamento</div>
-            <div style={{ fontSize: 15, color: "#C9A84C", fontFamily: "'Cormorant Garamond', serif" }}>{methodLabel}</div>
+            <div style={{ fontSize: 15, color: GOLD, fontFamily: SERIF }}>{methodLabel}</div>
           </div>
         </div>
-
         <div style={{ marginBottom: 12 }}>
           <input value={name} onChange={e => setName(e.target.value)} placeholder="Seu nome" style={{ width: "100%", padding: "14px 16px", borderRadius: 8, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "white", fontSize: 14, outline: "none", boxSizing: "border-box", fontFamily: "'DM Sans', sans-serif" }} />
         </div>
         <div style={{ marginBottom: 24 }}>
           <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Seu melhor email" type="email" style={{ width: "100%", padding: "14px 16px", borderRadius: 8, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "white", fontSize: 14, outline: "none", boxSizing: "border-box", fontFamily: "'DM Sans', sans-serif" }} />
         </div>
-
-        <button onClick={handleSubmit} disabled={!name.trim() || !email.trim()} style={{ width: "100%", padding: "16px 0", borderRadius: 8, background: (!name.trim() || !email.trim()) ? "rgba(201,168,76,0.3)" : "linear-gradient(135deg, #C9A84C, #A0832A)", color: "#0A0A0A", fontSize: 14, fontWeight: 600, fontFamily: "'Cormorant Garamond', serif", letterSpacing: "0.12em", textTransform: "uppercase", cursor: (!name.trim() || !email.trim()) ? "not-allowed" : "pointer", border: "none", opacity: (!name.trim() || !email.trim()) ? 0.5 : 1, transition: "opacity 0.3s" }}>Continuar no WhatsApp</button>
-
+        <button onClick={handleSubmit} disabled={!name.trim() || !email.trim()} style={{ width: "100%", padding: "16px 0", borderRadius: 8, background: (!name.trim() || !email.trim()) ? "rgba(201,168,76,0.3)" : `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", fontSize: 14, fontWeight: 600, fontFamily: SERIF, letterSpacing: "0.12em", textTransform: "uppercase", cursor: (!name.trim() || !email.trim()) ? "not-allowed" : "pointer", border: "none", opacity: (!name.trim() || !email.trim()) ? 0.5 : 1, transition: "opacity 0.3s" }}>Continuar no WhatsApp</button>
         <p style={{ fontSize: 11, color: "rgba(255,255,255,0.2)", textAlign: "center", marginTop: 14 }}>Você será redirecionado para o WhatsApp para finalizar.</p>
       </div>
     </div>
@@ -305,8 +360,10 @@ function CommunityShowcase() {
         {screens.map((s, i) => (
           <motion.div
             key={i}
-            animate={{ y: [0, -6, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: i * 0.5 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: i * 0.2 }}
             style={{
               width: s.w,
               maxWidth: 260,
@@ -319,8 +376,13 @@ function CommunityShowcase() {
               zIndex: s.featured ? 3 : 1,
             }}
           >
-            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 60%, rgba(10,10,10,0.4) 100%)", zIndex: 2, pointerEvents: "none" }} />
-            <img src={s.src} alt={s.alt} style={{ width: "100%", height: "auto", display: "block", filter: s.featured ? "brightness(0.95)" : "brightness(0.85)" }} />
+            <motion.div
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 4 + i * 0.5, repeat: Infinity, ease: "easeInOut", delay: i * 0.5 }}
+            >
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 60%, rgba(10,10,10,0.4) 100%)", zIndex: 2, pointerEvents: "none" }} />
+              <img src={s.src} alt={s.alt} style={{ width: "100%", height: "auto", display: "block", filter: s.featured ? "brightness(0.95)" : "brightness(0.85)" }} />
+            </motion.div>
           </motion.div>
         ))}
       </div>
@@ -336,6 +398,8 @@ export default function Home() {
   const [scrolled, setScrolled] = useState(false);
   const [checkout, setCheckout] = useState<string | null>(null);
   const [whatsappForm, setWhatsappForm] = useState<{ plan: string; method: string; totalUSD: number } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const handleLoadingComplete = useCallback(() => setLoading(false), []);
 
   const { scrollY } = useScroll();
   const heroGlowY = useTransform(scrollY, [0, 600], [0, 100]);
@@ -349,374 +413,405 @@ export default function Home() {
   const dot = (gold = false) => <div style={{ width: 6, height: 6, borderRadius: 3, background: gold ? GOLD : "rgba(255,255,255,0.25)", flexShrink: 0 }} />;
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
-      <MobileNav open={menuOpen} onClose={() => setMenuOpen(false)} />
-      {checkout && <CheckoutModal plan={checkout} onClose={() => setCheckout(null)} onWhatsApp={(p, m, t) => { setCheckout(null); setTimeout(() => setWhatsappForm({ plan: p, method: m, totalUSD: t }), 200); }} />}
-      {whatsappForm && <WhatsAppFormModal plan={whatsappForm.plan} method={whatsappForm.method} totalUSD={whatsappForm.totalUSD} onClose={() => setWhatsappForm(null)} />}
+    <>
+      <AnimatePresence mode="wait">
+        {loading && <LoadingScreen key="loader" onComplete={handleLoadingComplete} />}
+      </AnimatePresence>
 
-      {/* Ambient glow with parallax */}
-      <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0 }}>
-        <motion.div style={{ position: "absolute", top: "-20%", left: "20%", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.03) 0%, transparent 70%)", y: heroGlowY }} />
-        <div style={{ position: "absolute", bottom: "-10%", right: "10%", width: 400, height: 400, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.02) 0%, transparent 70%)" }} />
-      </div>
+      {!loading && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.2 }}>
+          <div className="grain-overlay" />
 
-      {/* NAV */}
-      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 40, transition: "all 0.5s", background: scrolled ? "rgba(10,10,10,0.85)" : "transparent", backdropFilter: scrolled ? "blur(20px)" : "none", borderBottom: scrolled ? "1px solid rgba(255,255,255,0.04)" : "1px solid transparent" }}>
-        <div style={{ maxWidth: 1152, margin: "0 auto", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <Logo size={30} />
-            <span style={{ color: "white", fontSize: 14, letterSpacing: "0.15em", textTransform: "uppercase", fontFamily: SERIF }}>DuckDuck Club</span>
+          <MobileNav open={menuOpen} onClose={() => setMenuOpen(false)} />
+          {checkout && <CheckoutModal plan={checkout} onClose={() => setCheckout(null)} onWhatsApp={(p, m, t) => { setCheckout(null); setTimeout(() => setWhatsappForm({ plan: p, method: m, totalUSD: t }), 200); }} />}
+          {whatsappForm && <WhatsAppFormModal plan={whatsappForm.plan} method={whatsappForm.method} totalUSD={whatsappForm.totalUSD} onClose={() => setWhatsappForm(null)} />}
+
+          {/* Ambient glow with parallax */}
+          <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0 }}>
+            <motion.div style={{ position: "absolute", top: "-20%", left: "20%", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.04) 0%, transparent 70%)", y: heroGlowY }} />
+            <div style={{ position: "absolute", bottom: "-10%", right: "10%", width: 400, height: 400, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.02) 0%, transparent 70%)" }} />
           </div>
-          {/* Desktop nav */}
-          <div style={{ display: "flex", alignItems: "center", gap: 32 }} className="desktop-nav">
-            {[["O clube", "about"], ["Por dentro", "inside"]].map(([l, h]) => (
-              <button key={l} onClick={() => scrollTo(h)} style={{ fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", background: "none", border: "none", cursor: "pointer", fontFamily: SERIF, transition: "color 0.3s" }}
-                onMouseEnter={e => (e.currentTarget.style.color = GOLD)} onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.4)")}>{l}</button>
-            ))}
-            <button onClick={() => scrollTo("pricing")} style={{ fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase", padding: "10px 20px", borderRadius: 8, background: "rgba(201,168,76,0.1)", color: GOLD, border: "1px solid rgba(201,168,76,0.2)", fontFamily: SERIF, cursor: "pointer", transition: "all 0.3s" }}
-              onMouseEnter={e => { e.currentTarget.style.background = "rgba(201,168,76,0.15)"; e.currentTarget.style.borderColor = "rgba(201,168,76,0.4)"; }}
-              onMouseLeave={e => { e.currentTarget.style.background = "rgba(201,168,76,0.1)"; e.currentTarget.style.borderColor = "rgba(201,168,76,0.2)"; }}>
-              Ver meu acesso
-            </button>
-          </div>
-          {/* Mobile hamburger */}
-          <button onClick={() => setMenuOpen(true)} className="mobile-menu" style={{ background: "none", border: "none", cursor: "pointer", display: "none" }}><Menu size={22} color="rgba(255,255,255,0.6)" /></button>
-        </div>
-      </nav>
 
-      {/* Responsive CSS */}
-      <style>{`
-        @media (max-width: 768px) {
-          .desktop-nav { display: none !important; }
-          .mobile-menu { display: block !important; }
-          .hero-tags { display: grid !important; grid-template-columns: 1fr 1fr !important; flex-direction: unset !important; gap: 6px !important; margin-top: 20px !important; }
-          .pillar-grid { grid-template-columns: 1fr !important; }
-          .pillar-card { flex-direction: column !important; }
-          .for-you-grid { grid-template-columns: 1fr !important; }
-          .pricing-grid { grid-template-columns: 1fr !important; }
-          .problem-grid { grid-template-columns: 1fr !important; }
-          .founder-grid { grid-template-columns: 1fr !important; }
-          .checkout-grid { grid-template-columns: 1fr !important; }
-          .screenshots-row { gap: 8px !important; }
-          .screenshots-row > div { border-radius: 12px !important; transform: none !important; }
-          .pricing-note { font-size: 10px !important; }
-          .hero-pill { font-size: 11px !important; padding: 8px 10px !important; text-align: center !important; }
-          .hero-break { display: block; height: 16px; }
-        }
-        .hero-break { display: none; }
-        input::placeholder { color: rgba(255,255,255,0.25) !important; }
-        input:focus { border-color: rgba(201,168,76,0.3) !important; outline: none !important; }
-      `}</style>
-
-      {/* ═══ 1. HERO ═══ */}
-      <section style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "96px 24px 80px", zIndex: 1, overflow: "hidden" }}>
-        <video autoPlay muted loop playsInline style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.1, zIndex: 0, pointerEvents: "none" }}>
-          <source src="/hero-video.mp4" type="video/mp4" />
-        </video>
-        <div style={{ maxWidth: 896, margin: "0 auto", textAlign: "center", position: "relative", zIndex: 1 }}>
-          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}>
-            <Badge>Ecossistema Privado</Badge>
-          </motion.div>
-          <motion.h1
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, delay: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
-            style={{ marginTop: 40, marginBottom: 28, fontSize: "clamp(30px, 6vw, 72px)", fontWeight: 300, lineHeight: 1.1, fontFamily: SERIF }}
+          {/* NAV — slide down */}
+          <motion.nav
+            initial={{ y: -80, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 40, transition: "background 0.5s, backdrop-filter 0.5s, border-color 0.5s", background: scrolled ? "rgba(10,10,10,0.85)" : "transparent", backdropFilter: scrolled ? "blur(20px)" : "none", borderBottom: scrolled ? "1px solid rgba(255,255,255,0.04)" : "1px solid transparent" }}
           >
-            Antes de pensar em crescer financeiramente, <span style={{ fontStyle: "italic", color: GOLD }}>aumente o seu valor no jogo.</span>
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.0, ease: "easeOut" }}
-            style={{ maxWidth: 640, margin: "0 auto 40px", fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)" }}
-          >
-            DuckDuck Club é um ecossistema privado para quem quer mais direção, mais contexto e mais valor real.<span className="hero-break" />​Aqui você constrói repertório internacional, aprende idiomas, amplia networking e acessa temas como offshore, China import, geopolítica, investimentos, segurança digital e operação global.
-          </motion.p>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.3, ease: "easeOut" }}
-          >
-            <GoldButton href="pricing">Ver meu acesso</GoldButton>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 1.6 }}
-            className="hero-tags"
-            style={{ marginTop: 48, display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 12 }}
-          >
-            {["Idiomas para acesso global", "Network, deals e matchmaking", "Offshore, China e geopolítica", "Privado, curado, sem ruído"].map(t => (
-              <span key={t} className="hero-pill" style={{ fontSize: 12, padding: "8px 16px", borderRadius: 9999, border: "1px solid rgba(201,168,76,0.12)", background: "rgba(201,168,76,0.03)", color: "rgba(255,255,255,0.45)", minHeight: 40, display: "flex", alignItems: "center", justifyContent: "center" }}>{t}</span>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      <AnimatedDivider />
-
-      {/* ═══ 2. O PROBLEMA ═══ */}
-      <section id="about" style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
-        <div style={{ maxWidth: 1024, margin: "0 auto" }}>
-          <Fade>
-            <Badge>O problema</Badge>
-            <h2 style={{ marginTop: 24, fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 24 }}>
-              Ambição sem contexto, sem linguagem e sem estrutura vira <span style={{ fontStyle: "italic", color: GOLD }}>desperdício de potencial.</span>
-            </h2>
-            <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 40, maxWidth: 720 }}>
-              Muita gente quer crescer e acessar oportunidades maiores. Mas tenta fazer isso com informação espalhada, networking fraco, leitura rasa de cenário e pouca capacidade prática de execução. O resultado é viver ocupada, mas continuar jogando abaixo do próprio potencial.
-            </p>
-          </Fade>
-          <div className="problem-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 20 }}>
-            {[
-              { t: "Muito conteúdo, pouca direção", d: "Sem leitura de cenário e geopolítica, a maioria reage tarde e decide no ruído." },
-              { t: "Muito potencial, pouco acesso", d: "Sem linguagem, repertório e as pessoas certas por perto, oportunidades simplesmente não chegam." },
-              { t: "Muita ambição, pouca estrutura", d: "Sem ferramentas, proteção e operações globais bem entendidas, o jogo fica mais caro e mais lento." },
-            ].map((item, i) => (
-              <Fade key={item.t} delay={i * 100}>
-                <motion.div
-                  whileHover={{ y: -4, borderColor: "rgba(201,168,76,0.2)" }}
-                  transition={{ duration: 0.2 }}
-                  style={{ padding: "24px 28px", borderRadius: 16, background: "rgba(255,255,255,0.02)", borderWidth: 1, borderStyle: "solid", borderColor: "rgba(255,255,255,0.06)", height: "100%" }}
-                >
-                  <h3 style={{ fontSize: 18, fontWeight: 500, fontFamily: SERIF, marginBottom: 12 }}>{item.t}</h3>
-                  <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.4)", margin: 0 }}>{item.d}</p>
-                </motion.div>
-              </Fade>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ 3. POR DENTRO — 2x2 rectangle grid ═══ */}
-      <section id="inside" style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
-        <div style={{ maxWidth: 1024, margin: "0 auto" }}>
-          <Fade>
-            <Badge>Por dentro</Badge>
-            <h2 style={{ marginTop: 24, fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 16 }}>O que você encontra <span style={{ fontStyle: "italic", color: GOLD }}>ao entrar</span></h2>
-            <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 48, maxWidth: 720 }}>
-              Quatro frentes de valor real. Cada uma desenhada para te colocar em uma posição melhor do que você estava ontem.
-            </p>
-          </Fade>
-          {/* 2x2 grid of horizontal rectangles */}
-          <div className="pillar-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-            {[
-              { icon: Compass, title: "Direção", desc: "Geopolítica, leitura de cenário e contexto estratégico para você antecipar movimentos — enquanto a maioria ainda está reagindo." },
-              { icon: BookOpen, title: "Valor pessoal", desc: "Idiomas, repertório e ferramentas práticas para ampliar seu alcance, sua utilidade e o tipo de oportunidade que chega até você." },
-              { icon: Handshake, title: "Valor relacional", desc: "Networking, deals e matchmaking que conectam você a operadores, investidores e oportunidades que não circulam no mainstream." },
-              { icon: Settings, title: "Valor operacional", desc: "Offshore, China import, crypto OPSEC e estruturas internacionais — não como teoria, mas como execução real com proteção." },
-            ].map((item, i) => (
-              <Fade key={item.title} delay={i * 80}>
-                <motion.div
-                  className="pillar-card"
-                  whileHover={{ y: -4, borderColor: "rgba(201,168,76,0.2)" }}
-                  transition={{ duration: 0.2 }}
-                  style={{ padding: "28px 32px", borderRadius: 16, background: "rgba(255,255,255,0.02)", borderWidth: 1, borderStyle: "solid", borderColor: "rgba(255,255,255,0.06)", height: "100%", display: "flex", gap: 24, alignItems: "flex-start" }}
-                >
-                  <div style={{ width: 44, height: 44, minWidth: 44, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.15)", marginTop: 2 }}><item.icon size={20} color={GOLD} /></div>
-                  <div>
-                    <h3 style={{ fontSize: 20, fontWeight: 500, fontFamily: SERIF, marginBottom: 8 }}>{item.title}</h3>
-                    <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 0 }}>{item.desc}</p>
-                  </div>
-                </motion.div>
-              </Fade>
-            ))}
-          </div>
-          <Fade delay={350}><div style={{ marginTop: 56, textAlign: "center" }}><GoldButton href="pricing">Quero acessar o clube</GoldButton></div></Fade>
-        </div>
-      </section>
-
-      <AnimatedDivider />
-
-      {/* ═══ 4. COMMUNITY SCREENSHOTS ═══ */}
-      <section style={{ position: "relative", padding: "80px 24px 112px", overflow: "hidden", zIndex: 1 }}>
-        <div style={{ maxWidth: 1024, margin: "0 auto" }}>
-          <Fade>
-            <div style={{ textAlign: "center", marginBottom: 48 }}>
-              <Badge>O ambiente</Badge>
-              <h2 style={{ marginTop: 24, fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 16 }}>Um ecossistema <span style={{ fontStyle: "italic", color: GOLD }}>real e organizado.</span></h2>
-              <p style={{ fontSize: 15, maxWidth: 560, margin: "0 auto", lineHeight: 1.7, color: "rgba(255,255,255,0.4)" }}>Canais estruturados, inteligência curada e espaços que funcionam — do onboarding ao nível mais operacional.</p>
-            </div>
-          </Fade>
-          <Fade delay={200}><CommunityShowcase /></Fade>
-          <Fade delay={350}><p style={{ textAlign: "center", marginTop: 40, fontSize: 12, color: "rgba(255,255,255,0.25)" }}>Plataforma via app e desktop · Acesso imediato após checkout</p></Fade>
-        </div>
-      </section>
-
-      <AnimatedDivider />
-
-      {/* ═══ 5. SOBRE O CRIADOR ═══ */}
-      <section style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
-        <div style={{ maxWidth: 1024, margin: "0 auto" }}>
-          <Fade>
-            <Badge>Sobre o criador</Badge>
-            <div className="founder-grid" style={{ marginTop: 32, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 48, alignItems: "start" }}>
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                <img src="/founder-photo.jpeg" alt="Nando Voyager — Founder" style={{ width: 320, height: 320, minWidth: 320, borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(201,168,76,0.3)" }} />
-                <p style={{ fontSize: 18, fontWeight: 500, fontFamily: SERIF, color: "white", marginTop: 20, marginBottom: 4 }}>Nando Voyager</p>
-                <a href="https://instagram.com/nandovoyager" target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: GOLD, textDecoration: "none", opacity: 0.85, transition: "opacity 0.2s" }}
-                  onMouseEnter={e => (e.currentTarget.style.opacity = "1")} onMouseLeave={e => (e.currentTarget.style.opacity = "0.85")}>@nandovoyager</a>
+            <div style={{ maxWidth: 1152, margin: "0 auto", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <Logo size={30} />
+                <span style={{ color: "white", fontSize: 14, letterSpacing: "0.15em", textTransform: "uppercase", fontFamily: SERIF }}>DuckDuck Club</span>
               </div>
-              <div>
-                <h2 style={{ fontSize: "clamp(22px, 3.5vw, 36px)", fontWeight: 300, lineHeight: 1.2, fontFamily: SERIF, marginBottom: 24 }}>
-                  A DuckDuck Club nasceu da interseção entre <span style={{ fontStyle: "italic", color: GOLD }}>contexto global, operação real e construção de valor.</span>
-                </h2>
-                <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 0 }}>
-                  Depois de viver entre países, operar em ambientes diferentes e perceber como idioma, geopolítica, estrutura, network e execução mudam o nível do jogo, eu decidi reunir tudo isso em um ecossistema privado. A DuckDuck Club foi criada para quem quer deixar de depender de improviso, ruído e informação solta — e começar a operar com mais clareza, mais linguagem e mais capacidade prática.
+              <div style={{ display: "flex", alignItems: "center", gap: 32 }} className="desktop-nav">
+                {[["O clube", "about"], ["Por dentro", "inside"]].map(([l, h]) => (
+                  <button key={l} onClick={() => scrollTo(h)} style={{ fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", background: "none", border: "none", cursor: "pointer", fontFamily: SERIF, transition: "color 0.3s" }}
+                    onMouseEnter={e => (e.currentTarget.style.color = GOLD)} onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.4)")}>{l}</button>
+                ))}
+                <button onClick={() => scrollTo("pricing")} style={{ fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase", padding: "10px 20px", borderRadius: 8, background: "rgba(201,168,76,0.1)", color: GOLD, border: "1px solid rgba(201,168,76,0.2)", fontFamily: SERIF, cursor: "pointer", transition: "all 0.3s" }}
+                  onMouseEnter={e => { e.currentTarget.style.background = "rgba(201,168,76,0.15)"; e.currentTarget.style.borderColor = "rgba(201,168,76,0.4)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = "rgba(201,168,76,0.1)"; e.currentTarget.style.borderColor = "rgba(201,168,76,0.2)"; }}>
+                  Ver meu acesso
+                </button>
+              </div>
+              <button onClick={() => setMenuOpen(true)} className="mobile-menu" style={{ background: "none", border: "none", cursor: "pointer", display: "none" }}><Menu size={22} color="rgba(255,255,255,0.6)" /></button>
+            </div>
+          </motion.nav>
+
+          {/* Responsive CSS */}
+          <style>{`
+            @media (max-width: 768px) {
+              .desktop-nav { display: none !important; }
+              .mobile-menu { display: block !important; }
+              .hero-tags { display: grid !important; grid-template-columns: 1fr 1fr !important; flex-direction: unset !important; gap: 6px !important; margin-top: 20px !important; }
+              .pillar-grid { grid-template-columns: 1fr !important; }
+              .pillar-card { flex-direction: column !important; }
+              .for-you-grid { grid-template-columns: 1fr !important; }
+              .pricing-grid { grid-template-columns: 1fr !important; }
+              .problem-grid { grid-template-columns: 1fr !important; }
+              .founder-grid { grid-template-columns: 1fr !important; }
+              .checkout-grid { grid-template-columns: 1fr !important; }
+              .screenshots-row { gap: 8px !important; }
+              .screenshots-row > div { border-radius: 12px !important; transform: none !important; }
+              .pricing-note { font-size: 10px !important; }
+              .hero-pill { font-size: 11px !important; padding: 8px 10px !important; text-align: center !important; }
+              .hero-break { display: block; height: 16px; }
+            }
+            .hero-break { display: none; }
+            input::placeholder { color: rgba(255,255,255,0.25) !important; }
+            input:focus { border-color: rgba(201,168,76,0.3) !important; outline: none !important; }
+          `}</style>
+
+          {/* ═══ 1. HERO ═══ */}
+          <section style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "96px 24px 80px", zIndex: 1, overflow: "hidden" }}>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.12 }}
+              transition={{ duration: 2, delay: 0.5 }}
+              style={{ position: "absolute", inset: 0, zIndex: 0, overflow: "hidden" }}
+            >
+              <video autoPlay muted loop playsInline style={{ width: "100%", height: "100%", objectFit: "cover" }}>
+                <source src="/hero-video.mp4" type="video/mp4" />
+              </video>
+            </motion.div>
+            <div style={{ position: "absolute", inset: 0, zIndex: 1, background: "linear-gradient(180deg, rgba(10,10,10,0.3) 0%, rgba(10,10,10,0.8) 50%, rgba(10,10,10,1) 100%)" }} />
+            <div style={{ maxWidth: 896, margin: "0 auto", textAlign: "center", position: "relative", zIndex: 2 }}>
+              <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.5 }}>
+                <Badge>Ecossistema Privado</Badge>
+              </motion.div>
+              <h1 style={{ marginTop: 40, marginBottom: 28, fontSize: "clamp(30px, 6vw, 72px)", fontWeight: 300, lineHeight: 1.1, fontFamily: SERIF }}>
+                <TextReveal text="Antes de pensar em crescer financeiramente," delay={0.8} />
+                <br />
+                <TextReveal text="aumente o seu valor no jogo." gold italic delay={1.6} />
+              </h1>
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 2.4 }}>
+                <p style={{ maxWidth: 640, margin: "0 auto 40px", fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)" }}>
+                  DuckDuck Club é um ecossistema privado para quem quer mais direção, mais contexto e mais valor real.<span className="hero-break" />​Aqui você constrói repertório internacional, aprende idiomas, amplia networking e acessa temas como offshore, China import, geopolítica, investimentos, segurança digital e operação global.
                 </p>
+              </motion.div>
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 2.8 }}>
+                <GoldButton href="pricing">Ver meu acesso</GoldButton>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8, delay: 3.2 }}
+                className="hero-tags"
+                style={{ marginTop: 48, display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 12 }}
+              >
+                {["Idiomas para acesso global", "Network, deals e matchmaking", "Offshore, China e geopolítica", "Privado, curado, sem ruído"].map(t => (
+                  <span key={t} className="hero-pill" style={{ fontSize: 12, padding: "8px 16px", borderRadius: 9999, border: "1px solid rgba(201,168,76,0.12)", background: "rgba(201,168,76,0.03)", color: "rgba(255,255,255,0.45)", minHeight: 40, display: "flex", alignItems: "center", justifyContent: "center" }}>{t}</span>
+                ))}
+              </motion.div>
+            </div>
+          </section>
+
+          <AnimatedDivider />
+
+          {/* ═══ 2. O PROBLEMA ═══ */}
+          <section id="about" style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
+            <div style={{ maxWidth: 1024, margin: "0 auto" }}>
+              <Fade>
+                <Badge>O problema</Badge>
+                <h2 style={{ marginTop: 24, fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 24 }}>
+                  <TextReveal text="Ambição sem contexto, sem linguagem e sem estrutura vira" delay={0} />
+                  {" "}
+                  <TextReveal text="desperdício de potencial." gold italic delay={0.8} />
+                </h2>
+                <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 40, maxWidth: 720 }}>
+                  Muita gente quer crescer e acessar oportunidades maiores. Mas tenta fazer isso com informação espalhada, networking fraco, leitura rasa de cenário e pouca capacidade prática de execução. O resultado é viver ocupada, mas continuar jogando abaixo do próprio potencial.
+                </p>
+              </Fade>
+              <div className="problem-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 20 }}>
+                {[
+                  { t: "Muito conteúdo, pouca direção", d: "Sem leitura de cenário e geopolítica, a maioria reage tarde e decide no ruído." },
+                  { t: "Muito potencial, pouco acesso", d: "Sem linguagem, repertório e as pessoas certas por perto, oportunidades simplesmente não chegam." },
+                  { t: "Muita ambição, pouca estrutura", d: "Sem ferramentas, proteção e operações globais bem entendidas, o jogo fica mais caro e mais lento." },
+                ].map((item, i) => (
+                  <Fade key={item.t} delay={i * 100}>
+                    <motion.div
+                      whileHover={{ y: -4, borderColor: "rgba(201,168,76,0.2)" }}
+                      transition={{ duration: 0.2 }}
+                      style={{ padding: "24px 28px", borderRadius: 16, background: "rgba(255,255,255,0.02)", borderWidth: 1, borderStyle: "solid", borderColor: "rgba(255,255,255,0.06)", height: "100%" }}
+                    >
+                      <h3 style={{ fontSize: 18, fontWeight: 500, fontFamily: SERIF, marginBottom: 12 }}>{item.t}</h3>
+                      <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.4)", margin: 0 }}>{item.d}</p>
+                    </motion.div>
+                  </Fade>
+                ))}
               </div>
             </div>
-          </Fade>
-        </div>
-      </section>
+          </section>
 
-      <AnimatedDivider />
-
-      {/* ═══ 6. PARA VOCÊ SE... ═══ */}
-      <section style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
-        <div style={{ maxWidth: 1024, margin: "0 auto" }}>
-          <Fade><h2 style={{ fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 48 }}>Isso é para você se<span style={{ color: GOLD }}>...</span></h2></Fade>
-          <div className="for-you-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-            <Fade>
-              <div style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(201,168,76,0.02)", border: "1px solid rgba(201,168,76,0.1)", height: "100%" }}>
-                <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-                  {["Quer aumentar o próprio valor antes de aumentar o tamanho do jogo", "Valoriza contexto, curadoria e repertório internacional", "Quer construir networking útil — não só consumir conteúdo", "Quer operar melhor com mais direção, linguagem e alavancas"].map(item => (
-                    <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: 12 }}><Check size={16} color={GOLD} style={{ marginTop: 2, flexShrink: 0 }} /><span style={{ fontSize: 14, lineHeight: 1.6, color: "rgba(255,255,255,0.65)" }}>{item}</span></div>
-                  ))}
-                </div>
+          {/* ═══ 3. POR DENTRO ═══ */}
+          <section id="inside" style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
+            <div style={{ maxWidth: 1024, margin: "0 auto" }}>
+              <Fade>
+                <Badge>Por dentro</Badge>
+                <h2 style={{ marginTop: 24, fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 16 }}>
+                  <TextReveal text="O que você encontra" delay={0} />
+                  {" "}
+                  <TextReveal text="ao entrar" gold italic delay={0.4} />
+                </h2>
+                <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 48, maxWidth: 720 }}>
+                  Quatro frentes de valor real. Cada uma desenhada para te colocar em uma posição melhor do que você estava ontem.
+                </p>
+              </Fade>
+              <div className="pillar-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+                {[
+                  { icon: Compass, title: "Direção", desc: "Geopolítica, leitura de cenário e contexto estratégico para você antecipar movimentos — enquanto a maioria ainda está reagindo." },
+                  { icon: BookOpen, title: "Valor pessoal", desc: "Idiomas, repertório e ferramentas práticas para ampliar seu alcance, sua utilidade e o tipo de oportunidade que chega até você." },
+                  { icon: Handshake, title: "Valor relacional", desc: "Networking, deals e matchmaking que conectam você a operadores, investidores e oportunidades que não circulam no mainstream." },
+                  { icon: Settings, title: "Valor operacional", desc: "Offshore, China import, crypto OPSEC e estruturas internacionais — não como teoria, mas como execução real com proteção." },
+                ].map((item, i) => (
+                  <Fade key={item.title} delay={i * 80}>
+                    <motion.div
+                      className="pillar-card"
+                      whileHover={{ y: -4, borderColor: "rgba(201,168,76,0.2)" }}
+                      transition={{ duration: 0.2 }}
+                      style={{ padding: "28px 32px", borderRadius: 16, background: "rgba(255,255,255,0.02)", borderWidth: 1, borderStyle: "solid", borderColor: "rgba(255,255,255,0.06)", height: "100%", display: "flex", gap: 24, alignItems: "flex-start" }}
+                    >
+                      <div style={{ width: 44, height: 44, minWidth: 44, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.15)", marginTop: 2 }}><item.icon size={20} color={GOLD} /></div>
+                      <div>
+                        <h3 style={{ fontSize: 20, fontWeight: 500, fontFamily: SERIF, marginBottom: 8 }}>{item.title}</h3>
+                        <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 0 }}>{item.desc}</p>
+                      </div>
+                    </motion.div>
+                  </Fade>
+                ))}
               </div>
-            </Fade>
-            <Fade delay={100}>
-              <div style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(255,255,255,0.015)", border: "1px solid rgba(255,255,255,0.05)", height: "100%" }}>
-                <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-                  {["Procura hype, promessa fácil ou atalhos mágicos", "Quer só assistir sem aplicar", "Prefere volume em vez de sinal", "Não valoriza contexto, profundidade e execução"].map(item => (
-                    <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: 12 }}><X size={16} color="rgba(255,255,255,0.2)" style={{ marginTop: 2, flexShrink: 0 }} /><span style={{ fontSize: 14, lineHeight: 1.6, color: "rgba(255,255,255,0.3)" }}>{item}</span></div>
-                  ))}
-                </div>
-              </div>
-            </Fade>
-          </div>
-        </div>
-      </section>
-
-      <AnimatedDivider />
-
-      {/* ═══ 7. PRICING ═══ */}
-      <section id="pricing" style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
-        <div style={{ maxWidth: 1024, margin: "0 auto" }}>
-          <Fade>
-            <h2 style={{ fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 12 }}>Escolha seu nível de <span style={{ fontStyle: "italic", color: GOLD }}>acesso</span></h2>
-            <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 48 }}>Entre pelo core ou desbloqueie a camada mais valiosa do clube.</p>
-          </Fade>
-          <div className="pricing-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20 }}>
-            <Fade>
-              <motion.div
-                whileHover={{ y: -4, borderColor: "rgba(201,168,76,0.2)" }}
-                transition={{ duration: 0.2 }}
-                style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(255,255,255,0.02)", borderWidth: 1, borderStyle: "solid", borderColor: "rgba(255,255,255,0.06)", display: "flex", flexDirection: "column", height: "100%" }}
-              >
-                <span style={{ display: "inline-flex", alignSelf: "flex-start", alignItems: "center", fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", padding: "6px 16px", borderRadius: 9999, border: "1px solid rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.6)", fontFamily: SERIF }}>Base</span>
-                <p style={{ marginTop: 20, fontSize: 14, color: "rgba(255,255,255,0.4)", marginBottom: 4 }}>A camada de direção e posicionamento</p>
-                <div style={{ marginTop: 12, marginBottom: 4 }}><span style={{ fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 300, fontFamily: SERIF }}>US$15</span><span style={{ fontSize: 14, marginLeft: 4, color: "rgba(255,255,255,0.35)" }}>/mês</span></div>
-                <p style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", marginBottom: 24 }}>aprox. R$79/mês</p>
-                <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32, flex: 1 }}>
-                  {[
-                    ["The Portal", "onboarding e direção"],
-                    ["The Core", "strategy & intel"],
-                    ["The Lounge", "networking"],
-                    ["Geopolitics", "leitura de cenário"],
-                  ].map(([name, sub]) => (
-                    <div key={name} style={{ display: "flex", alignItems: "center", gap: 12 }}>{dot()}<span style={{ fontSize: 14, color: "rgba(255,255,255,0.55)" }}>{name} <span style={{ color: "rgba(255,255,255,0.25)", fontSize: 12 }}>({sub})</span></span></div>
-                  ))}
-                </div>
-                <OutlineButton onClick={() => setCheckout("base")}>Escolher Base</OutlineButton>
-              </motion.div>
-            </Fade>
-            <Fade delay={100}>
-              <motion.div
-                whileHover={{ y: -4, borderColor: "rgba(201,168,76,0.4)" }}
-                transition={{ duration: 0.2 }}
-                style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(201,168,76,0.03)", borderWidth: 1, borderStyle: "solid", borderColor: "rgba(201,168,76,0.2)", display: "flex", flexDirection: "column", height: "100%", position: "relative", overflow: "hidden" }}
-              >
-                <div style={{ position: "absolute", top: 0, right: 0, width: 160, height: 160, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%)", transform: "translate(30%, -30%)", pointerEvents: "none" }} />
-                <p style={{ fontSize: 11, color: GOLD, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8, marginTop: 0 }}>Mais popular</p>
-                <span style={{ display: "inline-flex", alignSelf: "flex-start", alignItems: "center", fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", padding: "6px 16px", borderRadius: 9999, border: `1px solid ${GOLD}`, background: "rgba(201,168,76,0.1)", color: GOLD, fontFamily: SERIF }}>Premium</span>
-                <p style={{ marginTop: 20, fontSize: 14, color: "rgba(201,168,76,0.7)", marginBottom: 4 }}>A camada mais valiosa do clube</p>
-                <div style={{ marginTop: 12, marginBottom: 4 }}><span style={{ fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 300, fontFamily: SERIF, color: GOLD }}>US$29</span><span style={{ fontSize: 14, marginLeft: 4, color: "rgba(201,168,76,0.5)" }}>/mês</span></div>
-                <p style={{ fontSize: 12, color: "rgba(201,168,76,0.35)", marginBottom: 24 }}>aprox. R$149/mês</p>
-                <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32, flex: 1 }}>
-                  {[
-                    ["Tudo do Base", null],
-                    ["The Sanctum", "offshore, crypto, China"],
-                    ["Duck Tank", "deals e projetos"],
-                    ["Black Book", "case studies"],
-                    ["Global Moves", "vida internacional"],
-                    ["2 idiomas incluídos", null],
-                  ].map(([name, sub]) => (
-                    <div key={name} style={{ display: "flex", alignItems: "center", gap: 12 }}>{dot(true)}<span style={{ fontSize: 14, color: "rgba(255,255,255,0.7)" }}>{name}{sub && <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 12 }}> ({sub})</span>}</span></div>
-                  ))}
-                </div>
-                <GoldButton onClick={() => setCheckout("premium")} style={{ width: "100%" }}>Escolher Premium</GoldButton>
-              </motion.div>
-            </Fade>
-          </div>
-          <Fade delay={200}>
-            <div style={{ marginTop: 32, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: 8 }}>
-              <p className="pricing-note" style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", margin: 0, whiteSpace: "nowrap" }}>Cobrança internacional via Stripe. Valor final pode variar conforme câmbio.</p>
-              <p className="pricing-note" style={{ fontSize: 12, color: "rgba(201,168,76,0.5)", margin: 0, whiteSpace: "nowrap" }}>Pagamento também disponível via Pix ou crypto com atendimento direto.</p>
+              <Fade delay={350}><div style={{ marginTop: 56, textAlign: "center" }}><GoldButton href="pricing">Quero acessar o clube</GoldButton></div></Fade>
             </div>
-          </Fade>
-        </div>
-      </section>
+          </section>
 
-      {/* ═══ 8. FAQ ═══ */}
-      <section style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
-        <div style={{ maxWidth: 720, margin: "0 auto" }}>
-          <Fade><h2 style={{ fontSize: "clamp(24px, 3.5vw, 40px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 40 }}>Perguntas <span style={{ fontStyle: "italic", color: GOLD }}>frequentes</span></h2></Fade>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {[
-              { q: "O que exatamente eu recebo no Base?", a: "Acesso ao core do ecossistema: leitura de cenário, contexto, sinal e networking leve, sem ruído. Inclui The Portal, The Core, The Lounge e Geopolitics." },
-              { q: "O que muda no Premium?", a: "O Premium abre a camada mais valiosa do clube: The Sanctum, Duck Tank, Black Book, Global Moves e 2 idiomas incluídos. É onde vive a parte mais estratégica e operacional." },
-              { q: "Os 2 idiomas do Premium são escolhidos na entrada?", a: "Sim. Ao entrar no Premium, você define seus 2 idiomas. Extras podem ser adicionados depois por US$5/mês cada." },
-              { q: "Posso adicionar idiomas no Base?", a: "Sim. No Base, idiomas funcionam como extensão opcional por +US$5/mês cada." },
-              { q: "O que é o Polymarket Lab?", a: "Camada opcional para acompanhar leituras, teses e sinais ligados a prediction markets dentro da lógica do ecossistema. +US$10/mês." },
-              { q: "Como funciona o acesso depois do pagamento?", a: "Após a confirmação, você recebe o acesso imediato à plataforma e pode começar a navegar pelos canais do seu plano em minutos." },
-              { q: "O pagamento é mensal?", a: "Sim. Recorrente via Stripe, com cobrança internacional." },
-              { q: "Posso cancelar?", a: "Sim. Você pode cancelar a qualquer momento direto pela plataforma, sem burocracia." },
-            ].map((item, i) => (
-              <Fade key={i} delay={i * 40}><FAQItem q={item.q} a={item.a} /></Fade>
-            ))}
-          </div>
-        </div>
-      </section>
+          <AnimatedDivider />
 
-      {/* ═══ 9. FINAL CTA ═══ */}
-      <section style={{ position: "relative", padding: "112px 24px 160px", zIndex: 1 }}>
-        <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}><div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 60%)" }} /></div>
-        <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "center", position: "relative" }}>
-          <Fade><Logo size={48} /></Fade>
-          <Fade delay={100}><h2 style={{ marginTop: 32, fontSize: "clamp(28px, 5vw, 52px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 24 }}>Seu próximo nível começa <span style={{ fontStyle: "italic", color: GOLD }}>pelo ambiente certo.</span></h2></Fade>
-          <Fade delay={200}><p style={{ fontSize: 15, maxWidth: 480, margin: "0 auto 40px", lineHeight: 1.7, color: "rgba(255,255,255,0.4)" }}>Privado. Curado. Internacional.<br />Feito para quem quer operar com mais contexto, mais conexões e mais capacidade prática.</p></Fade>
-          <Fade delay={300}><GoldButton href="pricing">Ver meu acesso</GoldButton></Fade>
-        </div>
-      </section>
+          {/* ═══ 4. COMMUNITY SCREENSHOTS ═══ */}
+          <section style={{ position: "relative", padding: "80px 24px 112px", overflow: "hidden", zIndex: 1 }}>
+            <div style={{ maxWidth: 1024, margin: "0 auto" }}>
+              <Fade>
+                <div style={{ textAlign: "center", marginBottom: 48 }}>
+                  <Badge>O ambiente</Badge>
+                  <h2 style={{ marginTop: 24, fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 16 }}>
+                    <TextReveal text="Um ecossistema" delay={0} />
+                    {" "}
+                    <TextReveal text="real e organizado." gold italic delay={0.3} />
+                  </h2>
+                  <p style={{ fontSize: 15, maxWidth: 560, margin: "0 auto", lineHeight: 1.7, color: "rgba(255,255,255,0.4)" }}>Canais estruturados, inteligência curada e espaços que funcionam — do onboarding ao nível mais operacional.</p>
+                </div>
+              </Fade>
+              <Fade delay={200}><CommunityShowcase /></Fade>
+              <Fade delay={350}><p style={{ textAlign: "center", marginTop: 40, fontSize: 12, color: "rgba(255,255,255,0.25)" }}>Plataforma via app e desktop · Acesso imediato após checkout</p></Fade>
+            </div>
+          </section>
 
-      {/* FOOTER */}
-      <footer style={{ position: "relative", padding: "40px 24px", borderTop: "1px solid rgba(255,255,255,0.04)", zIndex: 1 }}>
-        <div style={{ maxWidth: 1024, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 24 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}><Logo size={22} /><span style={{ fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)", fontFamily: SERIF }}>DuckDuck Club</span></div>
-          <div style={{ display: "flex", gap: 24 }}>
-            {["Termos", "Privacidade"].map(item => (
-              <a key={item} href="#" style={{ fontSize: 12, color: "rgba(255,255,255,0.2)", textDecoration: "none", transition: "color 0.3s" }}
-                onMouseEnter={e => (e.currentTarget.style.color = "rgba(255,255,255,0.5)")} onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.2)")}>{item}</a>
-            ))}
-            <a href="https://instagram.com/duckduck.club" target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "rgba(255,255,255,0.2)", textDecoration: "none", transition: "color 0.3s" }}
-              onMouseEnter={e => (e.currentTarget.style.color = "rgba(255,255,255,0.5)")} onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.2)")}>Instagram</a>
-          </div>
-          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.15)" }}>© 2026 DuckDuck Club</div>
-        </div>
-      </footer>
-    </motion.div>
+          <AnimatedDivider />
+
+          {/* ═══ 5. SOBRE O CRIADOR ═══ */}
+          <section style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
+            <div style={{ maxWidth: 1024, margin: "0 auto" }}>
+              <Fade>
+                <Badge>Sobre o criador</Badge>
+                <div className="founder-grid" style={{ marginTop: 32, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 48, alignItems: "start" }}>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <img src="/founder-photo.jpeg" alt="Nando Voyager — Founder" style={{ width: 320, height: 320, minWidth: 320, borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(201,168,76,0.3)" }} />
+                    <p style={{ fontSize: 18, fontWeight: 500, fontFamily: SERIF, color: "white", marginTop: 20, marginBottom: 4 }}>Nando Voyager</p>
+                    <a href="https://instagram.com/nandovoyager" target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: GOLD, textDecoration: "none", opacity: 0.85, transition: "opacity 0.2s" }}
+                      onMouseEnter={e => (e.currentTarget.style.opacity = "1")} onMouseLeave={e => (e.currentTarget.style.opacity = "0.85")}>@nandovoyager</a>
+                  </div>
+                  <div>
+                    <h2 style={{ fontSize: "clamp(22px, 3.5vw, 36px)", fontWeight: 300, lineHeight: 1.2, fontFamily: SERIF, marginBottom: 24 }}>
+                      <TextReveal text="A DuckDuck Club nasceu da interseção entre" delay={0} />
+                      {" "}
+                      <TextReveal text="contexto global, operação real e construção de valor." gold italic delay={0.5} />
+                    </h2>
+                    <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 0 }}>
+                      Depois de viver entre países, operar em ambientes diferentes e perceber como idioma, geopolítica, estrutura, network e execução mudam o nível do jogo, eu decidi reunir tudo isso em um ecossistema privado. A DuckDuck Club foi criada para quem quer deixar de depender de improviso, ruído e informação solta — e começar a operar com mais clareza, mais linguagem e mais capacidade prática.
+                    </p>
+                  </div>
+                </div>
+              </Fade>
+            </div>
+          </section>
+
+          <AnimatedDivider />
+
+          {/* ═══ 6. PARA VOCÊ SE... ═══ */}
+          <section style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
+            <div style={{ maxWidth: 1024, margin: "0 auto" }}>
+              <Fade>
+                <h2 style={{ fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 48 }}>
+                  <TextReveal text="Isso é para você se" delay={0} />
+                  <span style={{ color: GOLD }}>...</span>
+                </h2>
+              </Fade>
+              <div className="for-you-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+                <Fade>
+                  <div style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(201,168,76,0.02)", border: "1px solid rgba(201,168,76,0.1)", height: "100%" }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                      {["Quer aumentar o próprio valor antes de aumentar o tamanho do jogo", "Valoriza contexto, curadoria e repertório internacional", "Quer construir networking útil — não só consumir conteúdo", "Quer operar melhor com mais direção, linguagem e alavancas"].map(item => (
+                        <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: 12 }}><Check size={16} color={GOLD} style={{ marginTop: 2, flexShrink: 0 }} /><span style={{ fontSize: 14, lineHeight: 1.6, color: "rgba(255,255,255,0.65)" }}>{item}</span></div>
+                      ))}
+                    </div>
+                  </div>
+                </Fade>
+                <Fade delay={100}>
+                  <div style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(255,255,255,0.015)", border: "1px solid rgba(255,255,255,0.05)", height: "100%" }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                      {["Procura hype, promessa fácil ou atalhos mágicos", "Quer só assistir sem aplicar", "Prefere volume em vez de sinal", "Não valoriza contexto, profundidade e execução"].map(item => (
+                        <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: 12 }}><X size={16} color="rgba(255,255,255,0.2)" style={{ marginTop: 2, flexShrink: 0 }} /><span style={{ fontSize: 14, lineHeight: 1.6, color: "rgba(255,255,255,0.3)" }}>{item}</span></div>
+                      ))}
+                    </div>
+                  </div>
+                </Fade>
+              </div>
+            </div>
+          </section>
+
+          <AnimatedDivider />
+
+          {/* ═══ 7. PRICING ═══ */}
+          <section id="pricing" style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
+            <div style={{ maxWidth: 1024, margin: "0 auto" }}>
+              <Fade>
+                <h2 style={{ fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 12 }}>
+                  <TextReveal text="Escolha seu nível de" delay={0} />
+                  {" "}
+                  <TextReveal text="acesso" gold italic delay={0.4} />
+                </h2>
+                <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 48 }}>Entre pelo core ou desbloqueie a camada mais valiosa do clube.</p>
+              </Fade>
+              <div className="pricing-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20 }}>
+                <Fade>
+                  <motion.div
+                    whileHover={{ y: -4, borderColor: "rgba(201,168,76,0.2)" }}
+                    transition={{ duration: 0.2 }}
+                    style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(255,255,255,0.02)", borderWidth: 1, borderStyle: "solid", borderColor: "rgba(255,255,255,0.06)", display: "flex", flexDirection: "column", height: "100%" }}
+                  >
+                    <span style={{ display: "inline-flex", alignSelf: "flex-start", alignItems: "center", fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", padding: "6px 16px", borderRadius: 9999, border: "1px solid rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.6)", fontFamily: SERIF }}>Base</span>
+                    <p style={{ marginTop: 20, fontSize: 14, color: "rgba(255,255,255,0.4)", marginBottom: 4 }}>A camada de direção e posicionamento</p>
+                    <div style={{ marginTop: 12, marginBottom: 4 }}><span style={{ fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 300, fontFamily: SERIF }}>US$15</span><span style={{ fontSize: 14, marginLeft: 4, color: "rgba(255,255,255,0.35)" }}>/mês</span></div>
+                    <p style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", marginBottom: 24 }}>aprox. R$79/mês</p>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32, flex: 1 }}>
+                      {[["The Portal", "onboarding e direção"], ["The Core", "strategy & intel"], ["The Lounge", "networking"], ["Geopolitics", "leitura de cenário"]].map(([name, sub]) => (
+                        <div key={name} style={{ display: "flex", alignItems: "center", gap: 12 }}>{dot()}<span style={{ fontSize: 14, color: "rgba(255,255,255,0.55)" }}>{name} <span style={{ color: "rgba(255,255,255,0.25)", fontSize: 12 }}>({sub})</span></span></div>
+                      ))}
+                    </div>
+                    <OutlineButton onClick={() => setCheckout("base")}>Escolher Base</OutlineButton>
+                  </motion.div>
+                </Fade>
+                <Fade delay={100}>
+                  <motion.div
+                    whileHover={{ y: -4, borderColor: "rgba(201,168,76,0.4)" }}
+                    transition={{ duration: 0.2 }}
+                    style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(201,168,76,0.03)", borderWidth: 1, borderStyle: "solid", borderColor: "rgba(201,168,76,0.2)", display: "flex", flexDirection: "column", height: "100%", position: "relative", overflow: "hidden" }}
+                  >
+                    <div style={{ position: "absolute", top: 0, right: 0, width: 160, height: 160, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%)", transform: "translate(30%, -30%)", pointerEvents: "none" }} />
+                    <p style={{ fontSize: 11, color: GOLD, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8, marginTop: 0 }}>Mais popular</p>
+                    <span style={{ display: "inline-flex", alignSelf: "flex-start", alignItems: "center", fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", padding: "6px 16px", borderRadius: 9999, border: `1px solid ${GOLD}`, background: "rgba(201,168,76,0.1)", color: GOLD, fontFamily: SERIF }}>Premium</span>
+                    <p style={{ marginTop: 20, fontSize: 14, color: "rgba(201,168,76,0.7)", marginBottom: 4 }}>A camada mais valiosa do clube</p>
+                    <div style={{ marginTop: 12, marginBottom: 4 }}><span style={{ fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 300, fontFamily: SERIF, color: GOLD }}>US$29</span><span style={{ fontSize: 14, marginLeft: 4, color: "rgba(201,168,76,0.5)" }}>/mês</span></div>
+                    <p style={{ fontSize: 12, color: "rgba(201,168,76,0.35)", marginBottom: 24 }}>aprox. R$149/mês</p>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32, flex: 1 }}>
+                      {[["Tudo do Base", null], ["The Sanctum", "offshore, crypto, China"], ["Duck Tank", "deals e projetos"], ["Black Book", "case studies"], ["Global Moves", "vida internacional"], ["2 idiomas incluídos", null]].map(([name, sub]) => (
+                        <div key={name} style={{ display: "flex", alignItems: "center", gap: 12 }}>{dot(true)}<span style={{ fontSize: 14, color: "rgba(255,255,255,0.7)" }}>{name}{sub && <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 12 }}> ({sub})</span>}</span></div>
+                      ))}
+                    </div>
+                    <GoldButton onClick={() => setCheckout("premium")} style={{ width: "100%" }}>Escolher Premium</GoldButton>
+                  </motion.div>
+                </Fade>
+              </div>
+              <Fade delay={200}>
+                <div style={{ marginTop: 32, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: 8 }}>
+                  <p className="pricing-note" style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", margin: 0, whiteSpace: "nowrap" }}>Cobrança internacional via Stripe. Valor final pode variar conforme câmbio.</p>
+                  <p className="pricing-note" style={{ fontSize: 12, color: "rgba(201,168,76,0.5)", margin: 0, whiteSpace: "nowrap" }}>Pagamento também disponível via Pix ou crypto com atendimento direto.</p>
+                </div>
+              </Fade>
+            </div>
+          </section>
+
+          {/* ═══ 8. FAQ ═══ */}
+          <section style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
+            <div style={{ maxWidth: 720, margin: "0 auto" }}>
+              <Fade>
+                <h2 style={{ fontSize: "clamp(24px, 3.5vw, 40px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 40 }}>
+                  <TextReveal text="Perguntas" delay={0} />
+                  {" "}
+                  <TextReveal text="frequentes" gold italic delay={0.3} />
+                </h2>
+              </Fade>
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                {[
+                  { q: "O que exatamente eu recebo no Base?", a: "Acesso ao core do ecossistema: leitura de cenário, contexto, sinal e networking leve, sem ruído. Inclui The Portal, The Core, The Lounge e Geopolitics." },
+                  { q: "O que muda no Premium?", a: "O Premium abre a camada mais valiosa do clube: The Sanctum, Duck Tank, Black Book, Global Moves e 2 idiomas incluídos. É onde vive a parte mais estratégica e operacional." },
+                  { q: "Os 2 idiomas do Premium são escolhidos na entrada?", a: "Sim. Ao entrar no Premium, você define seus 2 idiomas. Extras podem ser adicionados depois por US$5/mês cada." },
+                  { q: "Posso adicionar idiomas no Base?", a: "Sim. No Base, idiomas funcionam como extensão opcional por +US$5/mês cada." },
+                  { q: "O que é o Polymarket Lab?", a: "Camada opcional para acompanhar leituras, teses e sinais ligados a prediction markets dentro da lógica do ecossistema. +US$10/mês." },
+                  { q: "Como funciona o acesso depois do pagamento?", a: "Após a confirmação, você recebe o acesso imediato à plataforma e pode começar a navegar pelos canais do seu plano em minutos." },
+                  { q: "O pagamento é mensal?", a: "Sim. Recorrente via Stripe, com cobrança internacional." },
+                  { q: "Posso cancelar?", a: "Sim. Você pode cancelar a qualquer momento direto pela plataforma, sem burocracia." },
+                ].map((item, i) => (
+                  <Fade key={i} delay={i * 40}><FAQItem q={item.q} a={item.a} /></Fade>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ═══ 9. FINAL CTA ═══ */}
+          <section style={{ position: "relative", padding: "112px 24px 160px", zIndex: 1 }}>
+            <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}><div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 60%)" }} /></div>
+            <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "center", position: "relative" }}>
+              <Fade><Logo size={48} /></Fade>
+              <Fade delay={100}>
+                <h2 style={{ marginTop: 32, fontSize: "clamp(28px, 5vw, 52px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 24 }}>
+                  <TextReveal text="Seu próximo nível começa" delay={0} />
+                  <br />
+                  <TextReveal text="pelo ambiente certo." gold italic delay={0.4} />
+                </h2>
+              </Fade>
+              <Fade delay={200}><p style={{ fontSize: 15, maxWidth: 480, margin: "0 auto 40px", lineHeight: 1.7, color: "rgba(255,255,255,0.4)" }}>Privado. Curado. Internacional.<br />Feito para quem quer operar com mais contexto, mais conexões e mais capacidade prática.</p></Fade>
+              <Fade delay={300}><GoldButton href="pricing">Ver meu acesso</GoldButton></Fade>
+            </div>
+          </section>
+
+          {/* FOOTER */}
+          <footer style={{ position: "relative", padding: "40px 24px", borderTop: "1px solid rgba(255,255,255,0.04)", zIndex: 1 }}>
+            <div style={{ maxWidth: 1024, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 24 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}><Logo size={22} /><span style={{ fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)", fontFamily: SERIF }}>DuckDuck Club</span></div>
+              <div style={{ display: "flex", gap: 24 }}>
+                {["Termos", "Privacidade"].map(item => (
+                  <a key={item} href="#" style={{ fontSize: 12, color: "rgba(255,255,255,0.2)", textDecoration: "none", transition: "color 0.3s" }}
+                    onMouseEnter={e => (e.currentTarget.style.color = "rgba(255,255,255,0.5)")} onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.2)")}>{item}</a>
+                ))}
+                <a href="https://instagram.com/duckduck.club" target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "rgba(255,255,255,0.2)", textDecoration: "none", transition: "color 0.3s" }}
+                  onMouseEnter={e => (e.currentTarget.style.color = "rgba(255,255,255,0.5)")} onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.2)")}>Instagram</a>
+              </div>
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.15)" }}>© 2026 DuckDuck Club</div>
+            </div>
+          </footer>
+        </motion.div>
+      )}
+    </>
   );
 }
