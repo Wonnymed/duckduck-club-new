@@ -118,7 +118,7 @@ function CheckoutModal({ plan, onClose }: { plan: string; onClose: () => void })
       <div onClick={e => e.stopPropagation()} style={{ position: "relative", width: "100%", maxWidth: 900, maxHeight: "90vh", overflowY: "auto", borderRadius: 16, background: "#111", border: "1px solid rgba(255,255,255,0.08)" }}>
         <button onClick={onClose} style={{ position: "absolute", top: 16, right: 16, zIndex: 10, width: 32, height: 32, borderRadius: 9999, background: "rgba(255,255,255,0.05)", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><X size={16} color="rgba(255,255,255,0.6)" /></button>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
+        <div className="checkout-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
           <div style={{ padding: 32 }}>
             <div style={{ display: "inline-flex", fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", padding: "4px 12px", borderRadius: 9999, color: GOLD, background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.15)", marginBottom: 24 }}>Plano {premium ? "Premium" : "Base"}</div>
             <h3 style={{ fontSize: 28, fontWeight: 300, fontFamily: SERIF, marginBottom: 16 }}>Personalize seu acesso</h3>
@@ -196,7 +196,7 @@ function CommunityShowcase() {
   return (
     <div style={{ position: "relative" }}>
       <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "radial-gradient(ellipse at center, rgba(201,168,76,0.04) 0%, transparent 70%)" }} />
-      <div style={{ display: "flex", justifyContent: "center", gap: "2%", alignItems: "flex-end" }}>
+      <div className="screenshots-row" style={{ display: "flex", justifyContent: "center", gap: "2%", alignItems: "flex-end" }}>
         {screens.map((s, i) => (
           <div key={i} style={{
             width: s.w,
@@ -274,6 +274,16 @@ export default function Home() {
         @media (max-width: 768px) {
           .desktop-nav { display: none !important; }
           .mobile-menu { display: block !important; }
+          .hero-tags { flex-direction: column !important; align-items: center !important; }
+          .pillar-grid { grid-template-columns: 1fr !important; }
+          .pillar-card { flex-direction: column !important; }
+          .for-you-grid { grid-template-columns: 1fr !important; }
+          .pricing-grid { grid-template-columns: 1fr !important; }
+          .problem-grid { grid-template-columns: 1fr !important; }
+          .founder-grid { grid-template-columns: 1fr !important; }
+          .checkout-grid { grid-template-columns: 1fr !important; }
+          .screenshots-row { gap: 8px !important; }
+          .screenshots-row > div { border-radius: 12px !important; transform: none !important; }
         }
       `}</style>
 
@@ -293,7 +303,7 @@ export default function Home() {
           </Fade>
           <Fade delay={450}><GoldButton href="pricing">Ver meu acesso</GoldButton></Fade>
           <Fade delay={600}>
-            <div style={{ marginTop: 48, display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 12 }}>
+            <div className="hero-tags" style={{ marginTop: 48, display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 12 }}>
               {["Idiomas para acesso global", "Network, deals e matchmaking", "Offshore, China e geopolítica", "Privado, curado, sem ruído"].map(t => (
                 <span key={t} style={{ fontSize: 12, padding: "8px 16px", borderRadius: 9999, border: "1px solid rgba(201,168,76,0.12)", background: "rgba(201,168,76,0.03)", color: "rgba(255,255,255,0.45)" }}>{t}</span>
               ))}
@@ -314,7 +324,7 @@ export default function Home() {
               Muita gente quer crescer e acessar oportunidades maiores. Mas tenta fazer isso com informação espalhada, networking fraco, leitura rasa de cenário e pouca capacidade prática de execução. O resultado é viver ocupada, mas continuar jogando abaixo do próprio potencial.
             </p>
           </Fade>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 20 }}>
+          <div className="problem-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 20 }}>
             {[
               { t: "Muito conteúdo, pouca direção", d: "Sem leitura de cenário e geopolítica, a maioria reage tarde e decide no ruído." },
               { t: "Muito potencial, pouco acesso", d: "Sem linguagem, repertório e as pessoas certas por perto, oportunidades simplesmente não chegam." },
@@ -342,7 +352,7 @@ export default function Home() {
             </p>
           </Fade>
           {/* 2x2 grid of horizontal rectangles */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+          <div className="pillar-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
             {[
               { icon: Compass, title: "Direção", desc: "Geopolítica, leitura de cenário e contexto estratégico para você antecipar movimentos — enquanto a maioria ainda está reagindo." },
               { icon: BookOpen, title: "Valor pessoal", desc: "Idiomas, repertório e ferramentas práticas para ampliar seu alcance, sua utilidade e o tipo de oportunidade que chega até você." },
@@ -350,7 +360,7 @@ export default function Home() {
               { icon: Settings, title: "Valor operacional", desc: "Offshore, China import, crypto OPSEC e estruturas internacionais — não como teoria, mas como execução real com proteção." },
             ].map((item, i) => (
               <Fade key={item.title} delay={i * 80}>
-                <div style={{ padding: "28px 32px", borderRadius: 16, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", height: "100%", display: "flex", gap: 24, alignItems: "flex-start" }}>
+                <div className="pillar-card" style={{ padding: "28px 32px", borderRadius: 16, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", height: "100%", display: "flex", gap: 24, alignItems: "flex-start" }}>
                   <div style={{ width: 44, height: 44, minWidth: 44, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.15)", marginTop: 2 }}><item.icon size={20} color={GOLD} /></div>
                   <div>
                     <h3 style={{ fontSize: 20, fontWeight: 500, fontFamily: SERIF, marginBottom: 8 }}>{item.title}</h3>
@@ -384,7 +394,7 @@ export default function Home() {
         <div style={{ maxWidth: 1024, margin: "0 auto" }}>
           <Fade>
             <Badge>Sobre o criador</Badge>
-            <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 48, alignItems: "start" }}>
+            <div className="founder-grid" style={{ marginTop: 32, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 48, alignItems: "start" }}>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                 <img src="/founder-photo.jpeg" alt="Nando Voyager — Founder" style={{ width: 320, height: 320, minWidth: 320, borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(201,168,76,0.3)" }} />
                 <p style={{ fontSize: 18, fontWeight: 500, fontFamily: SERIF, color: "white", marginTop: 20, marginBottom: 4 }}>Nando Voyager</p>
@@ -408,7 +418,7 @@ export default function Home() {
       <section style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
         <div style={{ maxWidth: 1024, margin: "0 auto" }}>
           <Fade><h2 style={{ fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 48 }}>Isso é para você se<span style={{ color: GOLD }}>...</span></h2></Fade>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+          <div className="for-you-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
             <Fade>
               <div style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(201,168,76,0.02)", border: "1px solid rgba(201,168,76,0.1)", height: "100%" }}>
                 <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
@@ -438,7 +448,7 @@ export default function Home() {
             <h2 style={{ fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 12 }}>Escolha seu nível de <span style={{ fontStyle: "italic", color: GOLD }}>acesso</span></h2>
             <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 48 }}>Entre pelo core ou desbloqueie a camada mais valiosa do clube.</p>
           </Fade>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20 }}>
+          <div className="pricing-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20 }}>
             <Fade>
               <div style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", display: "flex", flexDirection: "column", height: "100%" }}>
                 <span style={{ display: "inline-flex", alignSelf: "flex-start", alignItems: "center", fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", padding: "6px 16px", borderRadius: 9999, border: "1px solid rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.6)", fontFamily: SERIF }}>Base</span>
