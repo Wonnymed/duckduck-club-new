@@ -356,7 +356,7 @@ export default function Home() {
         @media (max-width: 768px) {
           .desktop-nav { display: none !important; }
           .mobile-menu { display: block !important; }
-          .hero-tags { flex-direction: column !important; align-items: center !important; }
+          .hero-tags { display: grid !important; grid-template-columns: 1fr 1fr !important; flex-direction: unset !important; gap: 8px !important; margin-top: 32px !important; }
           .pillar-grid { grid-template-columns: 1fr !important; }
           .pillar-card { flex-direction: column !important; }
           .for-you-grid { grid-template-columns: 1fr !important; }
