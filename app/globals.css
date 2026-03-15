@@ -2,6 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html, body {
@@ -12,6 +13,8 @@ html, body {
 html {
   scroll-behavior: smooth;
 }
+
+
 
 body {
   background: #0A0A0A;

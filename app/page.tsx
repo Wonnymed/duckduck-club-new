@@ -1,29 +1,44 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Globe, ArrowRight, Menu, X, Check, ChevronDown, Compass, BookOpen, Handshake, Settings } from "lucide-react";
+import { motion, useScroll, useTransform, useInView } from "framer-motion";
+import { ArrowRight, Menu, X, Check, ChevronDown, Compass, BookOpen, Handshake, Settings } from "lucide-react";
 
 const GOLD = "#C9A84C";
 const GOLD_DIM = "#A0832A";
 const SERIF = "'Cormorant Garamond', serif";
 
-/* ─── Fade-in on scroll ─── */
-function useFadeIn() {
+/* ─── Fade-in on scroll (framer-motion) ─── */
+function Fade({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [v, setV] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setV(true); obs.disconnect(); } }, { threshold: 0.12 });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-  return { ref, style: { opacity: v ? 1 : 0, transform: v ? "translateY(0)" : "translateY(24px)", transition: "opacity 0.7s cubic-bezier(.4,0,.2,1), transform 0.7s cubic-bezier(.4,0,.2,1)" } };
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+  return (
+    <motion.div
+      ref={ref}
+      className={className}
+      initial={{ opacity: 0, y: 30 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+      transition={{ duration: 0.8, delay: delay / 1000, ease: [0.25, 0.1, 0.25, 1] }}
+    >
+      {children}
+    </motion.div>
+  );
 }
 
-function Fade({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
-  const { ref, style } = useFadeIn();
-  return <div ref={ref} style={{ ...style, transitionDelay: `${delay}ms` }} className={className}>{children}</div>;
+/* ─── Animated section divider ─── */
+function AnimatedDivider() {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  return (
+    <div ref={ref} style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "0 24px" }}>
+      <motion.div
+        initial={{ scaleX: 0, opacity: 0 }}
+        animate={isInView ? { scaleX: 1, opacity: 1 } : { scaleX: 0, opacity: 0 }}
+        transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
+        style={{ height: 1, width: "100%", maxWidth: 600, background: "linear-gradient(90deg, transparent, rgba(201,168,76,0.2), transparent)", transformOrigin: "center" }}
+      />
+    </div>
+  );
 }
 
 /* ─── Smooth scroll helper ─── */
@@ -48,21 +63,31 @@ function GoldButton({ children, onClick, href, style: extraStyle = {} }: { child
     if (onClick) onClick();
   };
   return (
-    <button onClick={handleClick} style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "16px 32px", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase" as const, fontWeight: 600, fontFamily: SERIF, background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", border: "none", cursor: "pointer", transition: "box-shadow 0.3s", ...extraStyle }}
-      onMouseEnter={e => (e.currentTarget.style.boxShadow = "0 0 40px rgba(201,168,76,0.18), 0 8px 32px rgba(0,0,0,0.4)")}
-      onMouseLeave={e => (e.currentTarget.style.boxShadow = "none")}>
+    <motion.button
+      onClick={handleClick}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "16px 32px", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase" as const, fontWeight: 600, fontFamily: SERIF, background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", border: "none", cursor: "pointer", transition: "box-shadow 0.3s", ...extraStyle }}
+      onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => (e.currentTarget.style.boxShadow = "0 0 40px rgba(201,168,76,0.18), 0 8px 32px rgba(0,0,0,0.4)")}
+      onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => (e.currentTarget.style.boxShadow = "none")}
+    >
       {children}<ArrowRight size={15} />
-    </button>
+    </motion.button>
   );
 }
 
 function OutlineButton({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) {
   return (
-    <button onClick={onClick} style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "14px 28px", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase" as const, fontFamily: SERIF, color: GOLD, border: "1px solid rgba(201,168,76,0.3)", background: "transparent", cursor: "pointer", transition: "all 0.3s", width: "100%" }}
-      onMouseEnter={e => { e.currentTarget.style.borderColor = GOLD; e.currentTarget.style.background = "rgba(201,168,76,0.06)"; }}
-      onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(201,168,76,0.3)"; e.currentTarget.style.background = "transparent"; }}>
+    <motion.button
+      onClick={onClick}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "14px 28px", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase" as const, fontFamily: SERIF, color: GOLD, border: "1px solid rgba(201,168,76,0.3)", background: "transparent", cursor: "pointer", transition: "all 0.3s", width: "100%" }}
+      onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => { e.currentTarget.style.borderColor = GOLD; e.currentTarget.style.background = "rgba(201,168,76,0.06)"; }}
+      onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => { e.currentTarget.style.borderColor = "rgba(201,168,76,0.3)"; e.currentTarget.style.background = "transparent"; }}
+    >
       {children}
-    </button>
+    </motion.button>
   );
 }
 
@@ -126,14 +151,14 @@ function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: (
   const [langs, setLangs] = useState<string[]>([]);
   const [payMethod, setPayMethod] = useState<'card' | 'pix' | 'crypto'>('card');
   const freeIncluded = premium ? 2 : 0;
-  const maxLangs = premium ? 3 : 2; // 2 free + 1 extra for premium; 0 free + 2 extra for base
+  const maxLangs = premium ? 3 : 2;
   const extraLanguages = Math.max(0, langs.length - freeIncluded);
   const normalizedExtra = Math.min(extraLanguages, premium ? 1 : 2);
   const total = basePrice + normalizedExtra * 5 + (poly ? 10 : 0);
   const brl = Math.round(total * 5.2);
   const toggle = (l: string) => setLangs(p => {
     if (p.includes(l)) return p.filter(x => x !== l);
-    if (p.length >= maxLangs) return p; // lock at max
+    if (p.length >= maxLangs) return p;
     return [...p, l];
   });
 
@@ -278,20 +303,25 @@ function CommunityShowcase() {
       <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "radial-gradient(ellipse at center, rgba(201,168,76,0.04) 0%, transparent 70%)" }} />
       <div className="screenshots-row" style={{ display: "flex", justifyContent: "center", gap: "2%", alignItems: "flex-end" }}>
         {screens.map((s, i) => (
-          <div key={i} style={{
-            width: s.w,
-            maxWidth: 260,
-            borderRadius: 16,
-            overflow: "hidden",
-            boxShadow: "0 25px 50px rgba(0,0,0,0.5)",
-            border: s.featured ? "1px solid rgba(201,168,76,0.15)" : "1px solid rgba(255,255,255,0.08)",
-            transform: `rotate(${s.rotate}deg) translateY(${s.ty}px)`,
-            position: "relative" as const,
-            zIndex: s.featured ? 3 : 1,
-          }}>
+          <motion.div
+            key={i}
+            animate={{ y: [0, -6, 0] }}
+            transition={{ duration: 3 + i * 0.4, repeat: Infinity, ease: "easeInOut", delay: i * 0.6 }}
+            style={{
+              width: s.w,
+              maxWidth: 260,
+              borderRadius: 16,
+              overflow: "hidden",
+              boxShadow: "0 25px 50px rgba(0,0,0,0.5)",
+              border: s.featured ? "1px solid rgba(201,168,76,0.15)" : "1px solid rgba(255,255,255,0.08)",
+              transform: `rotate(${s.rotate}deg) translateY(${s.ty}px)`,
+              position: "relative" as const,
+              zIndex: s.featured ? 3 : 1,
+            }}
+          >
             <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 60%, rgba(10,10,10,0.4) 100%)", zIndex: 2, pointerEvents: "none" }} />
             <img src={s.src} alt={s.alt} style={{ width: "100%", height: "auto", display: "block", filter: s.featured ? "brightness(0.95)" : "brightness(0.85)" }} />
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>
@@ -307,6 +337,9 @@ export default function Home() {
   const [checkout, setCheckout] = useState<string | null>(null);
   const [whatsappForm, setWhatsappForm] = useState<{ plan: string; method: string; totalUSD: number } | null>(null);
 
+  const { scrollY } = useScroll();
+  const heroGlowY = useTransform(scrollY, [0, 600], [0, 100]);
+
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", fn);
@@ -316,14 +349,14 @@ export default function Home() {
   const dot = (gold = false) => <div style={{ width: 6, height: 6, borderRadius: 3, background: gold ? GOLD : "rgba(255,255,255,0.25)", flexShrink: 0 }} />;
 
   return (
-    <>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
       <MobileNav open={menuOpen} onClose={() => setMenuOpen(false)} />
       {checkout && <CheckoutModal plan={checkout} onClose={() => setCheckout(null)} onWhatsApp={(p, m, t) => { setCheckout(null); setTimeout(() => setWhatsappForm({ plan: p, method: m, totalUSD: t }), 200); }} />}
       {whatsappForm && <WhatsAppFormModal plan={whatsappForm.plan} method={whatsappForm.method} totalUSD={whatsappForm.totalUSD} onClose={() => setWhatsappForm(null)} />}
 
-      {/* Ambient glow */}
+      {/* Ambient glow with parallax */}
       <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0 }}>
-        <div style={{ position: "absolute", top: "-20%", left: "20%", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.03) 0%, transparent 70%)" }} />
+        <motion.div style={{ position: "absolute", top: "-20%", left: "20%", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.03) 0%, transparent 70%)", y: heroGlowY }} />
         <div style={{ position: "absolute", bottom: "-10%", right: "10%", width: 400, height: 400, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.02) 0%, transparent 70%)" }} />
       </div>
 
@@ -378,27 +411,47 @@ export default function Home() {
       {/* ═══ 1. HERO ═══ */}
       <section style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "96px 24px 80px", zIndex: 1 }}>
         <div style={{ maxWidth: 896, margin: "0 auto", textAlign: "center" }}>
-          <Fade><Badge>Ecossistema Privado</Badge></Fade>
-          <Fade delay={150}>
-            <h1 style={{ marginTop: 40, marginBottom: 28, fontSize: "clamp(30px, 6vw, 72px)", fontWeight: 300, lineHeight: 1.1, fontFamily: SERIF }}>
-              Antes de pensar em crescer financeiramente, <span style={{ fontStyle: "italic", color: GOLD }}>aumente o seu valor no jogo.</span>
-            </h1>
-          </Fade>
-          <Fade delay={300}>
-            <p style={{ maxWidth: 640, margin: "0 auto 40px", fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)" }}>
-              DuckDuck Club é um ecossistema privado para quem quer mais direção, mais contexto e mais valor real.<span className="hero-break" />​Aqui você constrói repertório internacional, aprende idiomas, amplia networking e acessa temas como offshore, China import, geopolítica, investimentos, segurança digital e operação global.
-            </p>
-          </Fade>
-          <Fade delay={450}><GoldButton href="pricing">Ver meu acesso</GoldButton></Fade>
-          <Fade delay={600}>
-            <div className="hero-tags" style={{ marginTop: 48, display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 12 }}>
-              {["Idiomas para acesso global", "Network, deals e matchmaking", "Offshore, China e geopolítica", "Privado, curado, sem ruído"].map(t => (
-                <span key={t} className="hero-pill" style={{ fontSize: 12, padding: "8px 16px", borderRadius: 9999, border: "1px solid rgba(201,168,76,0.12)", background: "rgba(201,168,76,0.03)", color: "rgba(255,255,255,0.45)", minHeight: 40, display: "flex", alignItems: "center", justifyContent: "center" }}>{t}</span>
-              ))}
-            </div>
-          </Fade>
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}>
+            <Badge>Ecossistema Privado</Badge>
+          </motion.div>
+          <motion.h1
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.15, ease: [0.25, 0.1, 0.25, 1] }}
+            style={{ marginTop: 40, marginBottom: 28, fontSize: "clamp(30px, 6vw, 72px)", fontWeight: 300, lineHeight: 1.1, fontFamily: SERIF }}
+          >
+            Antes de pensar em crescer financeiramente, <span style={{ fontStyle: "italic", color: GOLD }}>aumente o seu valor no jogo.</span>
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+            style={{ maxWidth: 640, margin: "0 auto 40px", fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)" }}
+          >
+            DuckDuck Club é um ecossistema privado para quem quer mais direção, mais contexto e mais valor real.<span className="hero-break" />​Aqui você constrói repertório internacional, aprende idiomas, amplia networking e acessa temas como offshore, China import, geopolítica, investimentos, segurança digital e operação global.
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.45, ease: [0.25, 0.1, 0.25, 1] }}
+          >
+            <GoldButton href="pricing">Ver meu acesso</GoldButton>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.65 }}
+            className="hero-tags"
+            style={{ marginTop: 48, display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 12 }}
+          >
+            {["Idiomas para acesso global", "Network, deals e matchmaking", "Offshore, China e geopolítica", "Privado, curado, sem ruído"].map(t => (
+              <span key={t} className="hero-pill" style={{ fontSize: 12, padding: "8px 16px", borderRadius: 9999, border: "1px solid rgba(201,168,76,0.12)", background: "rgba(201,168,76,0.03)", color: "rgba(255,255,255,0.45)", minHeight: 40, display: "flex", alignItems: "center", justifyContent: "center" }}>{t}</span>
+            ))}
+          </motion.div>
         </div>
       </section>
+
+      <AnimatedDivider />
 
       {/* ═══ 2. O PROBLEMA ═══ */}
       <section id="about" style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
@@ -419,15 +472,21 @@ export default function Home() {
               { t: "Muita ambição, pouca estrutura", d: "Sem ferramentas, proteção e operações globais bem entendidas, o jogo fica mais caro e mais lento." },
             ].map((item, i) => (
               <Fade key={item.t} delay={i * 100}>
-                <div style={{ padding: "24px 28px", borderRadius: 16, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", height: "100%" }}>
+                <motion.div
+                  whileHover={{ y: -4, borderColor: "rgba(201,168,76,0.2)" }}
+                  transition={{ duration: 0.2 }}
+                  style={{ padding: "24px 28px", borderRadius: 16, background: "rgba(255,255,255,0.02)", borderWidth: 1, borderStyle: "solid", borderColor: "rgba(255,255,255,0.06)", height: "100%" }}
+                >
                   <h3 style={{ fontSize: 18, fontWeight: 500, fontFamily: SERIF, marginBottom: 12 }}>{item.t}</h3>
                   <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.4)", margin: 0 }}>{item.d}</p>
-                </div>
+                </motion.div>
               </Fade>
             ))}
           </div>
         </div>
       </section>
+
+      <AnimatedDivider />
 
       {/* ═══ 3. POR DENTRO — 2x2 rectangle grid ═══ */}
       <section id="inside" style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
@@ -448,19 +507,26 @@ export default function Home() {
               { icon: Settings, title: "Valor operacional", desc: "Offshore, China import, crypto OPSEC e estruturas internacionais — não como teoria, mas como execução real com proteção." },
             ].map((item, i) => (
               <Fade key={item.title} delay={i * 80}>
-                <div className="pillar-card" style={{ padding: "28px 32px", borderRadius: 16, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", height: "100%", display: "flex", gap: 24, alignItems: "flex-start" }}>
+                <motion.div
+                  className="pillar-card"
+                  whileHover={{ y: -4, borderColor: "rgba(201,168,76,0.2)" }}
+                  transition={{ duration: 0.2 }}
+                  style={{ padding: "28px 32px", borderRadius: 16, background: "rgba(255,255,255,0.02)", borderWidth: 1, borderStyle: "solid", borderColor: "rgba(255,255,255,0.06)", height: "100%", display: "flex", gap: 24, alignItems: "flex-start" }}
+                >
                   <div style={{ width: 44, height: 44, minWidth: 44, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.15)", marginTop: 2 }}><item.icon size={20} color={GOLD} /></div>
                   <div>
                     <h3 style={{ fontSize: 20, fontWeight: 500, fontFamily: SERIF, marginBottom: 8 }}>{item.title}</h3>
                     <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 0 }}>{item.desc}</p>
                   </div>
-                </div>
+                </motion.div>
               </Fade>
             ))}
           </div>
           <Fade delay={350}><div style={{ marginTop: 56, textAlign: "center" }}><GoldButton href="pricing">Quero acessar o clube</GoldButton></div></Fade>
         </div>
       </section>
+
+      <AnimatedDivider />
 
       {/* ═══ 4. COMMUNITY SCREENSHOTS ═══ */}
       <section style={{ position: "relative", padding: "80px 24px 112px", overflow: "hidden", zIndex: 1 }}>
@@ -476,6 +542,8 @@ export default function Home() {
           <Fade delay={350}><p style={{ textAlign: "center", marginTop: 40, fontSize: 12, color: "rgba(255,255,255,0.25)" }}>Plataforma via app e desktop · Acesso imediato após checkout</p></Fade>
         </div>
       </section>
+
+      <AnimatedDivider />
 
       {/* ═══ 5. SOBRE O CRIADOR ═══ */}
       <section style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
@@ -501,6 +569,8 @@ export default function Home() {
           </Fade>
         </div>
       </section>
+
+      <AnimatedDivider />
 
       {/* ═══ 6. PARA VOCÊ SE... ═══ */}
       <section style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
@@ -529,6 +599,8 @@ export default function Home() {
         </div>
       </section>
 
+      <AnimatedDivider />
+
       {/* ═══ 7. PRICING ═══ */}
       <section id="pricing" style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
         <div style={{ maxWidth: 1024, margin: "0 auto" }}>
@@ -538,7 +610,11 @@ export default function Home() {
           </Fade>
           <div className="pricing-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20 }}>
             <Fade>
-              <div style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", display: "flex", flexDirection: "column", height: "100%" }}>
+              <motion.div
+                whileHover={{ y: -4, borderColor: "rgba(201,168,76,0.2)" }}
+                transition={{ duration: 0.2 }}
+                style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(255,255,255,0.02)", borderWidth: 1, borderStyle: "solid", borderColor: "rgba(255,255,255,0.06)", display: "flex", flexDirection: "column", height: "100%" }}
+              >
                 <span style={{ display: "inline-flex", alignSelf: "flex-start", alignItems: "center", fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", padding: "6px 16px", borderRadius: 9999, border: "1px solid rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.6)", fontFamily: SERIF }}>Base</span>
                 <p style={{ marginTop: 20, fontSize: 14, color: "rgba(255,255,255,0.4)", marginBottom: 4 }}>A camada de direção e posicionamento</p>
                 <div style={{ marginTop: 12, marginBottom: 4 }}><span style={{ fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 300, fontFamily: SERIF }}>US$15</span><span style={{ fontSize: 14, marginLeft: 4, color: "rgba(255,255,255,0.35)" }}>/mês</span></div>
@@ -554,10 +630,14 @@ export default function Home() {
                   ))}
                 </div>
                 <OutlineButton onClick={() => setCheckout("base")}>Escolher Base</OutlineButton>
-              </div>
+              </motion.div>
             </Fade>
             <Fade delay={100}>
-              <div style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(201,168,76,0.03)", border: "1px solid rgba(201,168,76,0.2)", display: "flex", flexDirection: "column", height: "100%", position: "relative", overflow: "hidden" }}>
+              <motion.div
+                whileHover={{ y: -4, borderColor: "rgba(201,168,76,0.4)" }}
+                transition={{ duration: 0.2 }}
+                style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(201,168,76,0.03)", borderWidth: 1, borderStyle: "solid", borderColor: "rgba(201,168,76,0.2)", display: "flex", flexDirection: "column", height: "100%", position: "relative", overflow: "hidden" }}
+              >
                 <div style={{ position: "absolute", top: 0, right: 0, width: 160, height: 160, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%)", transform: "translate(30%, -30%)", pointerEvents: "none" }} />
                 <p style={{ fontSize: 11, color: GOLD, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8, marginTop: 0 }}>Mais popular</p>
                 <span style={{ display: "inline-flex", alignSelf: "flex-start", alignItems: "center", fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", padding: "6px 16px", borderRadius: 9999, border: `1px solid ${GOLD}`, background: "rgba(201,168,76,0.1)", color: GOLD, fontFamily: SERIF }}>Premium</span>
@@ -577,7 +657,7 @@ export default function Home() {
                   ))}
                 </div>
                 <GoldButton onClick={() => setCheckout("premium")} style={{ width: "100%" }}>Escolher Premium</GoldButton>
-              </div>
+              </motion.div>
             </Fade>
           </div>
           <Fade delay={200}>
@@ -588,6 +668,8 @@ export default function Home() {
           </Fade>
         </div>
       </section>
+
+      <AnimatedDivider />
 
       {/* ═══ 8. FAQ ═══ */}
       <section style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
@@ -636,6 +718,6 @@ export default function Home() {
           <div style={{ fontSize: 12, color: "rgba(255,255,255,0.15)" }}>© 2026 DuckDuck Club</div>
         </div>
       </footer>
-    </>
+    </motion.div>
   );
 }
