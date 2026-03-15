@@ -89,7 +89,7 @@ function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
         <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer" }}><X size={22} color="rgba(255,255,255,0.6)" /></button>
       </div>
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1, gap: 32 }}>
-        {[["O clube", "about"], ["Por dentro", "inside"], ["Acesso", "pricing"]].map(([l, h]) => (
+        {[["O clube", "about"], ["Por dentro", "inside"]].map(([l, h]) => (
           <button key={l} onClick={() => { onClose(); setTimeout(() => scrollTo(h), 200); }} style={{ fontSize: 24, color: "rgba(255,255,255,0.7)", background: "none", border: "none", cursor: "pointer", fontFamily: SERIF, letterSpacing: "0.1em" }}>{l}</button>
         ))}
         <GoldButton href="pricing" onClick={onClose}>Ver meu acesso</GoldButton>
