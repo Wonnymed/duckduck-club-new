@@ -232,76 +232,133 @@ function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: (
     return [...p, l];
   });
 
+  const block: React.CSSProperties = { borderRadius: 12, padding: 20, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", marginBottom: 12, transition: "all 0.3s ease" };
+
   return (
-    <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(12px)" }}>
-      <div onClick={e => e.stopPropagation()} style={{ position: "relative", width: "100%", maxWidth: 900, maxHeight: "90vh", overflowY: "auto", borderRadius: 16, background: "#111", border: "1px solid rgba(255,255,255,0.08)" }}>
-        <button onClick={onClose} style={{ position: "absolute", top: 16, right: 16, zIndex: 10, width: 32, height: 32, borderRadius: 9999, background: "rgba(255,255,255,0.05)", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><X size={16} color="rgba(255,255,255,0.6)" /></button>
-        <div className="checkout-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
-          <div style={{ padding: 32 }}>
-            <div style={{ display: "inline-flex", fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", padding: "4px 12px", borderRadius: 9999, color: GOLD, background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.15)", marginBottom: 24 }}>Plano {premium ? "Premium" : "Base"}</div>
-            <h3 style={{ fontSize: 28, fontWeight: 300, fontFamily: SERIF, marginBottom: 16 }}>Personalize seu acesso</h3>
-            <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 32 }}>
-              {premium ? "Seus 2 primeiros idiomas já estão incluídos. Adicione extras ou o Polymarket Lab se quiser expandir." : "Nenhum idioma incluído. Escolha até 2 por +US$5/mês cada."}
-            </p>
-            <div style={{ borderRadius: 12, padding: 20, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", marginBottom: 24 }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <div>
-                  <div style={{ fontSize: 14, fontWeight: 500, fontFamily: SERIF, marginBottom: 4 }}>Polymarket Lab</div>
-                  <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)" }}>+US$10/mês · aprox. R$52/mês</div>
-                </div>
-                <button onClick={() => setPoly(!poly)} style={{ width: 48, height: 24, borderRadius: 12, position: "relative", border: "none", cursor: "pointer", background: poly ? GOLD : "rgba(255,255,255,0.1)", transition: "background 0.3s" }}>
-                  <div style={{ width: 20, height: 20, borderRadius: 10, position: "absolute", top: 2, left: poly ? 26 : 2, background: poly ? "#0A0A0A" : "rgba(255,255,255,0.4)", transition: "left 0.3s" }} />
-                </button>
-              </div>
-            </div>
-            <div style={{ borderRadius: 12, padding: 20, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
-              <div style={{ fontSize: 14, fontWeight: 500, fontFamily: SERIF, marginBottom: 8 }}>{premium ? "Escolha seus idiomas" : "Idiomas disponíveis"}</div>
-              <p style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", marginBottom: 4 }}>{premium ? "2 idiomas incluídos. Adicione até 1 extra por +US$5/mês." : "+US$5/mês por idioma · aprox. R$26/mês cada."}</p>
-              {premium && <p style={{ fontSize: 12, color: GOLD, opacity: 0.7, marginBottom: 12 }}>{Math.min(langs.length, freeIncluded)}/{freeIncluded} incluídos selecionados</p>}
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
-                {LANGS.map(l => {
-                  const on = langs.includes(l);
-                  const blocked = !on && langs.length >= maxLangs;
-                  return <button key={l} onClick={() => toggle(l)} disabled={blocked} style={{ fontSize: 12, padding: "8px 16px", borderRadius: 9999, border: `1px solid ${on ? "rgba(201,168,76,0.4)" : "rgba(255,255,255,0.08)"}`, background: on ? "rgba(201,168,76,0.12)" : "rgba(255,255,255,0.04)", color: on ? GOLD : blocked ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.5)", cursor: blocked ? "not-allowed" : "pointer", opacity: blocked ? 0.4 : 1, transition: "all 0.2s" }}>{l}</button>;
-                })}
-              </div>
-            </div>
-          </div>
-          <div style={{ padding: 32, background: "rgba(255,255,255,0.02)", borderLeft: "1px solid rgba(255,255,255,0.06)" }}>
-            <h4 style={{ fontSize: 14, fontWeight: 500, color: GOLD, fontFamily: SERIF, marginBottom: 24 }}>Seu acesso selecionado</h4>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      onClick={onClose}
+      style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, background: "rgba(0,0,0,0.85)", backdropFilter: "blur(20px)" }}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+        onClick={e => e.stopPropagation()}
+        className="checkout-modal"
+        style={{ position: "relative", width: "100%", maxWidth: 520, maxHeight: "90vh", overflowY: "auto", borderRadius: 20, background: "#0F0F0F", border: "1px solid rgba(201,168,76,0.08)", padding: 40 }}
+      >
+        {/* Close */}
+        <button onClick={onClose} style={{ position: "absolute", top: 16, right: 16, width: 36, height: 36, borderRadius: 9999, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <X size={15} color="rgba(255,255,255,0.4)" />
+        </button>
+
+        {/* Badge */}
+        <div style={{ display: "inline-flex", fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", padding: "4px 14px", borderRadius: 9999, color: GOLD, background: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.15)", marginBottom: 20 }}>
+          Plano {premium ? "Premium" : "Base"}
+        </div>
+
+        {/* Headline */}
+        <h3 style={{ fontSize: 28, fontWeight: 300, fontFamily: SERIF, marginBottom: 8, marginTop: 0 }}>Personalize seu acesso</h3>
+        <p style={{ fontSize: 14, lineHeight: 1.6, color: "rgba(255,255,255,0.4)", marginBottom: 0 }}>
+          {premium ? "Seus 2 primeiros idiomas estão incluídos. Adicione extras ou o Polymarket Lab." : "Nenhum idioma incluído. Escolha até 2 por +US$5/mês cada."}
+        </p>
+
+        {/* Divider */}
+        <div style={{ width: 40, height: 1, background: `rgba(201,168,76,0.3)`, margin: "24px auto" }} />
+
+        {/* Total em destaque */}
+        <div style={{ textAlign: "center", marginBottom: 24 }}>
+          <div style={{ fontSize: 48, fontWeight: 300, fontFamily: SERIF, lineHeight: 1 }}>US${total}</div>
+          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginTop: 6 }}>aprox. R${brl}/mês</div>
+        </div>
+
+        {/* Divider */}
+        <div style={{ width: 40, height: 1, background: "rgba(201,168,76,0.3)", margin: "0 auto 24px" }} />
+
+        {/* Polymarket toggle */}
+        <div style={block}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div>
-              {[
-                ["Plano", premium ? "Premium" : "Base"],
-                ["Inclui", premium ? "Tudo do Base + The Sanctum, Duck Tank, Black Book, Global Moves e 2 idiomas" : "The Portal, The Core, The Lounge e Geopolitics"],
-                ["Idiomas", langs.length > 0 ? langs.join(", ") : "Nenhum"],
-                ["Extensões", poly ? "Polymarket Lab" : "Nenhum"],
-              ].map(([label, value], i) => (
-                <div key={label} style={{ paddingTop: i > 0 ? 16 : 0, marginTop: i > 0 ? 16 : 0, borderTop: i > 0 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
-                  <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.15em", color: "rgba(255,255,255,0.3)", marginBottom: 4 }}>{label}</div>
-                  <div style={{ fontSize: 14, color: "rgba(255,255,255,0.7)" }}>{value}</div>
-                </div>
-              ))}
+              <div style={{ fontSize: 14, fontWeight: 500, fontFamily: SERIF, marginBottom: 4 }}>Polymarket Lab</div>
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)" }}>+US$10/mês · aprox. R$52/mês</div>
             </div>
-            <div style={{ marginTop: 32, paddingTop: 20, borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-              <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 4 }}>
-                <span style={{ fontSize: 14, fontWeight: 500, color: GOLD, fontFamily: SERIF }}>Total mensal</span>
-                <span style={{ fontSize: 24, fontWeight: 300, fontFamily: SERIF }}>US${total}</span>
-              </div>
-              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginBottom: 24 }}>Aprox. R${brl}/mês</div>
-              <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
-                {([["card", "Cartão"], ["pix", "Pix"], ["crypto", "Crypto"]] as const).map(([method, label]) => (
-                  <button key={method} onClick={() => setPayMethod(method)} style={{ flex: 1, padding: "10px 0", borderRadius: 8, fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: SERIF, cursor: "pointer", transition: "all 0.2s", background: payMethod === method ? "rgba(201,168,76,0.1)" : "rgba(255,255,255,0.03)", border: `1px solid ${payMethod === method ? GOLD : "rgba(255,255,255,0.08)"}`, color: payMethod === method ? GOLD : "rgba(255,255,255,0.45)" }}>{label}</button>
-                ))}
-              </div>
-              <button onClick={() => { if (payMethod === "card") { window.open(resolveCheckoutLink(plan, extraLanguages), "_blank"); } else { onWhatsApp(plan, payMethod, total); onClose(); } }} style={{ width: "100%", padding: "14px 0", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, fontFamily: SERIF, background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", border: "none", cursor: "pointer" }}>
-                {payMethod === "card" ? "Continuar para checkout" : payMethod === "pix" ? "Gerar pagamento via Pix" : "Pagar com crypto"}
-              </button>
-              <p style={{ fontSize: 10, marginTop: 16, textAlign: "center", color: "rgba(255,255,255,0.25)", lineHeight: 1.6 }}>Cobrança via Stripe. Valor pode variar conforme câmbio e taxas.</p>
-            </div>
+            <button onClick={() => setPoly(!poly)} style={{ width: 48, height: 24, borderRadius: 12, position: "relative", border: "none", cursor: "pointer", background: poly ? GOLD : "rgba(255,255,255,0.08)", transition: "background 0.3s ease", flexShrink: 0 }}>
+              <div style={{ width: 20, height: 20, borderRadius: 10, position: "absolute", top: 2, left: poly ? 26 : 2, background: poly ? "#0A0A0A" : "rgba(255,255,255,0.4)", transition: "left 0.3s ease" }} />
+            </button>
           </div>
         </div>
-      </div>
-    </div>
+
+        {/* Idiomas */}
+        <div style={block}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+            <div style={{ fontSize: 14, fontWeight: 500, fontFamily: SERIF }}>{premium ? "Escolha seus idiomas" : "Idiomas disponíveis"}</div>
+            {premium && <div style={{ fontSize: 11, color: GOLD, opacity: 0.7 }}>{Math.min(langs.length, freeIncluded)}/{freeIncluded} incluídos</div>}
+          </div>
+          <p style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginBottom: 14, marginTop: 0 }}>
+            {premium ? "2 incluídos · adicione até 1 extra por +US$5/mês" : "+US$5/mês por idioma · aprox. R$26/mês cada"}
+          </p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            {LANGS.map(l => {
+              const on = langs.includes(l);
+              const blocked = !on && langs.length >= maxLangs;
+              return (
+                <button key={l} onClick={() => toggle(l)} disabled={blocked}
+                  style={{ fontSize: 13, padding: "10px 18px", borderRadius: 20, border: `1px solid ${on ? "rgba(201,168,76,0.4)" : "rgba(255,255,255,0.07)"}`, background: on ? "rgba(201,168,76,0.1)" : "rgba(255,255,255,0.03)", color: on ? GOLD : blocked ? "rgba(255,255,255,0.15)" : "rgba(255,255,255,0.45)", cursor: blocked ? "not-allowed" : "pointer", opacity: blocked ? 0.4 : 1, transition: "all 0.3s ease" }}>
+                  {l}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div style={{ width: 40, height: 1, background: "rgba(201,168,76,0.3)", margin: "12px auto 24px" }} />
+
+        {/* Método de pagamento */}
+        <div style={{ marginBottom: 12 }}>
+          <div style={{ fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", marginBottom: 12 }}>Método de pagamento</div>
+          <div style={{ display: "flex", gap: 8 }}>
+            {([["card", "Cartão"], ["pix", "Pix"], ["crypto", "Crypto"]] as const).map(([method, label]) => (
+              <button key={method} onClick={() => setPayMethod(method)}
+                style={{ flex: 1, padding: "12px 0", borderRadius: 10, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase", fontFamily: SERIF, cursor: "pointer", transition: "all 0.3s ease", background: payMethod === method ? "rgba(201,168,76,0.08)" : "rgba(255,255,255,0.02)", border: `1px solid ${payMethod === method ? GOLD : "rgba(255,255,255,0.07)"}`, color: payMethod === method ? GOLD : "rgba(255,255,255,0.4)", boxShadow: payMethod === method ? "0 0 20px rgba(201,168,76,0.1)" : "none" }}>
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Resumo compacto */}
+        <div style={{ ...block, marginBottom: 20 }}>
+          {[
+            ["Plano", premium ? "Premium" : "Base"],
+            ["Idiomas", langs.length > 0 ? langs.join(", ") : "Nenhum"],
+            ["Extensões", poly ? "Polymarket Lab" : "Nenhum"],
+          ].map(([label, value], i) => (
+            <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", paddingTop: i > 0 ? 10 : 0, marginTop: i > 0 ? 10 : 0, borderTop: i > 0 ? "1px solid rgba(255,255,255,0.04)" : "none" }}>
+              <span style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.15em", color: "rgba(255,255,255,0.25)" }}>{label}</span>
+              <span style={{ fontSize: 12, color: "rgba(255,255,255,0.65)" }}>{value}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <button
+          onClick={() => { if (payMethod === "card") { window.open(resolveCheckoutLink(plan, extraLanguages), "_blank"); } else { onWhatsApp(plan, payMethod, total); onClose(); } }}
+          style={{ width: "100%", padding: "18px 0", borderRadius: 10, fontSize: 15, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, fontFamily: SERIF, background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", border: "none", cursor: "pointer", transition: "opacity 0.2s ease" }}
+          onMouseEnter={e => (e.currentTarget.style.opacity = "0.9")}
+          onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+        >
+          {payMethod === "card" ? "Continuar para checkout" : payMethod === "pix" ? "Gerar pagamento Pix" : "Pagar com crypto"}
+        </button>
+
+        {/* Nota */}
+        <p style={{ fontSize: 11, marginTop: 16, textAlign: "center", color: "rgba(255,255,255,0.2)", lineHeight: 1.6, margin: "16px 0 0" }}>
+          Cobrança via Stripe. Valor pode variar conforme câmbio.
+        </p>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -506,7 +563,7 @@ export default function Home() {
               .pricing-grid { grid-template-columns: 1fr !important; }
               .problem-grid { grid-template-columns: 1fr !important; }
               .founder-grid { grid-template-columns: 1fr !important; }
-              .checkout-grid { grid-template-columns: 1fr !important; }
+              .checkout-modal { max-width: 100% !important; margin: 0 !important; border-radius: 20px 20px 0 0 !important; position: fixed !important; bottom: 0 !important; padding: 24px !important; }
               .screenshots-row { gap: 8px !important; }
               .screenshots-row > div { border-radius: 12px !important; transform: none !important; }
               .pricing-note { font-size: 10px !important; }
