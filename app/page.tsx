@@ -366,6 +366,7 @@ export default function Home() {
           .checkout-grid { grid-template-columns: 1fr !important; }
           .screenshots-row { gap: 8px !important; }
           .screenshots-row > div { border-radius: 12px !important; transform: none !important; }
+          .pricing-note { font-size: 10px !important; }
         }
         input::placeholder { color: rgba(255,255,255,0.25) !important; }
         input:focus { border-color: rgba(201,168,76,0.3) !important; outline: none !important; }
@@ -578,8 +579,8 @@ export default function Home() {
           </div>
           <Fade delay={200}>
             <div style={{ marginTop: 32, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: 8 }}>
-              <p style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", margin: 0 }}>Cobrança internacional via Stripe. Valor final pode variar conforme câmbio.</p>
-              <p style={{ fontSize: 12, color: "rgba(201,168,76,0.5)", margin: 0 }}>Pagamento também disponível via Pix ou crypto com atendimento direto.</p>
+              <p className="pricing-note" style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", margin: 0, whiteSpace: "nowrap" }}>Cobrança internacional via Stripe. Valor final pode variar conforme câmbio.</p>
+              <p className="pricing-note" style={{ fontSize: 12, color: "rgba(201,168,76,0.5)", margin: 0, whiteSpace: "nowrap" }}>Pagamento também disponível via Pix ou crypto com atendimento direto.</p>
             </div>
           </Fade>
         </div>
