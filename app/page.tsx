@@ -383,7 +383,7 @@ export default function Home() {
           </Fade>
           <Fade delay={300}>
             <p style={{ maxWidth: 640, margin: "0 auto 40px", fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)" }}>
-              DuckDuck Club é um ecossistema privado para quem quer mais direção, mais contexto e mais valor real. Aqui você constrói repertório internacional, aprende idiomas, amplia networking e acessa temas como offshore, China import, geopolítica, investimentos, segurança digital e operação global.
+              DuckDuck Club é um ecossistema privado para quem quer mais direção, mais contexto e mais valor real.<br /><br />Aqui você constrói repertório internacional, aprende idiomas, amplia networking e acessa temas como offshore, China import, geopolítica, investimentos, segurança digital e operação global.
             </p>
           </Fade>
           <Fade delay={450}><GoldButton href="pricing">Ver meu acesso</GoldButton></Fade>
