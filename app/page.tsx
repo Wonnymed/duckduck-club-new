@@ -552,9 +552,9 @@ export default function Home() {
             </Fade>
           </div>
           <Fade delay={200}>
-            <div style={{ marginTop: 32, display: "flex", alignItems: "center", gap: 24, flexWrap: "wrap" }}>
+            <div style={{ marginTop: 32, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: 8 }}>
               <p style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", margin: 0 }}>Cobrança internacional via Stripe. Valor final pode variar conforme câmbio.</p>
-              <p style={{ fontSize: 12, color: "rgba(201,168,76,0.5)", margin: 0, marginTop: 8 }}>Pagamento também disponível via Pix ou crypto com atendimento direto.</p>
+              <p style={{ fontSize: 12, color: "rgba(201,168,76,0.5)", margin: 0 }}>Pagamento também disponível via Pix ou crypto com atendimento direto.</p>
             </div>
           </Fade>
         </div>
