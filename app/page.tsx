@@ -390,6 +390,41 @@ function CommunityShowcase() {
   );
 }
 
+/* ═══ HERO SCROLL SEQUENCE ═══ */
+function HeroSequence() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end start"] });
+
+  const phrases = [
+    "O ambiente define o jogo.",
+    "As pessoas definem o acesso.",
+    "A informação certa define o próximo movimento."
+  ];
+
+  const opacity1 = useTransform(scrollYProgress, [0, 0.15, 0.25, 0.33], [0, 1, 1, 0]);
+  const opacity2 = useTransform(scrollYProgress, [0.25, 0.4, 0.5, 0.58], [0, 1, 1, 0]);
+  const opacity3 = useTransform(scrollYProgress, [0.5, 0.65, 0.75, 0.85], [0, 1, 1, 0]);
+  const opacities = [opacity1, opacity2, opacity3];
+
+  return (
+    <div ref={containerRef} style={{ height: "300vh", position: "relative" }}>
+      <div style={{ position: "sticky", top: 0, height: "100vh", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+        <video autoPlay muted loop playsInline style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.15, zIndex: 0 }}>
+          <source src="/hero-video.mp4" type="video/mp4" />
+        </video>
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, rgba(10,10,10,0.4) 0%, rgba(10,10,10,0.9) 100%)", zIndex: 1 }} />
+        {phrases.map((phrase, i) => (
+          <motion.div key={i} style={{ position: "absolute", zIndex: 2, opacity: opacities[i], textAlign: "center", padding: "0 24px", maxWidth: 900 }}>
+            <h2 style={{ fontSize: "clamp(32px, 6vw, 72px)", fontWeight: 300, fontFamily: SERIF, color: "white", lineHeight: 1.1 }}>
+              {phrase}
+            </h2>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /* ═══════════════════════════════
    MAIN PAGE
 ═══════════════════════════════ */
@@ -482,6 +517,8 @@ export default function Home() {
             input::placeholder { color: rgba(255,255,255,0.25) !important; }
             input:focus { border-color: rgba(201,168,76,0.3) !important; outline: none !important; }
           `}</style>
+
+          <HeroSequence />
 
           {/* ═══ 1. HERO ═══ */}
           <section style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "96px 24px 80px", zIndex: 1, overflow: "hidden" }}>
@@ -580,10 +617,10 @@ export default function Home() {
               </Fade>
               <div className="pillar-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
                 {[
-                  { icon: Compass, title: "Direção", desc: "Geopolítica, leitura de cenário e contexto estratégico para você antecipar movimentos — enquanto a maioria ainda está reagindo." },
-                  { icon: BookOpen, title: "Valor pessoal", desc: "Idiomas, repertório e ferramentas práticas para ampliar seu alcance, sua utilidade e o tipo de oportunidade que chega até você." },
-                  { icon: Handshake, title: "Valor relacional", desc: "Networking, deals e matchmaking que conectam você a operadores, investidores e oportunidades que não circulam no mainstream." },
-                  { icon: Settings, title: "Valor operacional", desc: "Offshore, China import, crypto OPSEC e estruturas internacionais — não como teoria, mas como execução real com proteção." },
+                  { num: "01", icon: Compass, title: "Direção", desc: "Geopolítica, leitura de cenário e contexto estratégico para você antecipar movimentos — enquanto a maioria ainda está reagindo." },
+                  { num: "02", icon: BookOpen, title: "Valor pessoal", desc: "Idiomas, repertório e ferramentas práticas para ampliar seu alcance, sua utilidade e o tipo de oportunidade que chega até você." },
+                  { num: "03", icon: Handshake, title: "Valor relacional", desc: "Networking, deals e matchmaking que conectam você a operadores, investidores e oportunidades que não circulam no mainstream." },
+                  { num: "04", icon: Settings, title: "Valor operacional", desc: "Offshore, China import, crypto OPSEC e estruturas internacionais — não como teoria, mas como execução real com proteção." },
                 ].map((item, i) => (
                   <Fade key={item.title} delay={i * 80}>
                     <motion.div
@@ -594,6 +631,7 @@ export default function Home() {
                     >
                       <div style={{ width: 44, height: 44, minWidth: 44, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.15)", marginTop: 2 }}><item.icon size={20} color={GOLD} /></div>
                       <div>
+                        <div style={{ fontSize: 11, letterSpacing: "0.2em", color: "rgba(201,168,76,0.4)", marginBottom: 8, fontFamily: "'DM Sans', sans-serif" }}>{item.num}</div>
                         <h3 style={{ fontSize: 20, fontWeight: 500, fontFamily: SERIF, marginBottom: 8 }}>{item.title}</h3>
                         <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 0 }}>{item.desc}</p>
                       </div>
@@ -779,9 +817,12 @@ export default function Home() {
           </section>
 
           {/* ═══ 9. FINAL CTA ═══ */}
-          <section style={{ position: "relative", padding: "112px 24px 160px", zIndex: 1 }}>
-            <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}><div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 60%)" }} /></div>
-            <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "center", position: "relative" }}>
+          <section style={{ position: "relative", padding: "112px 24px 160px", zIndex: 1, overflow: "hidden" }}>
+            <video autoPlay muted loop playsInline style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.08, zIndex: 0, pointerEvents: "none" }}>
+              <source src="/hero-video.mp4" type="video/mp4" />
+            </video>
+            <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, rgba(10,10,10,0.5) 0%, rgba(10,10,10,0.95) 100%)", zIndex: 1 }} />
+            <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "center", position: "relative", zIndex: 2 }}>
               <Fade><Logo size={48} /></Fade>
               <Fade delay={100}>
                 <h2 style={{ marginTop: 32, fontSize: "clamp(28px, 5vw, 52px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 24 }}>
