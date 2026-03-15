@@ -101,7 +101,7 @@ function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
 /* ═══ CHECKOUT MODAL ═══ */
 const LANGS = ["English", "Spanish", "Italian", "French", "German", "Mandarin", "Korean", "Japanese"];
 
-function CheckoutModal({ plan, onClose }: { plan: string; onClose: () => void }) {
+function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: () => void; onWhatsApp: (plan: string, method: string, totalUSD: number) => void }) {
   const premium = plan === "premium";
   const basePrice = premium ? 29 : 15;
   const [poly, setPoly] = useState(false);
@@ -174,13 +174,68 @@ function CheckoutModal({ plan, onClose }: { plan: string; onClose: () => void })
                   <button key={method} onClick={() => setPayMethod(method)} style={{ flex: 1, padding: "10px 0", borderRadius: 8, fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: SERIF, cursor: "pointer", transition: "all 0.2s", background: payMethod === method ? "rgba(201,168,76,0.1)" : "rgba(255,255,255,0.03)", border: `1px solid ${payMethod === method ? GOLD : "rgba(255,255,255,0.08)"}`, color: payMethod === method ? GOLD : "rgba(255,255,255,0.45)" }}>{label}</button>
                 ))}
               </div>
-              <button style={{ width: "100%", padding: "14px 0", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, fontFamily: SERIF, background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", border: "none", cursor: "pointer" }}>
+              <button onClick={() => { if (payMethod === "card") { /* Stripe será integrado depois */ } else { onWhatsApp(plan, payMethod, total); onClose(); } }} style={{ width: "100%", padding: "14px 0", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, fontFamily: SERIF, background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", border: "none", cursor: "pointer" }}>
                 {payMethod === "card" ? "Continuar para checkout" : payMethod === "pix" ? "Gerar pagamento via Pix" : "Pagar com crypto"}
               </button>
               <p style={{ fontSize: 10, marginTop: 16, textAlign: "center", color: "rgba(255,255,255,0.25)", lineHeight: 1.6 }}>Cobrança via Stripe. Valor pode variar conforme câmbio e taxas.</p>
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══ WHATSAPP FORM MODAL ═══ */
+function WhatsAppFormModal({ plan, method, totalUSD, onClose }: { plan: string; method: string; totalUSD: number; onClose: () => void }) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+
+  const planLabel = plan === "premium" ? "Premium" : "Base";
+  const methodLabel = method === "pix" ? "Pix" : "Crypto";
+
+  const handleSubmit = () => {
+    if (!name.trim() || !email.trim()) return;
+    const message = encodeURIComponent(
+      "Olá, quero entrar no DuckDuck Club.\n\n" +
+      "Plano: " + planLabel + " (US$" + totalUSD + "/mês)\n" +
+      "Método de pagamento: " + methodLabel + "\n" +
+      "Nome: " + name.trim() + "\n" +
+      "Email: " + email.trim()
+    );
+    window.open("https://wa.me/15615966097?text=" + message, "_blank");
+    onClose();
+  };
+
+  return (
+    <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 60, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, background: "rgba(0,0,0,0.85)", backdropFilter: "blur(16px)" }}>
+      <div onClick={e => e.stopPropagation()} style={{ maxWidth: 480, width: "100%", borderRadius: 16, background: "#111", border: "1px solid rgba(255,255,255,0.08)", padding: 32, position: "relative" }}>
+        <button onClick={onClose} style={{ position: "absolute", top: 16, right: 16, width: 32, height: 32, borderRadius: 9999, background: "rgba(255,255,255,0.05)", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><X size={16} color="rgba(255,255,255,0.6)" /></button>
+
+        <h3 style={{ fontSize: 24, fontWeight: 300, fontFamily: "'Cormorant Garamond', serif", marginBottom: 8 }}>Finalize seu acesso</h3>
+        <p style={{ fontSize: 14, color: "rgba(255,255,255,0.45)", marginBottom: 28 }}>Pix e crypto com atendimento direto via WhatsApp.</p>
+
+        <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
+          <div style={{ flex: 1, padding: 14, borderRadius: 10, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+            <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.15em", color: "rgba(255,255,255,0.3)", marginBottom: 6 }}>Plano</div>
+            <div style={{ fontSize: 15, color: "white", fontFamily: "'Cormorant Garamond', serif" }}>{planLabel} · US${totalUSD}/mês</div>
+          </div>
+          <div style={{ flex: 1, padding: 14, borderRadius: 10, background: "rgba(201,168,76,0.04)", border: "1px solid rgba(201,168,76,0.12)" }}>
+            <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.15em", color: "rgba(255,255,255,0.3)", marginBottom: 6 }}>Pagamento</div>
+            <div style={{ fontSize: 15, color: "#C9A84C", fontFamily: "'Cormorant Garamond', serif" }}>{methodLabel}</div>
+          </div>
+        </div>
+
+        <div style={{ marginBottom: 12 }}>
+          <input value={name} onChange={e => setName(e.target.value)} placeholder="Seu nome" style={{ width: "100%", padding: "14px 16px", borderRadius: 8, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "white", fontSize: 14, outline: "none", boxSizing: "border-box", fontFamily: "'DM Sans', sans-serif" }} />
+        </div>
+        <div style={{ marginBottom: 24 }}>
+          <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Seu melhor email" type="email" style={{ width: "100%", padding: "14px 16px", borderRadius: 8, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "white", fontSize: 14, outline: "none", boxSizing: "border-box", fontFamily: "'DM Sans', sans-serif" }} />
+        </div>
+
+        <button onClick={handleSubmit} disabled={!name.trim() || !email.trim()} style={{ width: "100%", padding: "16px 0", borderRadius: 8, background: (!name.trim() || !email.trim()) ? "rgba(201,168,76,0.3)" : "linear-gradient(135deg, #C9A84C, #A0832A)", color: "#0A0A0A", fontSize: 14, fontWeight: 600, fontFamily: "'Cormorant Garamond', serif", letterSpacing: "0.12em", textTransform: "uppercase", cursor: (!name.trim() || !email.trim()) ? "not-allowed" : "pointer", border: "none", opacity: (!name.trim() || !email.trim()) ? 0.5 : 1, transition: "opacity 0.3s" }}>Continuar no WhatsApp</button>
+
+        <p style={{ fontSize: 11, color: "rgba(255,255,255,0.2)", textAlign: "center", marginTop: 14 }}>Você será redirecionado para o WhatsApp para finalizar.</p>
       </div>
     </div>
   );
@@ -225,6 +280,7 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [checkout, setCheckout] = useState<string | null>(null);
+  const [whatsappForm, setWhatsappForm] = useState<{ plan: string; method: string; totalUSD: number } | null>(null);
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 40);
@@ -237,7 +293,8 @@ export default function Home() {
   return (
     <>
       <MobileNav open={menuOpen} onClose={() => setMenuOpen(false)} />
-      {checkout && <CheckoutModal plan={checkout} onClose={() => setCheckout(null)} />}
+      {checkout && <CheckoutModal plan={checkout} onClose={() => setCheckout(null)} onWhatsApp={(p, m, t) => { setCheckout(null); setTimeout(() => setWhatsappForm({ plan: p, method: m, totalUSD: t }), 200); }} />}
+      {whatsappForm && <WhatsAppFormModal plan={whatsappForm.plan} method={whatsappForm.method} totalUSD={whatsappForm.totalUSD} onClose={() => setWhatsappForm(null)} />}
 
       {/* Ambient glow */}
       <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0 }}>
@@ -285,6 +342,8 @@ export default function Home() {
           .screenshots-row { gap: 8px !important; }
           .screenshots-row > div { border-radius: 12px !important; transform: none !important; }
         }
+        input::placeholder { color: rgba(255,255,255,0.25) !important; }
+        input:focus { border-color: rgba(201,168,76,0.3) !important; outline: none !important; }
       `}</style>
 
       {/* ═══ 1. HERO ═══ */}
@@ -495,6 +554,7 @@ export default function Home() {
           <Fade delay={200}>
             <div style={{ marginTop: 32, display: "flex", alignItems: "center", gap: 24, flexWrap: "wrap" }}>
               <p style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", margin: 0 }}>Cobrança internacional via Stripe. Valor final pode variar conforme câmbio.</p>
+              <p style={{ fontSize: 12, color: "rgba(201,168,76,0.5)", margin: 0, marginTop: 8 }}>Pagamento também disponível via Pix ou crypto com atendimento direto.</p>
             </div>
           </Fade>
         </div>
