@@ -356,7 +356,7 @@ export default function Home() {
         @media (max-width: 768px) {
           .desktop-nav { display: none !important; }
           .mobile-menu { display: block !important; }
-          .hero-tags { display: grid !important; grid-template-columns: 1fr 1fr !important; flex-direction: unset !important; gap: 8px !important; margin-top: 32px !important; }
+          .hero-tags { display: grid !important; grid-template-columns: 1fr 1fr !important; flex-direction: unset !important; gap: 6px !important; margin-top: 20px !important; }
           .pillar-grid { grid-template-columns: 1fr !important; }
           .pillar-card { flex-direction: column !important; }
           .for-you-grid { grid-template-columns: 1fr !important; }
@@ -367,6 +367,7 @@ export default function Home() {
           .screenshots-row { gap: 8px !important; }
           .screenshots-row > div { border-radius: 12px !important; transform: none !important; }
           .pricing-note { font-size: 10px !important; }
+          .hero-pill { font-size: 11px !important; padding: 8px 10px !important; text-align: center !important; }
         }
         input::placeholder { color: rgba(255,255,255,0.25) !important; }
         input:focus { border-color: rgba(201,168,76,0.3) !important; outline: none !important; }
@@ -390,7 +391,7 @@ export default function Home() {
           <Fade delay={600}>
             <div className="hero-tags" style={{ marginTop: 48, display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 12 }}>
               {["Idiomas para acesso global", "Network, deals e matchmaking", "Offshore, China e geopolítica", "Privado, curado, sem ruído"].map(t => (
-                <span key={t} style={{ fontSize: 12, padding: "8px 16px", borderRadius: 9999, border: "1px solid rgba(201,168,76,0.12)", background: "rgba(201,168,76,0.03)", color: "rgba(255,255,255,0.45)" }}>{t}</span>
+                <span key={t} className="hero-pill" style={{ fontSize: 12, padding: "8px 16px", borderRadius: 9999, border: "1px solid rgba(201,168,76,0.12)", background: "rgba(201,168,76,0.03)", color: "rgba(255,255,255,0.45)", minHeight: 40, display: "flex", alignItems: "center", justifyContent: "center" }}>{t}</span>
               ))}
             </div>
           </Fade>
