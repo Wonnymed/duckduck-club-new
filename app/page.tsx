@@ -28,14 +28,14 @@ function Fade({ children, className = "", delay = 0 }: { children: React.ReactNo
 /* ─── Animated section divider ─── */
 function AnimatedDivider() {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: true });
   return (
-    <div ref={ref} style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "0 24px" }}>
+    <div ref={ref} style={{ display: "flex", justifyContent: "center", padding: "8px 0" }}>
       <motion.div
-        initial={{ scaleX: 0, opacity: 0 }}
-        animate={isInView ? { scaleX: 1, opacity: 1 } : { scaleX: 0, opacity: 0 }}
-        transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
-        style={{ height: 1, width: "100%", maxWidth: 600, background: "linear-gradient(90deg, transparent, rgba(201,168,76,0.2), transparent)", transformOrigin: "center" }}
+        initial={{ width: 0 }}
+        animate={isInView ? { width: 80 } : { width: 0 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+        style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(201,168,76,0.3), transparent)" }}
       />
     </div>
   );
@@ -65,8 +65,8 @@ function GoldButton({ children, onClick, href, style: extraStyle = {} }: { child
   return (
     <motion.button
       onClick={handleClick}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ scale: 1.03 }}
+      whileTap={{ scale: 0.97 }}
       style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "16px 32px", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase" as const, fontWeight: 600, fontFamily: SERIF, background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", border: "none", cursor: "pointer", transition: "box-shadow 0.3s", ...extraStyle }}
       onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => (e.currentTarget.style.boxShadow = "0 0 40px rgba(201,168,76,0.18), 0 8px 32px rgba(0,0,0,0.4)")}
       onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => (e.currentTarget.style.boxShadow = "none")}
@@ -80,8 +80,8 @@ function OutlineButton({ children, onClick }: { children: React.ReactNode; onCli
   return (
     <motion.button
       onClick={onClick}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ scale: 1.03 }}
+      whileTap={{ scale: 0.97 }}
       style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "14px 28px", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase" as const, fontFamily: SERIF, color: GOLD, border: "1px solid rgba(201,168,76,0.3)", background: "transparent", cursor: "pointer", transition: "all 0.3s", width: "100%" }}
       onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => { e.currentTarget.style.borderColor = GOLD; e.currentTarget.style.background = "rgba(201,168,76,0.06)"; }}
       onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => { e.currentTarget.style.borderColor = "rgba(201,168,76,0.3)"; e.currentTarget.style.background = "transparent"; }}
@@ -306,7 +306,7 @@ function CommunityShowcase() {
           <motion.div
             key={i}
             animate={{ y: [0, -6, 0] }}
-            transition={{ duration: 3 + i * 0.4, repeat: Infinity, ease: "easeInOut", delay: i * 0.6 }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: i * 0.5 }}
             style={{
               width: s.w,
               maxWidth: 260,
@@ -409,15 +409,18 @@ export default function Home() {
       `}</style>
 
       {/* ═══ 1. HERO ═══ */}
-      <section style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "96px 24px 80px", zIndex: 1 }}>
-        <div style={{ maxWidth: 896, margin: "0 auto", textAlign: "center" }}>
-          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}>
+      <section style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "96px 24px 80px", zIndex: 1, overflow: "hidden" }}>
+        <video autoPlay muted loop playsInline style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.1, zIndex: 0, pointerEvents: "none" }}>
+          <source src="/hero-video.mp4" type="video/mp4" />
+        </video>
+        <div style={{ maxWidth: 896, margin: "0 auto", textAlign: "center", position: "relative", zIndex: 1 }}>
+          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}>
             <Badge>Ecossistema Privado</Badge>
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.15, ease: [0.25, 0.1, 0.25, 1] }}
+            transition={{ duration: 1.2, delay: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
             style={{ marginTop: 40, marginBottom: 28, fontSize: "clamp(30px, 6vw, 72px)", fontWeight: 300, lineHeight: 1.1, fontFamily: SERIF }}
           >
             Antes de pensar em crescer financeiramente, <span style={{ fontStyle: "italic", color: GOLD }}>aumente o seu valor no jogo.</span>
@@ -425,7 +428,7 @@ export default function Home() {
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+            transition={{ duration: 0.8, delay: 1.0, ease: "easeOut" }}
             style={{ maxWidth: 640, margin: "0 auto 40px", fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)" }}
           >
             DuckDuck Club é um ecossistema privado para quem quer mais direção, mais contexto e mais valor real.<span className="hero-break" />​Aqui você constrói repertório internacional, aprende idiomas, amplia networking e acessa temas como offshore, China import, geopolítica, investimentos, segurança digital e operação global.
@@ -433,14 +436,14 @@ export default function Home() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.45, ease: [0.25, 0.1, 0.25, 1] }}
+            transition={{ duration: 0.8, delay: 1.3, ease: "easeOut" }}
           >
             <GoldButton href="pricing">Ver meu acesso</GoldButton>
           </motion.div>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.65 }}
+            transition={{ duration: 0.8, delay: 1.6 }}
             className="hero-tags"
             style={{ marginTop: 48, display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 12 }}
           >
@@ -485,8 +488,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      <AnimatedDivider />
 
       {/* ═══ 3. POR DENTRO — 2x2 rectangle grid ═══ */}
       <section id="inside" style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
@@ -668,8 +669,6 @@ export default function Home() {
           </Fade>
         </div>
       </section>
-
-      <AnimatedDivider />
 
       {/* ═══ 8. FAQ ═══ */}
       <section style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
