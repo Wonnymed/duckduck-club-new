@@ -447,41 +447,6 @@ function CommunityShowcase() {
   );
 }
 
-/* ═══ HERO SCROLL SEQUENCE ═══ */
-function HeroSequence() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end start"] });
-
-  const phrases = [
-    "O ambiente define o jogo.",
-    "As pessoas definem o acesso.",
-    "A informação certa define o próximo movimento."
-  ];
-
-  const opacity1 = useTransform(scrollYProgress, [0, 0.15, 0.25, 0.33], [0, 1, 1, 0]);
-  const opacity2 = useTransform(scrollYProgress, [0.25, 0.4, 0.5, 0.58], [0, 1, 1, 0]);
-  const opacity3 = useTransform(scrollYProgress, [0.5, 0.65, 0.75, 0.85], [0, 1, 1, 0]);
-  const opacities = [opacity1, opacity2, opacity3];
-
-  return (
-    <div ref={containerRef} style={{ height: "300vh", position: "relative" }}>
-      <div style={{ position: "sticky", top: 0, height: "100vh", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-        <video autoPlay muted loop playsInline style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.15, zIndex: 0 }}>
-          <source src="/hero-video.mp4" type="video/mp4" />
-        </video>
-        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, rgba(10,10,10,0.4) 0%, rgba(10,10,10,0.9) 100%)", zIndex: 1 }} />
-        {phrases.map((phrase, i) => (
-          <motion.div key={i} style={{ position: "absolute", zIndex: 2, opacity: opacities[i], textAlign: "center", padding: "0 24px", maxWidth: 900 }}>
-            <h2 style={{ fontSize: "clamp(32px, 6vw, 72px)", fontWeight: 300, fontFamily: SERIF, color: "white", lineHeight: 1.1 }}>
-              {phrase}
-            </h2>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 /* ═══════════════════════════════
    MAIN PAGE
 ═══════════════════════════════ */
@@ -574,8 +539,6 @@ export default function Home() {
             input::placeholder { color: rgba(255,255,255,0.25) !important; }
             input:focus { border-color: rgba(201,168,76,0.3) !important; outline: none !important; }
           `}</style>
-
-          <HeroSequence />
 
           {/* ═══ 1. HERO ═══ */}
           <section style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "96px 24px 80px", zIndex: 1, overflow: "hidden" }}>
