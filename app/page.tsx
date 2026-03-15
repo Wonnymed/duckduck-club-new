@@ -368,7 +368,9 @@ export default function Home() {
           .screenshots-row > div { border-radius: 12px !important; transform: none !important; }
           .pricing-note { font-size: 10px !important; }
           .hero-pill { font-size: 11px !important; padding: 8px 10px !important; text-align: center !important; }
+          .hero-break { display: block; height: 16px; }
         }
+        .hero-break { display: none; }
         input::placeholder { color: rgba(255,255,255,0.25) !important; }
         input:focus { border-color: rgba(201,168,76,0.3) !important; outline: none !important; }
       `}</style>
@@ -384,7 +386,7 @@ export default function Home() {
           </Fade>
           <Fade delay={300}>
             <p style={{ maxWidth: 640, margin: "0 auto 40px", fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)" }}>
-              DuckDuck Club é um ecossistema privado para quem quer mais direção, mais contexto e mais valor real.<br /><br />Aqui você constrói repertório internacional, aprende idiomas, amplia networking e acessa temas como offshore, China import, geopolítica, investimentos, segurança digital e operação global.
+              DuckDuck Club é um ecossistema privado para quem quer mais direção, mais contexto e mais valor real.<span className="hero-break" />​Aqui você constrói repertório internacional, aprende idiomas, amplia networking e acessa temas como offshore, China import, geopolítica, investimentos, segurança digital e operação global.
             </p>
           </Fade>
           <Fade delay={450}><GoldButton href="pricing">Ver meu acesso</GoldButton></Fade>
