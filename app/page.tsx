@@ -487,7 +487,7 @@ export default function Home() {
           <section style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "96px 24px 80px", zIndex: 1, overflow: "hidden" }}>
             <motion.div
               initial={{ opacity: 0 }}
-              animate={{ opacity: 0.12 }}
+              animate={{ opacity: 0.25 }}
               transition={{ duration: 2, delay: 0.5 }}
               style={{ position: "absolute", inset: 0, zIndex: 0, overflow: "hidden" }}
             >
@@ -495,7 +495,7 @@ export default function Home() {
                 <source src="/hero-video.mp4" type="video/mp4" />
               </video>
             </motion.div>
-            <div style={{ position: "absolute", inset: 0, zIndex: 1, background: "linear-gradient(180deg, rgba(10,10,10,0.3) 0%, rgba(10,10,10,0.8) 50%, rgba(10,10,10,1) 100%)" }} />
+            <div style={{ position: "absolute", inset: 0, zIndex: 1, background: "linear-gradient(180deg, rgba(10,10,10,0.1) 0%, rgba(10,10,10,0.6) 50%, rgba(10,10,10,1) 100%)" }} />
             <div style={{ maxWidth: 896, margin: "0 auto", textAlign: "center", position: "relative", zIndex: 2 }}>
               <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.5 }}>
                 <Badge>Ecossistema Privado</Badge>
@@ -507,7 +507,7 @@ export default function Home() {
               </h1>
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 2.4 }}>
                 <p style={{ maxWidth: 640, margin: "0 auto 40px", fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)" }}>
-                  DuckDuck Club é um ecossistema privado para quem quer mais direção, mais contexto e mais valor real.<span className="hero-break" />​Aqui você constrói repertório internacional, aprende idiomas, amplia networking e acessa temas como offshore, China import, geopolítica, investimentos, segurança digital e operação global.
+                  DuckDuck Club é um ecossistema privado para quem quer mais direção, mais contexto e mais valor real.<span className="hero-break" /> Aqui você constrói repertório internacional, aprende idiomas, amplia networking e acessa temas como offshore, China import, geopolítica, investimentos, segurança digital e operação global.
                 </p>
               </motion.div>
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 2.8 }}>
