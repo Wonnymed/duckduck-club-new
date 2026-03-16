@@ -79,6 +79,10 @@ body {
   50% { opacity: 0.4; transform: scale(0.85); }
 }
 
+@media (min-width: 769px) {
+  .floating-cta { display: none !important; }
+}
+
 @media (max-width: 768px) {
   section { padding-left: 20px !important; padding-right: 20px !important; }
   .loading-content { padding: 0 24px !important; }

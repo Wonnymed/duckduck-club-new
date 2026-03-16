@@ -3,7 +3,22 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "DuckDuck Club — Ecossistema Privado",
-  description: "Ecossistema privado para quem quer mais direção, mais contexto e mais valor real.",
+  description: "Direção. Contexto. Valor real. Ecossistema privado para quem quer operar com mais clareza, mais linguagem e mais acesso.",
+  openGraph: {
+    title: "DuckDuck Club — Ecossistema Privado",
+    description: "Direção. Contexto. Valor real. Ecossistema privado para quem quer operar com mais clareza, mais linguagem e mais acesso.",
+    url: "https://www.duckduck.club",
+    siteName: "DuckDuck Club",
+    locale: "pt_BR",
+    type: "website",
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "DuckDuck Club — Ecossistema Privado" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "DuckDuck Club — Ecossistema Privado",
+    description: "Direção. Contexto. Valor real. Ecossistema privado para quem quer operar com mais clareza, mais linguagem e mais acesso.",
+    images: ["/og-image.jpg"],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

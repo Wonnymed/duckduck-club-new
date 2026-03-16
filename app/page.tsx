@@ -724,6 +724,62 @@ function GeoIntel() {
   );
 }
 
+/* ─── Floating CTA Mobile ─── */
+function FloatingCTA() {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setVisible(window.scrollY > 600);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  if (typeof window !== "undefined" && window.innerWidth > 768) return null;
+
+  return (
+    <motion.div
+      initial={{ y: 100 }}
+      animate={{ y: visible ? 0 : 100 }}
+      transition={{ duration: 0.3 }}
+      className="floating-cta"
+      style={{
+        position: "fixed",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 40,
+        padding: "12px 20px",
+        paddingBottom: "calc(12px + env(safe-area-inset-bottom))",
+        background: "linear-gradient(0deg, rgba(10,10,10,0.98) 0%, rgba(10,10,10,0.9) 100%)",
+        backdropFilter: "blur(12px)",
+        borderTop: "1px solid rgba(201,168,76,0.1)",
+      }}
+    >
+      <button
+        onClick={() => { const el = document.getElementById("pricing"); if (el) el.scrollIntoView({ behavior: "smooth" }); }}
+        style={{
+          width: "100%",
+          padding: "14px 0",
+          borderRadius: 8,
+          background: "linear-gradient(135deg, #C9A84C, #A0832A)",
+          color: "#0A0A0A",
+          fontSize: 13,
+          fontWeight: 600,
+          fontFamily: SERIF,
+          letterSpacing: "0.12em",
+          textTransform: "uppercase",
+          border: "none",
+          cursor: "pointer",
+        }}
+      >
+        Ver meu acesso →
+      </button>
+    </motion.div>
+  );
+}
+
 /* ─── Cursor Spotlight ─── */
 function CursorSpotlight() {
   const [pos, setPos] = useState({ x: -100, y: -100 });
@@ -851,6 +907,7 @@ export default function Home() {
           <div className="grain-overlay" />
           <CursorSpotlight />
           <GoldParticles />
+          <FloatingCTA />
 
           <MobileNav open={menuOpen} onClose={() => setMenuOpen(false)} />
           {checkout && <CheckoutModal plan={checkout} onClose={() => setCheckout(null)} onWhatsApp={(p, m, t) => { setCheckout(null); setTimeout(() => setWhatsappForm({ plan: p, method: m, totalUSD: t }), 200); }} />}
