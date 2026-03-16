@@ -455,6 +455,144 @@ function CommunityShowcase() {
   );
 }
 
+/* ─── Decrypt Text ─── */
+function DecryptText({ text, delay = 0, speed = 30, className = "" }: { text: string; delay?: number; speed?: number; className?: string }) {
+  const [displayed, setDisplayed] = useState("");
+  const [started, setStarted] = useState(false);
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&*!?{}[]<>/\\|~^";
+
+  useEffect(() => {
+    const startTimer = setTimeout(() => setStarted(true), delay);
+    return () => clearTimeout(startTimer);
+  }, [delay]);
+
+  useEffect(() => {
+    if (!started) return;
+    let currentIndex = 0;
+    let scrambleCount = 0;
+
+    const interval = setInterval(() => {
+      if (currentIndex >= text.length) {
+        clearInterval(interval);
+        setDisplayed(text);
+        return;
+      }
+
+      scrambleCount++;
+      let result = text.substring(0, currentIndex);
+
+      for (let i = currentIndex; i < Math.min(currentIndex + 8, text.length); i++) {
+        if (text[i] === " ") {
+          result += " ";
+        } else {
+          result += chars[Math.floor(Math.random() * chars.length)];
+        }
+      }
+
+      if (scrambleCount % 3 === 0) {
+        currentIndex++;
+      }
+
+      setDisplayed(result);
+    }, speed);
+
+    return () => clearInterval(interval);
+  }, [started, text, speed]);
+
+  return <span className={className}>{started ? displayed || "\u00A0" : "\u00A0"}</span>;
+}
+
+/* ─── Intelligence Ticker ─── */
+function IntelTicker() {
+  const items = [
+    "INTEL 047 · Estruturas holding no Sudeste Asiático · análise publicada",
+    "SIGNAL · Risco de desvalorização CNY · corredor HK ativo",
+    "OPSEC · Novo protocolo de cold storage · atualizado",
+    "MACRO · Fluxo de capital saindo da Europa · oportunidade detectada",
+    "CHINA OPS · Fornecedor Tier 1 verificado · Guangzhou",
+    "GLOBAL · Nova jurisdição offshore aberta · briefing disponível",
+    "NETWORK · Deal cross-border fechado entre membros · esta semana",
+    "LANGUAGES · Novo módulo de Mandarin business · disponível",
+  ];
+
+  const duplicated = [...items, ...items];
+
+  return (
+    <div style={{
+      width: "100%",
+      overflow: "hidden",
+      padding: "14px 0",
+      borderTop: "1px solid rgba(201,168,76,0.06)",
+      borderBottom: "1px solid rgba(201,168,76,0.06)",
+      background: "rgba(201,168,76,0.02)",
+      position: "relative",
+      zIndex: 1,
+    }}>
+      <motion.div
+        animate={{ x: ["0%", "-50%"] }}
+        transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+        style={{ display: "flex", gap: 48, whiteSpace: "nowrap" }}
+      >
+        {duplicated.map((item, i) => (
+          <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
+            <span style={{ width: 4, height: 4, borderRadius: "50%", background: "#C9A84C", opacity: 0.4, display: "inline-block" }} />
+            <span style={{ fontSize: 12, letterSpacing: "0.05em", color: "rgba(201,168,76,0.4)", fontFamily: "'DM Sans', sans-serif" }}>{item}</span>
+          </span>
+        ))}
+      </motion.div>
+    </div>
+  );
+}
+
+/* ─── Geo Intelligence Badge ─── */
+function GeoIntel() {
+  const [location, setLocation] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchGeo = async () => {
+      try {
+        const res = await fetch("https://ipapi.co/json/");
+        const data = await res.json();
+        if (data.city && data.country_name) {
+          setLocation(data.city + ", " + data.country_name);
+        }
+      } catch {
+        // silently fail
+      }
+    };
+    const timer = setTimeout(fetchGeo, 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!location) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8 }}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 8,
+        marginBottom: 20,
+        padding: "6px 14px",
+        borderRadius: 20,
+        background: "rgba(201,168,76,0.04)",
+        border: "1px solid rgba(201,168,76,0.08)",
+      }}
+    >
+      <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+        <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#4ADE80" }} />
+        <div style={{ position: "absolute", inset: 0, width: 6, height: 6, borderRadius: "50%", background: "#4ADE80", animation: "geoPing 2s infinite" }} />
+      </div>
+      <span style={{ fontSize: 11, letterSpacing: "0.08em", color: "rgba(255,255,255,0.35)" }}>
+        Acessando de {location}
+      </span>
+    </motion.div>
+  );
+}
+
 /* ─── Cursor Spotlight ─── */
 function CursorSpotlight() {
   const [pos, setPos] = useState({ x: -100, y: -100 });
@@ -721,14 +859,22 @@ export default function Home() {
             </motion.div>
             <div style={{ position: "absolute", inset: 0, zIndex: 1, background: "linear-gradient(180deg, rgba(10,10,10,0.1) 0%, rgba(10,10,10,0.6) 50%, rgba(10,10,10,1) 100%)" }} />
             <div style={{ maxWidth: 896, margin: "0 auto", textAlign: "center", position: "relative", zIndex: 2 }}>
+              <GeoIntel />
               <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.5 }}>
                 <Badge>Ecossistema Privado</Badge>
               </motion.div>
-              <h1 style={{ marginTop: 40, marginBottom: 28, fontSize: "clamp(30px, 6vw, 72px)", fontWeight: 300, lineHeight: 1.1, fontFamily: SERIF }}>
-                <TextReveal text="Antes de pensar em crescer financeiramente," delay={0.8} />
+              <motion.h1
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3, delay: 0.5 }}
+                style={{ marginTop: 40, marginBottom: 28, fontSize: "clamp(30px, 6vw, 72px)", fontWeight: 300, lineHeight: 1.1, fontFamily: SERIF }}
+              >
+                <DecryptText text="Antes de pensar em crescer financeiramente," delay={800} speed={25} />
                 <br />
-                <TextReveal text="aumente o seu valor no jogo." gold italic delay={1.6} />
-              </h1>
+                <span className="gold-shimmer" style={{ fontStyle: "italic" }}>
+                  <DecryptText text="aumente o seu valor no jogo." delay={2200} speed={25} />
+                </span>
+              </motion.h1>
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 2.4 }}>
                 <p style={{ maxWidth: 640, margin: "0 auto 40px", fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)" }}>
                   DuckDuck Club é um ecossistema privado para quem quer mais direção, mais contexto e mais valor real.<span className="hero-break" /> Aqui você constrói repertório internacional, aprende idiomas, amplia networking e acessa temas como offshore, China import, geopolítica, investimentos, segurança digital e operação global.
@@ -755,6 +901,7 @@ export default function Home() {
           </section>
 
           <AnimatedDivider />
+          <IntelTicker />
 
           {/* ═══ 2. O PROBLEMA ═══ */}
           <section id="about" style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
@@ -930,6 +1077,7 @@ export default function Home() {
           </section>
 
           <AnimatedDivider />
+          <IntelTicker />
 
           {/* ═══ 7. PRICING ═══ */}
           <section id="pricing" style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
