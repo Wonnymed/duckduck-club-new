@@ -1375,14 +1375,16 @@ export default function Home() {
                 <span style={{ fontSize: 10, letterSpacing: "0.12em", color: "rgba(255,255,255,0.12)", textTransform: "uppercase" }}>Encrypted · Private · International</span>
               </div>
               <div style={{ display: "flex", gap: 24 }}>
-                {["Termos", "Privacidade"].map(item => (
-                  <a key={item} href="#" style={{ fontSize: 12, color: "rgba(255,255,255,0.2)", textDecoration: "none", transition: "color 0.3s" }}
-                    onMouseEnter={e => (e.currentTarget.style.color = "rgba(255,255,255,0.5)")} onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.2)")}>{item}</a>
+                {[
+                  { label: "Termos", href: "/termos" },
+                  { label: "Instagram", href: "https://instagram.com/duckduck.club", external: true },
+                  { label: "WhatsApp", href: "https://wa.me/15615966097?text=" + encodeURIComponent("Olá, tenho uma dúvida sobre o DuckDuck Club."), external: true },
+                ].map(item => (
+                  <a key={item.label} href={item.href} target={item.external ? "_blank" : undefined} rel={item.external ? "noopener noreferrer" : undefined} style={{ fontSize: 12, color: "rgba(255,255,255,0.2)", textDecoration: "none", transition: "color 0.3s" }}
+                    onMouseEnter={e => (e.currentTarget.style.color = "rgba(255,255,255,0.5)")}
+                    onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.2)")}
+                  >{item.label}</a>
                 ))}
-                <a href="https://instagram.com/duckduck.club" target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "rgba(255,255,255,0.2)", textDecoration: "none", transition: "color 0.3s" }}
-                  onMouseEnter={e => (e.currentTarget.style.color = "rgba(255,255,255,0.5)")} onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.2)")}>Instagram</a>
-                <a href="https://wa.me/5511999999999" target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "rgba(255,255,255,0.2)", textDecoration: "none", transition: "color 0.3s" }}
-                  onMouseEnter={e => (e.currentTarget.style.color = "rgba(255,255,255,0.5)")} onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.2)")}>WhatsApp</a>
               </div>
               <div style={{ fontSize: 12, color: "rgba(255,255,255,0.15)" }}>© 2026 DuckDuck Club</div>
             </div>
