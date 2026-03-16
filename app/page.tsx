@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from "framer-motion";
 import { ArrowRight, Menu, X, Check, ChevronDown, Compass, BookOpen, Handshake, Settings, Lock } from "lucide-react";
 
@@ -12,6 +12,8 @@ const SERIF = "'Cormorant Garamond', serif";
 function LoadingScreen({ onComplete }: { onComplete: () => void }) {
   const [lines, setLines] = useState<string[]>([]);
   const [done, setDone] = useState(false);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
 
   const sequence = [
     { text: "> establishing secure connection...", delay: 300 },
@@ -29,9 +31,9 @@ function LoadingScreen({ onComplete }: { onComplete: () => void }) {
       }, item.delay));
     });
     timers.push(setTimeout(() => setDone(true), 2800));
-    timers.push(setTimeout(() => onComplete(), 3200));
+    timers.push(setTimeout(() => { onCompleteRef.current(); }, 3200));
     return () => timers.forEach(clearTimeout);
-  }, [onComplete]);
+  }, []);
 
   return (
     <motion.div
@@ -815,8 +817,12 @@ export default function Home() {
   const [checkout, setCheckout] = useState<string | null>(null);
   const [whatsappForm, setWhatsappForm] = useState<{ plan: string; method: string; totalUSD: number } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const handleLoadingComplete = useCallback(() => setLoading(false), []);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const { scrollY, scrollYProgress: pageProgress } = useScroll();
   const heroGlowY = useTransform(scrollY, [0, 600], [0, 100]);
@@ -829,12 +835,14 @@ export default function Home() {
 
   const dot = (gold = false) => <div style={{ width: 6, height: 6, borderRadius: 3, background: gold ? GOLD : "rgba(255,255,255,0.25)", flexShrink: 0 }} />;
 
+  if (!mounted) return null;
+
   return (
     <>
       <motion.div style={{ position: "fixed", top: 0, left: 0, right: 0, height: 2, background: "linear-gradient(90deg, #C9A84C, #E8D48B)", zIndex: 50, scaleX: pageProgress, transformOrigin: "left" }} />
 
       <AnimatePresence mode="wait">
-        {loading && <LoadingScreen key="loader" onComplete={handleLoadingComplete} />}
+        {loading && <LoadingScreen key="loading" onComplete={() => setLoading(false)} />}
       </AnimatePresence>
 
       {!loading && (

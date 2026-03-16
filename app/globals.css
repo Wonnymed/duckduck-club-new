@@ -12,6 +12,7 @@ html, body {
 
 html {
   scroll-behavior: smooth;
+  scroll-restoration: manual;
 }
 
 
