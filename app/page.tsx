@@ -1032,10 +1032,10 @@ export default function Home() {
               </Fade>
               <div className="pillar-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
                 {[
-                  { num: "01", icon: Compass, title: "Direção", desc: "Geopolítica, leitura de cenário e contexto estratégico para você antecipar movimentos — enquanto a maioria ainda está reagindo.", intel: "Última análise: Corredor Asia-LATAM aberto — impacto em holdings internacionais" },
+                  { num: "01", icon: Compass, title: "Direção", desc: "Geopolítica, leitura de cenário e contexto estratégico para você antecipar movimentos — enquanto a maioria ainda está reagindo.", intel: "Análise publicada: alta do petróleo prevista antes do fechamento do Estreito de Hormuz — membros posicionados com antecedência" },
                   { num: "02", icon: BookOpen, title: "Valor pessoal", desc: "Idiomas, repertório e ferramentas práticas para ampliar seu alcance, sua utilidade e o tipo de oportunidade que chega até você.", intel: "Novo módulo: Vocabulário de negociação em Mandarin para importadores" },
-                  { num: "03", icon: Handshake, title: "Valor relacional", desc: "Networking, deals e matchmaking que conectam você a operadores, investidores e oportunidades que não circulam no mainstream.", intel: "Deal fechado: Parceria cross-border entre membros BR-HK esta semana" },
-                  { num: "04", icon: Settings, title: "Valor operacional", desc: "Offshore, China import, crypto OPSEC e estruturas internacionais — não como teoria, mas como execução real com proteção.", intel: "Alerta OPSEC: Vulnerabilidade em custódia de ativos — protocolo atualizado" },
+                  { num: "03", icon: Handshake, title: "Valor relacional", desc: "Networking, deals e matchmaking que conectam você a operadores, investidores e oportunidades que não circulam no mainstream.", intel: "Estruturação concluída: abertura de empresa em Hong Kong para membro do setor de mineração e joalheria" },
+                  { num: "04", icon: Settings, title: "Valor operacional", desc: "Offshore, China import, crypto OPSEC e estruturas internacionais — não como teoria, mas como execução real com proteção.", intel: "OPSEC: como receber pagamentos em carteira descentralizada com privacidade real — protocolo publicado" },
                 ].map((item, i) => (
                   <PillarCard key={item.title} num={item.num} icon={item.icon} title={item.title} desc={item.desc} intel={item.intel} delay={i * 80} />
                 ))}
