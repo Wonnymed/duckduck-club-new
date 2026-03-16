@@ -580,6 +580,9 @@ function IntelTicker() {
     "GLOBAL · Nova jurisdição offshore aberta · briefing disponível",
     "NETWORK · Deal cross-border fechado entre membros · esta semana",
     "LANGUAGES · Novo módulo de Mandarin business · disponível",
+    "LANGUAGE · Módulo de negociação em Mandarin · atualizado",
+    "LANGUAGE · Vocabulário de contratos em alemão · novo",
+    "LANGUAGE · Guia de imersão business Korean · disponível",
   ];
 
   const duplicated = [...items, ...items];
@@ -902,6 +905,9 @@ export default function Home() {
               .hero-break { display: block; height: 16px; }
               .privacy-badge { display: none !important; }
               .redacted-grid { grid-template-columns: 1fr !important; }
+              .lang-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+              .lang-callout { flex-direction: column !important; gap: 12px !important; }
+              .lang-includes-grid { grid-template-columns: 1fr !important; }
             }
             .hero-break { display: none; }
             input::placeholder { color: rgba(255,255,255,0.25) !important; }
@@ -1051,7 +1057,95 @@ export default function Home() {
 
           <AnimatedDivider />
 
-          {/* ═══ 4. COMMUNITY SCREENSHOTS ═══ */}
+          {/* ═══ 4. LANGUAGE ARSENAL ═══ */}
+          <section style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1, overflow: "hidden" }}>
+            <div style={{ maxWidth: 1024, margin: "0 auto" }}>
+              <Fade>
+                <Badge>Language Arsenal</Badge>
+                <h2 style={{ marginTop: 24, fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 16 }}>
+                  Quem não fala a língua certa,{" "}
+                  <span className="gold-shimmer" style={{ fontStyle: "italic" }}>não entra na sala certa.</span>
+                </h2>
+                <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 48, maxWidth: 680 }}>
+                  Negócios acontecem em idiomas. Contratos se fecham em idiomas. Conexões se formam em idiomas. Cada língua que você não fala é uma porta que permanece trancada — e alguém do outro lado já está operando sem você.
+                </p>
+              </Fade>
+
+              <div className="lang-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 48 }}>
+                {[
+                  { flag: "🇬🇧", lang: "English", unlock: "Acesso global, negócios, tech, finanças" },
+                  { flag: "🇪🇸", lang: "Spanish", unlock: "LATAM, 500M+ de falantes, mercados emergentes" },
+                  { flag: "🇮🇹", lang: "Italian", unlock: "Europa, cidadania, luxo, gastronomia" },
+                  { flag: "🇫🇷", lang: "French", unlock: "África, diplomacia, Europa, Canadá" },
+                  { flag: "🇩🇪", lang: "German", unlock: "Engenharia, indústria, economia #1 da Europa" },
+                  { flag: "🇨🇳", lang: "Mandarin", unlock: "China, import/export, a maior economia do futuro" },
+                  { flag: "🇰🇷", lang: "Korean", unlock: "Tech, cultura, mercado asiático em expansão" },
+                  { flag: "🇯🇵", lang: "Japanese", unlock: "Tecnologia, negócios, terceira economia global" },
+                ].map((item, i) => (
+                  <Fade key={item.lang} delay={i * 60}>
+                    <div
+                      style={{ padding: "20px 18px", borderRadius: 12, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", textAlign: "center", transition: "all 0.3s", cursor: "default", height: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}
+                      onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(201,168,76,0.2)"; e.currentTarget.style.background = "rgba(201,168,76,0.03)"; }}
+                      onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"; e.currentTarget.style.background = "rgba(255,255,255,0.02)"; }}
+                    >
+                      <div style={{ fontSize: 32, marginBottom: 10 }}>{item.flag}</div>
+                      <div style={{ fontSize: 15, fontWeight: 500, fontFamily: SERIF, color: "white", marginBottom: 6 }}>{item.lang}</div>
+                      <div style={{ fontSize: 11, lineHeight: 1.5, color: "rgba(255,255,255,0.3)" }}>{item.unlock}</div>
+                    </div>
+                  </Fade>
+                ))}
+              </div>
+
+              <Fade>
+                <div className="lang-callout" style={{ padding: "28px 32px", borderRadius: 16, background: "rgba(201,168,76,0.03)", border: "1px solid rgba(201,168,76,0.08)", display: "flex", alignItems: "flex-start", gap: 20, maxWidth: 800, margin: "0 auto" }}>
+                  <div style={{ fontSize: 28, flexShrink: 0, marginTop: 2 }}>🔒</div>
+                  <div>
+                    <div style={{ fontSize: 16, fontWeight: 500, fontFamily: SERIF, color: "white", marginBottom: 8 }}>
+                      A maioria das oportunidades não chega até você em português.
+                    </div>
+                    <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.4)", margin: "0 0 16px" }}>
+                      Contratos na China, networking na Europa, deals nos EUA, fornecedores na Coreia — tudo acontece na língua local. Dentro do DuckDuck Club, cada idioma vem com uma biblioteca completa: cursos estruturados, livros recomendados, PDFs práticos, guias de conversação, vocabulário de negócios e material curado para quem quer operar de verdade — não decorar gramática.
+                    </p>
+                    <div style={{ fontSize: 14, color: "rgba(255,255,255,0.35)", marginBottom: 16 }}>Cada idioma inclui:</div>
+                    <div className="lang-includes-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 16 }}>
+                      {[
+                        "Cursos completos estruturados",
+                        "Livros e audiobooks recomendados",
+                        "PDFs e materiais práticos",
+                        "Guias de conversação para negócios",
+                        "Vocabulário de negociação e contratos",
+                        "Expressões estratégicas por contexto",
+                        "Imersão cultural aplicada a operação",
+                        "Stack de ferramentas e apps curados",
+                      ].map(item => (
+                        <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+                          <span style={{ color: GOLD, fontSize: 14, marginTop: 1, flexShrink: 0 }}>›</span>
+                          <span style={{ fontSize: 12, lineHeight: 1.5, color: "rgba(255,255,255,0.4)" }}>{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                      {["Não é curso genérico", "Foco em operação real", "Material curado e atualizado", "Armamento linguístico"].map(tag => (
+                        <span key={tag} style={{ fontSize: 10, padding: "4px 12px", borderRadius: 20, background: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.1)", color: "rgba(201,168,76,0.5)", letterSpacing: "0.05em" }}>{tag}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </Fade>
+
+              <Fade>
+                <div style={{ textAlign: "center", marginTop: 32 }}>
+                  <p style={{ fontSize: 13, color: "rgba(255,255,255,0.3)" }}>
+                    Premium inclui 2 idiomas com acesso completo. Base permite adicionar por +US$5/mês cada.
+                  </p>
+                </div>
+              </Fade>
+            </div>
+          </section>
+
+          <AnimatedDivider />
+
+          {/* ═══ 5. COMMUNITY SCREENSHOTS ═══ */}
           <section style={{ position: "relative", padding: "80px 24px 112px", overflow: "hidden", zIndex: 1 }}>
             <div style={{ maxWidth: 1024, margin: "0 auto" }}>
               <Fade>
