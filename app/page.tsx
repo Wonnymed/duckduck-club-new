@@ -632,10 +632,10 @@ function WorldMap() {
 }
 
 /* ─── Decrypt Text ─── */
-function DecryptText({ text, delay = 0, speed = 30, className = "" }: { text: string; delay?: number; speed?: number; className?: string }) {
+function DecryptText({ text, delay = 0, speed = 40, className = "" }: { text: string; delay?: number; speed?: number; className?: string }) {
   const [displayed, setDisplayed] = useState("");
   const [started, setStarted] = useState(false);
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&*!?{}[]<>/\\|~^";
+  const chars = "abcdefghijklmnopqrstuvwxyz";
 
   useEffect(() => {
     const startTimer = setTimeout(() => setStarted(true), delay);
@@ -645,7 +645,6 @@ function DecryptText({ text, delay = 0, speed = 30, className = "" }: { text: st
   useEffect(() => {
     if (!started) return;
     let currentIndex = 0;
-    let scrambleCount = 0;
 
     const interval = setInterval(() => {
       if (currentIndex >= text.length) {
@@ -654,28 +653,26 @@ function DecryptText({ text, delay = 0, speed = 30, className = "" }: { text: st
         return;
       }
 
-      scrambleCount++;
       let result = text.substring(0, currentIndex);
 
-      for (let i = currentIndex; i < Math.min(currentIndex + 8, text.length); i++) {
-        if (text[i] === " ") {
+      // Only 1-2 scrambled characters ahead, not 8
+      const scrambleAhead = Math.min(2, text.length - currentIndex);
+      for (let i = 0; i < scrambleAhead; i++) {
+        if (text[currentIndex + i] === " ") {
           result += " ";
         } else {
           result += chars[Math.floor(Math.random() * chars.length)];
         }
       }
 
-      if (scrambleCount % 3 === 0) {
-        currentIndex++;
-      }
-
+      currentIndex++;
       setDisplayed(result);
     }, speed);
 
     return () => clearInterval(interval);
   }, [started, text, speed]);
 
-  return <span className={className}>{started ? displayed || "\u00A0" : "\u00A0"}</span>;
+  return <span className={className} style={{ transition: "opacity 0.3s" }}>{started ? displayed || "\u00A0" : "\u00A0"}</span>;
 }
 
 /* ─── Intelligence Ticker ─── */
@@ -1065,10 +1062,10 @@ export default function Home() {
                 transition={{ duration: 0.3, delay: 0.5 }}
                 style={{ marginTop: 40, marginBottom: 28, fontSize: "clamp(30px, 6vw, 72px)", fontWeight: 300, lineHeight: 1.1, fontFamily: SERIF }}
               >
-                <DecryptText text="Antes de pensar em crescer financeiramente," delay={800} speed={25} />
+                <DecryptText text="Antes de pensar em crescer financeiramente," delay={800} speed={40} />
                 <br />
                 <span className="gold-shimmer" style={{ fontStyle: "italic" }}>
-                  <DecryptText text="aumente o seu valor no jogo." delay={2200} speed={25} />
+                  <DecryptText text="aumente o seu valor no jogo." delay={2400} speed={40} />
                 </span>
               </motion.h1>
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 2.4 }}>
