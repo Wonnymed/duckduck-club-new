@@ -632,10 +632,12 @@ function WorldMap() {
 }
 
 /* ─── Decrypt Text ─── */
-function DecryptText({ text, delay = 0, speed = 40, className = "" }: { text: string; delay?: number; speed?: number; className?: string }) {
+function DecryptText({ text, delay = 0, speed = 35, className = "" }: { text: string; delay?: number; speed?: number; className?: string }) {
   const [displayed, setDisplayed] = useState("");
   const [started, setStarted] = useState(false);
-  const chars = "abcdefghijklmnopqrstuvwxyz";
+
+  // Hex-style characters — looks like encrypted data, not random noise
+  const chars = "0123456789abcdef";
 
   useEffect(() => {
     const startTimer = setTimeout(() => setStarted(true), delay);
@@ -645,6 +647,7 @@ function DecryptText({ text, delay = 0, speed = 40, className = "" }: { text: st
   useEffect(() => {
     if (!started) return;
     let currentIndex = 0;
+    let phase = 0;
 
     const interval = setInterval(() => {
       if (currentIndex >= text.length) {
@@ -653,11 +656,12 @@ function DecryptText({ text, delay = 0, speed = 40, className = "" }: { text: st
         return;
       }
 
+      phase++;
       let result = text.substring(0, currentIndex);
 
-      // Only 1-2 scrambled characters ahead, not 8
-      const scrambleAhead = Math.min(2, text.length - currentIndex);
-      for (let i = 0; i < scrambleAhead; i++) {
+      // 3 characters of hex scramble ahead
+      const ahead = Math.min(3, text.length - currentIndex);
+      for (let i = 0; i < ahead; i++) {
         if (text[currentIndex + i] === " ") {
           result += " ";
         } else {
@@ -665,7 +669,11 @@ function DecryptText({ text, delay = 0, speed = 40, className = "" }: { text: st
         }
       }
 
-      currentIndex++;
+      // Every 2 phases, lock one real character
+      if (phase % 2 === 0) {
+        currentIndex++;
+      }
+
       setDisplayed(result);
     }, speed);
 
