@@ -1066,13 +1066,13 @@ export default function Home() {
               <div className="lang-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 48 }}>
                 {[
                   { flag: "🇬🇧", lang: "English", unlock: "Acesso global, negócios, tech, finanças" },
-                  { flag: "🇪🇸", lang: "Spanish", unlock: "LATAM, 500M+ de falantes, mercados emergentes" },
-                  { flag: "🇮🇹", lang: "Italian", unlock: "Europa, cidadania, luxo, gastronomia" },
-                  { flag: "🇫🇷", lang: "French", unlock: "África, diplomacia, Europa, Canadá" },
-                  { flag: "🇩🇪", lang: "German", unlock: "Engenharia, indústria, economia #1 da Europa" },
-                  { flag: "🇨🇳", lang: "Mandarin", unlock: "China, import/export, a maior economia do futuro" },
-                  { flag: "🇰🇷", lang: "Korean", unlock: "Tech, cultura, mercado asiático em expansão" },
-                  { flag: "🇯🇵", lang: "Japanese", unlock: "Tecnologia, negócios, terceira economia global" },
+                  { flag: "🇪🇸", lang: "Español", unlock: "LATAM, 500M+ de falantes, mercados emergentes" },
+                  { flag: "🇮🇹", lang: "Italiano", unlock: "Europa, cidadania, luxo, gastronomia" },
+                  { flag: "🇫🇷", lang: "Français", unlock: "África, diplomacia, Europa, Canadá" },
+                  { flag: "🇩🇪", lang: "Deutsch", unlock: "Engenharia, indústria, economia #1 da Europa" },
+                  { flag: "🇨🇳", lang: "中文", unlock: "China, import/export, a maior economia do futuro" },
+                  { flag: "🇰🇷", lang: "한국어", unlock: "Tech, cultura, mercado asiático em expansão" },
+                  { flag: "🇯🇵", lang: "日本語", unlock: "Tecnologia, negócios, terceira economia global" },
                 ].map((item, i) => (
                   <LanguageCard key={item.lang} flag={item.flag} lang={item.lang} unlock={item.unlock} delay={i * 60} />
                 ))}
