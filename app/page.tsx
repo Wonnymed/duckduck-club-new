@@ -46,7 +46,7 @@ function LoadingScreen({ onComplete }: { onComplete: () => void }) {
       <div style={{ position: "absolute", inset: 0, background: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px)", pointerEvents: "none", zIndex: 2 }} />
 
       {/* Terminal lines */}
-      <div style={{ position: "relative", zIndex: 3 }}>
+      <div style={{ position: "relative", zIndex: 3 }} className="loading-content">
         {lines.map((line, i) => (
           <motion.div
             key={i}
@@ -197,7 +197,7 @@ function OutlineButton({ children, onClick }: { children: React.ReactNode; onCli
 function FAQItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <div onClick={() => setOpen(!open)} style={{ borderRadius: 12, background: "rgba(255,255,255,0.02)", border: `1px solid ${open ? "rgba(201,168,76,0.15)" : "rgba(255,255,255,0.06)"}`, cursor: "pointer", transition: "border-color 0.3s" }}>
+    <div onClick={() => setOpen(!open)} className="faq-item" style={{ borderRadius: 12, background: "rgba(255,255,255,0.02)", border: `1px solid ${open ? "rgba(201,168,76,0.15)" : "rgba(255,255,255,0.06)"}`, cursor: "pointer", transition: "border-color 0.3s" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 24px" }}>
         <h4 style={{ fontSize: 15, fontWeight: 500, fontFamily: SERIF, color: open ? GOLD : "white", paddingRight: 16, margin: 0 }}>{q}</h4>
         <ChevronDown size={18} style={{ color: "rgba(255,255,255,0.3)", transform: open ? "rotate(180deg)" : "rotate(0)", transition: "transform 0.3s", flexShrink: 0 }} />
@@ -405,7 +405,7 @@ function WhatsAppFormModal({ plan, method, totalUSD, onClose }: { plan: string; 
   };
   return (
     <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 60, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, background: "rgba(0,0,0,0.85)", backdropFilter: "blur(16px)" }}>
-      <div onClick={e => e.stopPropagation()} style={{ maxWidth: 480, width: "100%", borderRadius: 16, background: "#111", border: "1px solid rgba(255,255,255,0.08)", padding: 32, position: "relative" }}>
+      <div onClick={e => e.stopPropagation()} className="whatsapp-modal" style={{ maxWidth: 480, width: "100%", borderRadius: 16, background: "#111", border: "1px solid rgba(255,255,255,0.08)", padding: 32, position: "relative" }}>
         <button onClick={onClose} style={{ position: "absolute", top: 16, right: 16, width: 32, height: 32, borderRadius: 9999, background: "rgba(255,255,255,0.05)", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><X size={16} color="rgba(255,255,255,0.6)" /></button>
         <h3 style={{ fontSize: 24, fontWeight: 300, fontFamily: SERIF, marginBottom: 8 }}>Finalize seu acesso</h3>
         <p style={{ fontSize: 14, color: "rgba(255,255,255,0.45)", marginBottom: 28 }}>Pix e crypto com atendimento direto via WhatsApp.</p>
@@ -569,7 +569,7 @@ function PillarCard({ num, icon: Icon, title, desc, intel, delay }: { num: strin
           <div style={{ fontSize: 20, fontWeight: 500, fontFamily: SERIF, marginBottom: 8 }}>{title}</div>
           <div style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.45)" }}>{desc}</div>
           <div style={{ marginTop: hovered ? 12 : 0, maxHeight: hovered ? 60 : 0, opacity: hovered ? 1 : 0, overflow: "hidden", transition: "all 0.4s ease", padding: hovered ? "8px 12px" : "0 12px", borderRadius: 8, background: "rgba(201,168,76,0.04)", border: hovered ? "1px solid rgba(201,168,76,0.08)" : "1px solid transparent" }}>
-            <span style={{ fontSize: 11, color: "rgba(201,168,76,0.5)", fontStyle: "italic" }}>🔒 {intel}</span>
+            <span className="intel-preview" style={{ fontSize: 11, color: "rgba(201,168,76,0.5)", fontStyle: "italic" }}>🔒 {intel}</span>
           </div>
         </div>
       </div>
@@ -679,7 +679,7 @@ function IntelTicker() {
   const duplicated = [...items, ...items];
 
   return (
-    <div style={{
+    <div className="intel-ticker" style={{
       width: "100%",
       overflow: "hidden",
       padding: "14px 0",
@@ -732,6 +732,7 @@ function GeoIntel() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8 }}
+      className="geo-intel"
       style={{
         display: "inline-flex",
         alignItems: "center",
@@ -789,7 +790,9 @@ function CursorSpotlight() {
 
 /* ─── Gold Particles ─── */
 function GoldParticles() {
-  const particles = Array.from({ length: 18 }, (_, i) => ({
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+  const particleCount = isMobile ? 8 : 18;
+  const particles = Array.from({ length: particleCount }, (_, i) => ({
     id: i,
     left: Math.random() * 100,
     delay: Math.random() * 10,
@@ -933,12 +936,12 @@ export default function Home() {
               .pricing-grid { grid-template-columns: 1fr !important; }
               .problem-grid { grid-template-columns: 1fr !important; }
               .founder-grid { grid-template-columns: 1fr !important; }
-              .checkout-modal { max-width: 100% !important; margin: 0 !important; border-radius: 20px 20px 0 0 !important; position: fixed !important; bottom: 0 !important; padding: 24px !important; }
+              .checkout-modal { max-width: 100% !important; margin: 0 !important; border-radius: 20px 20px 0 0 !important; position: fixed !important; bottom: 0 !important; padding: 24px !important; max-height: 90vh !important; overflow-y: auto !important; }
               .screenshots-row { gap: 8px !important; }
               .screenshots-row > div { border-radius: 12px !important; transform: none !important; }
               .pricing-note { font-size: 10px !important; }
               .hero-pill { font-size: 11px !important; padding: 8px 10px !important; text-align: center !important; }
-              .stats-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 24px !important; }
+              .stats-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 20px !important; }
               .hero-break { display: block; height: 16px; }
               .privacy-badge { display: none !important; }
               .redacted-grid { grid-template-columns: 1fr !important; }
@@ -970,7 +973,7 @@ export default function Home() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3, delay: 0.5 }}
-                style={{ marginTop: 40, marginBottom: 28, fontSize: "clamp(30px, 6vw, 72px)", fontWeight: 300, lineHeight: 1.1, fontFamily: SERIF }}
+                style={{ marginTop: 40, marginBottom: 28, fontSize: "clamp(28px, 8vw, 72px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF }}
               >
                 <DecryptText text="Antes de pensar em crescer financeiramente," delay={800} speed={35} />
                 <br />
@@ -1048,7 +1051,7 @@ export default function Home() {
                 <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 32, maxWidth: 720 }}>
                   Muita gente quer crescer e acessar oportunidades maiores. Mas tenta fazer isso com informação espalhada, networking fraco, leitura rasa de cenário e pouca capacidade prática de execução. O resultado é viver ocupada, mas continuar jogando abaixo do próprio potencial.
                 </p>
-                <div style={{ padding: "18px 24px", borderRadius: 12, background: "rgba(255,80,80,0.03)", border: "1px solid rgba(255,80,80,0.1)", display: "flex", alignItems: "flex-start", gap: 14, maxWidth: 720, marginBottom: 40 }}>
+                <div className="cost-alert" style={{ padding: "18px 24px", borderRadius: 12, background: "rgba(255,80,80,0.03)", border: "1px solid rgba(255,80,80,0.1)", display: "flex", alignItems: "flex-start", gap: 14, maxWidth: 720, marginBottom: 40 }}>
                   <span style={{ fontSize: 18, flexShrink: 0 }}>⚠️</span>
                   <p style={{ fontSize: 13, lineHeight: 1.7, color: "rgba(255,255,255,0.35)", margin: 0 }}>
                     Cada mês sem contexto real, sem idioma e sem as pessoas certas tem um custo — oportunidades que passam, deals que não fecham, posições que outros ocupam. Inação também tem preço.
@@ -1238,7 +1241,7 @@ export default function Home() {
                 <Badge>Sobre o criador</Badge>
                 <div className="founder-grid" style={{ marginTop: 32, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 48, alignItems: "start" }}>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                    <img src="/founder-photo.jpeg" alt="Nando Voyager — Founder" style={{ width: 320, height: 320, minWidth: 320, borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(201,168,76,0.3)" }} />
+                    <img src="/founder-photo.jpeg" alt="Nando Voyager — Founder" className="founder-photo" style={{ width: 320, height: 320, minWidth: 320, borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(201,168,76,0.3)" }} />
                     <p style={{ fontSize: 18, fontWeight: 500, fontFamily: SERIF, color: "white", marginTop: 20, marginBottom: 4 }}>Nando Voyager</p>
                     <a href="https://instagram.com/nandovoyager" target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: GOLD, textDecoration: "none", opacity: 0.85, transition: "opacity 0.2s" }}
                       onMouseEnter={e => (e.currentTarget.style.opacity = "1")} onMouseLeave={e => (e.currentTarget.style.opacity = "0.85")}>@nandovoyager</a>
@@ -1401,7 +1404,7 @@ export default function Home() {
           </section>
 
           {/* ═══ 9. FINAL CTA ═══ */}
-          <section style={{ position: "relative", padding: "112px 24px 160px", zIndex: 1, overflow: "hidden" }}>
+          <section className="cta-final" style={{ position: "relative", padding: "112px 24px 160px", zIndex: 1, overflow: "hidden" }}>
             <video autoPlay muted loop playsInline style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.08, zIndex: 0, pointerEvents: "none" }}>
               <source src="/hero-video.mp4" type="video/mp4" />
             </video>
@@ -1440,7 +1443,7 @@ export default function Home() {
                 <div style={{ display: "flex", alignItems: "center", gap: 12 }}><Logo size={22} /><span style={{ fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)", fontFamily: SERIF }}>DuckDuck Club</span></div>
                 <span style={{ fontSize: 10, letterSpacing: "0.12em", color: "rgba(255,255,255,0.12)", textTransform: "uppercase" }}>Encrypted · Private · International</span>
               </div>
-              <div style={{ display: "flex", gap: 24 }}>
+              <div className="footer-links" style={{ display: "flex", gap: 24 }}>
                 {[
                   { label: "Termos", href: "/termos" },
                   { label: "Instagram", href: "https://instagram.com/duckduck.club", external: true },
