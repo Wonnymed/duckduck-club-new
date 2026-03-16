@@ -1340,11 +1340,7 @@ export default function Home() {
                     <span style={{ display: "inline-flex", alignSelf: "flex-start", alignItems: "center", fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", padding: "6px 16px", borderRadius: 9999, border: `1px solid ${GOLD}`, background: "rgba(201,168,76,0.1)", color: GOLD, fontFamily: SERIF }}>Premium</span>
                     <p style={{ marginTop: 20, fontSize: 14, color: "rgba(201,168,76,0.7)", marginBottom: 4 }}>A camada mais valiosa do clube</p>
                     <div style={{ marginTop: 12, marginBottom: 4 }}><span style={{ fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 300, fontFamily: SERIF, color: GOLD }}>US$29</span><span style={{ fontSize: 14, marginLeft: 4, color: "rgba(201,168,76,0.5)" }}>/mês</span></div>
-                    <p style={{ fontSize: 12, color: "rgba(201,168,76,0.35)", marginBottom: 12 }}>aprox. R$149/mês</p>
-                    <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "5px 12px", borderRadius: 20, background: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.15)", marginBottom: 20 }}>
-                      <span style={{ width: 6, height: 6, borderRadius: "50%", background: GOLD, display: "inline-block", animation: "foundingPulse 2s ease-in-out infinite" }} />
-                      <span style={{ fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(201,168,76,0.7)" }}>Fase de fundação — vagas limitadas</span>
-                    </div>
+                    <p style={{ fontSize: 12, color: "rgba(201,168,76,0.35)", marginBottom: 24 }}>aprox. R$149/mês</p>
                     <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32, flex: 1 }}>
                       {[["Tudo do Base", null], ["The Sanctum", "offshore, crypto, China"], ["Duck Tank", "deals e projetos"], ["Black Book", "case studies"], ["Global Moves", "vida internacional"], ["2 idiomas incluídos", null]].map(([name, sub]) => (
                         <div key={name} style={{ display: "flex", alignItems: "center", gap: 12 }}>{dot(true)}<span style={{ fontSize: 14, color: "rgba(255,255,255,0.7)" }}>{name}{sub && <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 12 }}> ({sub})</span>}</span></div>
@@ -1385,7 +1381,6 @@ export default function Home() {
                   { q: "Como funciona o acesso depois do pagamento?", a: "Após a confirmação, você recebe o acesso imediato à plataforma e pode começar a navegar pelos canais do seu plano em minutos." },
                   { q: "O pagamento é mensal?", a: "Sim. Recorrente via Stripe, com cobrança internacional." },
                   { q: "Posso cancelar?", a: "Sim. Você pode cancelar a qualquer momento direto pela plataforma, sem burocracia." },
-                  { q: "Por que o preço é tão acessível?", a: "Porque estamos na fase de fundação. Os primeiros membros entram com o preço mais baixo que o clube vai ter — e esse preço é travado enquanto a assinatura estiver ativa. Quando a fase de fundação fechar, o valor sobe e não volta." },
                 ].map((item, i) => (
                   <Fade key={i} delay={i * 40}><FAQItem q={item.q} a={item.a} /></Fade>
                 ))}
