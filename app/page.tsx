@@ -9,16 +9,22 @@ const GOLD_DIM = "#A0832A";
 const SERIF = "'Cormorant Garamond', serif";
 
 /* ─── Loading Screen ─── */
-function LoadingScreen({ onComplete }: { onComplete: () => void }) {
+function LoadingScreen({ onComplete, videoReady }: { onComplete: () => void; videoReady: boolean }) {
   const [phase, setPhase] = useState(0);
 
   useEffect(() => {
     const t1 = setTimeout(() => setPhase(1), 400);
     const t2 = setTimeout(() => setPhase(2), 1200);
     const t3 = setTimeout(() => setPhase(3), 2000);
-    const t4 = setTimeout(() => onComplete(), 2600);
+    // fallback: complete after 4s regardless of video state
+    const t4 = setTimeout(() => onComplete(), 4000);
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
   }, [onComplete]);
+
+  // complete as soon as phase 3 is reached AND video is ready
+  useEffect(() => {
+    if (phase >= 3 && videoReady) onComplete();
+  }, [phase, videoReady, onComplete]);
 
   return (
     <motion.div
@@ -459,7 +465,7 @@ function PillarCard({ item }: { item: { num: string; title: string; video: strin
     >
       {/* Video background */}
       <video
-        autoPlay muted loop playsInline
+        autoPlay muted loop playsInline preload="metadata"
         style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: hovered ? 0.35 : 0.2, zIndex: 0, transition: "opacity 0.5s ease" }}
       >
         <source src={item.video} type="video/mp4" />
@@ -485,7 +491,18 @@ export default function Home() {
   const [checkout, setCheckout] = useState<string | null>(null);
   const [whatsappForm, setWhatsappForm] = useState<{ plan: string; method: string; totalUSD: number } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [videoReady, setVideoReady] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const handleLoadingComplete = useCallback(() => setLoading(false), []);
+
+  useEffect(() => {
+    const vid = videoRef.current;
+    if (vid) {
+      const onCanPlay = () => setVideoReady(true);
+      vid.addEventListener("canplaythrough", onCanPlay);
+      return () => vid.removeEventListener("canplaythrough", onCanPlay);
+    }
+  }, []);
 
   const { scrollY } = useScroll();
   const heroGlowY = useTransform(scrollY, [0, 600], [0, 100]);
@@ -501,7 +518,7 @@ export default function Home() {
   return (
     <>
       <AnimatePresence mode="wait">
-        {loading && <LoadingScreen key="loader" onComplete={handleLoadingComplete} />}
+        {loading && <LoadingScreen key="loader" onComplete={handleLoadingComplete} videoReady={videoReady} />}
       </AnimatePresence>
 
       {!loading && (
@@ -578,7 +595,7 @@ export default function Home() {
               transition={{ duration: 2, delay: 0.5 }}
               style={{ position: "absolute", inset: 0, zIndex: 0, overflow: "hidden" }}
             >
-              <video autoPlay muted loop playsInline style={{ width: "100%", height: "100%", objectFit: "cover" }}>
+              <video ref={videoRef} autoPlay muted loop playsInline preload="auto" poster="/hero-poster.jpg" style={{ width: "100%", height: "100%", objectFit: "cover", background: "#0A0A0A" }}>
                 <source src="/hero-video.mp4" type="video/mp4" />
               </video>
             </motion.div>
