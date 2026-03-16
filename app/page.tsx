@@ -843,66 +843,6 @@ function GoldParticles() {
   );
 }
 
-/* ─── 3D Member Card ─── */
-function MemberCard() {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [rotate, setRotate] = useState({ x: 0, y: 0 });
-  const [glare, setGlare] = useState({ x: 50, y: 50 });
-
-  useEffect(() => {
-    const handleMouse = (e: MouseEvent) => {
-      if (!cardRef.current) return;
-      const rect = cardRef.current.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      const rotateY = ((e.clientX - centerX) / rect.width) * 12;
-      const rotateX = -((e.clientY - centerY) / rect.height) * 12;
-      setRotate({ x: rotateX, y: rotateY });
-      setGlare({ x: ((e.clientX - rect.left) / rect.width) * 100, y: ((e.clientY - rect.top) / rect.height) * 100 });
-    };
-    const reset = () => { setRotate({ x: 0, y: 0 }); setGlare({ x: 50, y: 50 }); };
-    window.addEventListener("mousemove", handleMouse);
-    window.addEventListener("mouseleave", reset);
-    return () => { window.removeEventListener("mousemove", handleMouse); window.removeEventListener("mouseleave", reset); };
-  }, []);
-
-  return (
-    <motion.div
-      ref={cardRef}
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1.2, delay: 2.0 }}
-      style={{
-        width: 320,
-        height: 200,
-        borderRadius: 16,
-        position: "relative",
-        overflow: "hidden",
-        background: "linear-gradient(135deg, rgba(20,20,20,0.9) 0%, rgba(15,15,15,0.95) 100%)",
-        border: "1px solid rgba(201,168,76,0.2)",
-        transform: `perspective(1000px) rotateX(${rotate.x}deg) rotateY(${rotate.y}deg)`,
-        transition: "transform 0.1s ease-out",
-        boxShadow: "0 25px 50px rgba(0,0,0,0.5), 0 0 40px rgba(201,168,76,0.05)",
-        padding: 28,
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-      }}
-    >
-      <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(201,168,76,0.08) 0%, transparent 60%)`, pointerEvents: "none", zIndex: 1 }} />
-      <div style={{ position: "relative", zIndex: 2 }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <img src="/logo.jpeg" alt="" style={{ width: 32, height: 32, objectFit: "contain", borderRadius: "50%", border: "1px solid rgba(201,168,76,0.15)" }} />
-          <span style={{ fontSize: 9, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(201,168,76,0.4)" }}>Private Access</span>
-        </div>
-      </div>
-      <div style={{ position: "relative", zIndex: 2 }}>
-        <div style={{ fontSize: 15, fontWeight: 500, fontFamily: SERIF, color: "white", marginBottom: 4 }}>DuckDuck Club</div>
-        <div style={{ fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(201,168,76,0.5)" }}>Member Card</div>
-      </div>
-    </motion.div>
-  );
-}
 
 /* ─── Blur Reveal ─── */
 function BlurReveal({ children }: { children: React.ReactNode }) {
@@ -1009,7 +949,6 @@ export default function Home() {
             @media (max-width: 768px) {
               .desktop-nav { display: none !important; }
               .mobile-menu { display: block !important; }
-              .hide-mobile { display: none !important; }
               .hero-tags { display: grid !important; grid-template-columns: 1fr 1fr !important; flex-direction: unset !important; gap: 6px !important; margin-top: 20px !important; }
               .pillar-grid { grid-template-columns: 1fr !important; }
               .pillar-card { flex-direction: column !important; }
@@ -1049,18 +988,6 @@ export default function Home() {
             <div style={{ position: "absolute", inset: 0, zIndex: 1, background: "linear-gradient(180deg, rgba(10,10,10,0.1) 0%, rgba(10,10,10,0.6) 50%, rgba(10,10,10,1) 100%)" }} />
             <div style={{ maxWidth: 896, margin: "0 auto", textAlign: "center", position: "relative", zIndex: 2 }}>
               <GeoIntel />
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 1.5 }}
-                style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 12, padding: "5px 14px", borderRadius: 20, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", cursor: "pointer" }}
-                onClick={() => scrollTo("pricing")}
-              >
-                <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.2)" }} />
-                <span style={{ fontSize: 10, letterSpacing: "0.1em", color: "rgba(255,255,255,0.25)" }}>Access Level: Public</span>
-                <span style={{ fontSize: 10, color: "rgba(201,168,76,0.5)" }}>· Upgrade →</span>
-              </motion.div>
-              <br />
               <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.5 }}>
                 <Badge>Ecossistema Privado</Badge>
               </motion.div>
@@ -1084,9 +1011,6 @@ export default function Home() {
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 2.8 }}>
                 <GoldButton href="pricing" className="cta-glow">Ver meu acesso</GoldButton>
               </motion.div>
-              <div style={{ marginTop: 40, display: "flex", justifyContent: "center" }} className="hide-mobile">
-                <MemberCard />
-              </div>
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
