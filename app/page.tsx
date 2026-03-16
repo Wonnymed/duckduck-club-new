@@ -2,66 +2,85 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from "framer-motion";
-import { ArrowRight, Menu, X, Check, ChevronDown, Compass, BookOpen, Handshake, Settings } from "lucide-react";
+import { ArrowRight, Menu, X, Check, ChevronDown, Compass, BookOpen, Handshake, Settings, Lock } from "lucide-react";
 
 const GOLD = "#C9A84C";
 const GOLD_DIM = "#A0832A";
 const SERIF = "'Cormorant Garamond', serif";
 
 /* ─── Loading Screen ─── */
-function LoadingScreen({ onComplete, videoReady }: { onComplete: () => void; videoReady: boolean }) {
-  const [phase, setPhase] = useState(0);
+function LoadingScreen({ onComplete }: { onComplete: () => void }) {
+  const [lines, setLines] = useState<string[]>([]);
+  const [done, setDone] = useState(false);
+
+  const sequence = [
+    { text: "> establishing secure connection...", delay: 300 },
+    { text: "> routing through encrypted tunnel...", delay: 800 },
+    { text: "> verifying credentials...", delay: 1300 },
+    { text: "> clearance: granted", delay: 1800 },
+    { text: "> welcome to duckduck club.", delay: 2200 },
+  ];
 
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase(1), 400);
-    const t2 = setTimeout(() => setPhase(2), 1200);
-    const t3 = setTimeout(() => setPhase(3), 2000);
-    // fallback: complete after 4s regardless of video state
-    const t4 = setTimeout(() => onComplete(), 4000);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    sequence.forEach((item) => {
+      timers.push(setTimeout(() => {
+        setLines(prev => [...prev, item.text]);
+      }, item.delay));
+    });
+    timers.push(setTimeout(() => setDone(true), 2800));
+    timers.push(setTimeout(() => onComplete(), 3200));
+    return () => timers.forEach(clearTimeout);
   }, [onComplete]);
-
-  // complete as soon as phase 3 is reached AND video is ready
-  useEffect(() => {
-    if (phase >= 3 && videoReady) onComplete();
-  }, [phase, videoReady, onComplete]);
 
   return (
     <motion.div
       initial={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.8, ease: "easeInOut" }}
-      style={{ position: "fixed", inset: 0, zIndex: 100, background: "#0A0A0A", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 20 }}
+      animate={{ opacity: done ? 0 : 1 }}
+      transition={{ duration: 0.6, ease: "easeInOut" }}
+      style={{ position: "fixed", inset: 0, zIndex: 100, background: "#050505", display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "center", padding: "0 10%", fontFamily: "'Courier New', monospace" }}
     >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ opacity: phase >= 1 ? 1 : 0, scale: phase >= 1 ? 1 : 0.5 }}
-        transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
-      >
-        <img src="/logo.jpeg" alt="DuckDuck Club" style={{ width: 64, height: 64, objectFit: "contain", borderRadius: "50%", border: "1px solid rgba(201,168,76,0.2)" }} />
-      </motion.div>
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: phase >= 2 ? 1 : 0, y: phase >= 2 ? 0 : 10 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        style={{ fontSize: 16, letterSpacing: "0.3em", textTransform: "uppercase", color: GOLD, fontFamily: SERIF }}
-      >
-        DuckDuck Club
-      </motion.div>
-      <motion.div
-        initial={{ width: 0 }}
-        animate={{ width: phase >= 2 ? 60 : 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(201,168,76,0.4), transparent)" }}
-      />
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: phase >= 3 ? 0.5 : 0 }}
-        transition={{ duration: 0.4 }}
-        style={{ fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)" }}
-      >
-        Private ecosystem
-      </motion.div>
+      {/* Scanline effect */}
+      <div style={{ position: "absolute", inset: 0, background: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px)", pointerEvents: "none", zIndex: 2 }} />
+
+      {/* Terminal lines */}
+      <div style={{ position: "relative", zIndex: 3 }}>
+        {lines.map((line, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}
+            style={{
+              fontSize: 14,
+              marginBottom: 12,
+              color: line.includes("welcome")
+                ? "#C9A84C"
+                : line.includes("granted")
+                ? "#4ADE80"
+                : "rgba(201,168,76,0.6)",
+              letterSpacing: "0.05em",
+            }}
+          >
+            {line}
+            {i === lines.length - 1 && !done && (
+              <motion.span
+                animate={{ opacity: [1, 0] }}
+                transition={{ duration: 0.5, repeat: Infinity }}
+                style={{ marginLeft: 2 }}
+              >
+                █
+              </motion.span>
+            )}
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Subtle DuckDuck logo watermark */}
+      <div style={{ position: "absolute", bottom: 40, left: "50%", transform: "translateX(-50%)", display: "flex", alignItems: "center", gap: 10, opacity: lines.length >= 4 ? 0.3 : 0, transition: "opacity 0.5s" }}>
+        <img src="/logo.jpeg" alt="" style={{ width: 20, height: 20, objectFit: "contain", borderRadius: "50%" }} />
+        <span style={{ fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(201,168,76,0.5)", fontFamily: SERIF }}>DuckDuck Club</span>
+      </div>
     </motion.div>
   );
 }
@@ -455,6 +474,54 @@ function CommunityShowcase() {
   );
 }
 
+/* ─── Redacted Intel Card ─── */
+function RedactedCard({ title, preview, classification }: { title: string; preview: string; classification: string }) {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        padding: "20px 24px",
+        borderRadius: 12,
+        background: "rgba(255,255,255,0.02)",
+        border: `1px solid ${hovered ? "rgba(201,168,76,0.15)" : "rgba(201,168,76,0.06)"}`,
+        cursor: "default",
+        transition: "border-color 0.3s",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+        <span style={{ fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(201,168,76,0.4)" }}>{classification}</span>
+        <Lock size={12} color="rgba(201,168,76,0.3)" />
+      </div>
+      <div style={{ fontSize: 15, fontWeight: 500, fontFamily: SERIF, color: "white", marginBottom: 8 }}>{title}</div>
+      <div style={{ position: "relative" }}>
+        <p style={{ fontSize: 13, lineHeight: 1.6, color: "rgba(255,255,255,0.35)", margin: 0 }}>{preview}</p>
+        <div style={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: hovered ? "40%" : "60%",
+          background: hovered
+            ? "linear-gradient(0deg, rgba(10,10,10,0.95) 0%, transparent 100%)"
+            : "linear-gradient(0deg, rgba(10,10,10,1) 0%, rgba(10,10,10,0.9) 50%, transparent 100%)",
+          transition: "all 0.5s ease",
+          display: "flex",
+          alignItems: "flex-end",
+          justifyContent: "center",
+          paddingBottom: 4,
+        }}>
+          <span style={{ fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", color: hovered ? "rgba(201,168,76,0.5)" : "rgba(255,255,255,0.2)", transition: "color 0.3s" }}>
+            {hovered ? "Entre no clube para desbloquear" : "Conteúdo classificado"}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Decrypt Text ─── */
 function DecryptText({ text, delay = 0, speed = 30, className = "" }: { text: string; delay?: number; speed?: number; className?: string }) {
   const [displayed, setDisplayed] = useState("");
@@ -587,7 +654,7 @@ function GeoIntel() {
         <div style={{ position: "absolute", inset: 0, width: 6, height: 6, borderRadius: "50%", background: "#4ADE80", animation: "geoPing 2s infinite" }} />
       </div>
       <span style={{ fontSize: 11, letterSpacing: "0.08em", color: "rgba(255,255,255,0.35)" }}>
-        Acessando de {location}
+        Conexão segura de {location}
       </span>
     </motion.div>
   );
@@ -745,18 +812,8 @@ export default function Home() {
   const [checkout, setCheckout] = useState<string | null>(null);
   const [whatsappForm, setWhatsappForm] = useState<{ plan: string; method: string; totalUSD: number } | null>(null);
   const [loading, setLoading] = useState(true);
-  const [videoReady, setVideoReady] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const handleLoadingComplete = useCallback(() => setLoading(false), []);
-
-  useEffect(() => {
-    const vid = videoRef.current;
-    if (vid) {
-      const onCanPlay = () => setVideoReady(true);
-      vid.addEventListener("canplaythrough", onCanPlay);
-      return () => vid.removeEventListener("canplaythrough", onCanPlay);
-    }
-  }, []);
 
   const { scrollY, scrollYProgress: pageProgress } = useScroll();
   const heroGlowY = useTransform(scrollY, [0, 600], [0, 100]);
@@ -774,7 +831,7 @@ export default function Home() {
       <motion.div style={{ position: "fixed", top: 0, left: 0, right: 0, height: 2, background: "linear-gradient(90deg, #C9A84C, #E8D48B)", zIndex: 50, scaleX: pageProgress, transformOrigin: "left" }} />
 
       <AnimatePresence mode="wait">
-        {loading && <LoadingScreen key="loader" onComplete={handleLoadingComplete} videoReady={videoReady} />}
+        {loading && <LoadingScreen key="loader" onComplete={handleLoadingComplete} />}
       </AnimatePresence>
 
       {!loading && (
@@ -804,6 +861,10 @@ export default function Home() {
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <Logo size={30} />
                 <span style={{ color: "white", fontSize: 14, letterSpacing: "0.15em", textTransform: "uppercase", fontFamily: SERIF }}>DuckDuck Club</span>
+                <div className="privacy-badge" style={{ display: "flex", alignItems: "center", gap: 5, marginLeft: 0, padding: "3px 10px", borderRadius: 20, background: "rgba(74,222,128,0.06)", border: "1px solid rgba(74,222,128,0.1)" }}>
+                  <Lock size={10} color="rgba(74,222,128,0.6)" />
+                  <span style={{ fontSize: 9, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(74,222,128,0.5)" }}>Private</span>
+                </div>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 32 }} className="desktop-nav">
                 {[["O clube", "about"], ["Por dentro", "inside"]].map(([l, h]) => (
@@ -839,6 +900,8 @@ export default function Home() {
               .pricing-note { font-size: 10px !important; }
               .hero-pill { font-size: 11px !important; padding: 8px 10px !important; text-align: center !important; }
               .hero-break { display: block; height: 16px; }
+              .privacy-badge { display: none !important; }
+              .redacted-grid { grid-template-columns: 1fr !important; }
             }
             .hero-break { display: none; }
             input::placeholder { color: rgba(255,255,255,0.25) !important; }
@@ -1011,7 +1074,29 @@ export default function Home() {
 
           <AnimatedDivider />
 
-          {/* ═══ 5. SOBRE O CRIADOR ═══ */}
+          {/* ═══ 5. CLASSIFICADO — REDACTED INTEL ═══ */}
+          <section style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
+            <div style={{ maxWidth: 1024, margin: "0 auto" }}>
+              <Fade>
+                <Badge>Classificado</Badge>
+                <h2 style={{ marginTop: 24, fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 16 }}>
+                  O que está sendo discutido <span className="gold-shimmer" style={{ fontStyle: "italic" }}>agora lá dentro.</span>
+                </h2>
+                <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.4)", marginBottom: 40, maxWidth: 600 }}>
+                  Teasers reais do ecossistema. O conteúdo completo é exclusivo para membros.
+                </p>
+              </Fade>
+              <div className="redacted-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
+                <Fade delay={0}><RedactedCard classification="Intel · Geopolítica" title="Corredor de capital Asia-LATAM: nova rota aberta" preview="Análise completa sobre o novo fluxo de capital entre Hong Kong e Brasil via estruturas em Singapura. Implicações para quem opera com holding internacional e quer posicionar antes do..." /></Fade>
+                <Fade delay={100}><RedactedCard classification="OPSEC · Crypto" title="Cold storage: o erro que 90% comete" preview="Protocolo atualizado de segurança para custódia de ativos digitais. Inclui checklist prático, ferramentas recomendadas e o único setup que realmente protege contra..." /></Fade>
+                <Fade delay={200}><RedactedCard classification="China Ops · Sourcing" title="Fornecedor Tier 1 verificado em Guangzhou" preview="Novo fornecedor validado pelo ecossistema com preços 40% abaixo do mercado para eletrônicos. Processo completo de verificação, negociação e importação direta via..." /></Fade>
+              </div>
+            </div>
+          </section>
+
+          <AnimatedDivider />
+
+          {/* ═══ 6. SOBRE O CRIADOR ═══ */}
           <section style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
             <div style={{ maxWidth: 1024, margin: "0 auto" }}>
               <Fade>
@@ -1191,6 +1276,14 @@ export default function Home() {
               <Fade delay={300}><GoldButton href="pricing" className="cta-glow">Ver meu acesso</GoldButton></Fade>
             </div>
           </section>
+
+          {/* PRIVACY STATEMENT */}
+          <div style={{ padding: "16px 24px", borderTop: "1px solid rgba(74,222,128,0.04)", background: "rgba(74,222,128,0.01)", textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+            <Lock size={12} color="rgba(74,222,128,0.4)" />
+            <span style={{ fontSize: 11, letterSpacing: "0.06em", color: "rgba(255,255,255,0.2)" }}>
+              Este site não rastreia você. Sem cookies de terceiros. Sua privacidade é o padrão.
+            </span>
+          </div>
 
           {/* FOOTER */}
           <footer style={{ position: "relative", padding: "40px 24px", borderTop: "1px solid rgba(255,255,255,0.04)", zIndex: 1 }}>
