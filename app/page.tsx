@@ -577,60 +577,6 @@ function PillarCard({ num, icon: Icon, title, desc, intel, delay }: { num: strin
   );
 }
 
-/* ─── World Map ─── */
-function WorldMap() {
-  const cities = [
-    { name: "São Paulo", x: 30, y: 62 },
-    { name: "Florida", x: 22, y: 42 },
-    { name: "Argenta", x: 51, y: 38 },
-    { name: "Seoul", x: 82, y: 40 },
-    { name: "Townsville", x: 88, y: 68 },
-    { name: "Hong Kong", x: 79, y: 47 },
-    { name: "Shanghai", x: 80, y: 42 },
-    { name: "Chongqing", x: 77, y: 44 },
-    { name: "Guangzhou", x: 78, y: 47 },
-    { name: "Busan", x: 83, y: 41 },
-  ];
-
-  return (
-    <div style={{ position: "relative", width: "100%", maxWidth: 500, margin: "20px auto 24px", opacity: 0.6 }}>
-      <svg viewBox="0 0 100 50" style={{ width: "100%", height: "auto" }}>
-        {[10, 20, 30, 40].map(y => (
-          <line key={`h${y}`} x1="0" y1={y} x2="100" y2={y} stroke="rgba(201,168,76,0.04)" strokeWidth="0.15" />
-        ))}
-        {[20, 40, 60, 80].map(x => (
-          <line key={`v${x}`} x1={x} y1="0" x2={x} y2="50" stroke="rgba(201,168,76,0.04)" strokeWidth="0.15" />
-        ))}
-        <path d="M5 15 Q10 10 20 12 Q25 10 28 15 Q25 20 22 25 Q18 30 15 28 Q8 25 5 20 Z" fill="rgba(201,168,76,0.06)" stroke="rgba(201,168,76,0.08)" strokeWidth="0.2" />
-        <path d="M22 35 Q28 32 32 35 Q34 40 33 48 Q30 52 27 48 Q23 44 22 40 Z" fill="rgba(201,168,76,0.06)" stroke="rgba(201,168,76,0.08)" strokeWidth="0.2" />
-        <path d="M42 12 Q48 10 55 12 Q56 16 54 20 Q50 22 45 20 Q42 17 42 14 Z" fill="rgba(201,168,76,0.06)" stroke="rgba(201,168,76,0.08)" strokeWidth="0.2" />
-        <path d="M45 22 Q52 20 55 25 Q56 32 54 40 Q50 44 47 40 Q44 34 44 28 Z" fill="rgba(201,168,76,0.06)" stroke="rgba(201,168,76,0.08)" strokeWidth="0.2" />
-        <path d="M55 10 Q65 8 80 12 Q88 15 90 22 Q88 30 82 35 Q75 32 68 28 Q60 25 56 20 Q54 15 55 12 Z" fill="rgba(201,168,76,0.06)" stroke="rgba(201,168,76,0.08)" strokeWidth="0.2" />
-        <path d="M82 38 Q88 36 92 38 Q94 42 92 46 Q88 48 84 46 Q82 42 82 40 Z" fill="rgba(201,168,76,0.06)" stroke="rgba(201,168,76,0.08)" strokeWidth="0.2" />
-        {cities.map((city, i) => {
-          if (i === 0) return null;
-          const prev = cities[i - 1];
-          return <line key={`line${i}`} x1={prev.x} y1={prev.y / 100 * 50} x2={city.x} y2={city.y / 100 * 50} stroke="rgba(201,168,76,0.08)" strokeWidth="0.1" strokeDasharray="0.5,0.5" />;
-        })}
-        {cities.map((city, i) => (
-          <g key={city.name}>
-            <circle cx={city.x} cy={city.y / 100 * 50} r="0.8" fill="#C9A84C" opacity="0.3">
-              <animate attributeName="r" from="0.8" to="2.5" dur={`${2 + i * 0.3}s`} repeatCount="indefinite" />
-              <animate attributeName="opacity" from="0.3" to="0" dur={`${2 + i * 0.3}s`} repeatCount="indefinite" />
-            </circle>
-            <circle cx={city.x} cy={city.y / 100 * 50} r="0.5" fill="#C9A84C" opacity="0.8" />
-          </g>
-        ))}
-      </svg>
-      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 8, marginTop: 12 }}>
-        {cities.map(city => (
-          <span key={city.name} style={{ fontSize: 9, letterSpacing: "0.08em", color: "rgba(201,168,76,0.3)", textTransform: "uppercase" }}>{city.name}</span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 /* ─── Decrypt Text ─── */
 function DecryptText({ text, delay = 0, speed = 35, className = "" }: { text: string; delay?: number; speed?: number; className?: string }) {
   const [displayed, setDisplayed] = useState("");
@@ -1237,9 +1183,7 @@ export default function Home() {
                     <p style={{ fontSize: 18, fontWeight: 500, fontFamily: SERIF, color: "white", marginTop: 20, marginBottom: 4 }}>Nando Voyager</p>
                     <a href="https://instagram.com/nandovoyager" target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: GOLD, textDecoration: "none", opacity: 0.85, transition: "opacity 0.2s" }}
                       onMouseEnter={e => (e.currentTarget.style.opacity = "1")} onMouseLeave={e => (e.currentTarget.style.opacity = "0.85")}>@nandovoyager</a>
-                    <div style={{ marginTop: 24, width: "100%" }}>
-                      <WorldMap />
-                    </div>
+
                   </div>
                   <div>
                     <BlurReveal>
