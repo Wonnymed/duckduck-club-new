@@ -629,37 +629,6 @@ function DecryptText({ text, delay = 0, speed = 35, className = "" }: { text: st
   return <span className={className} style={{ transition: "opacity 0.3s" }}>{started ? displayed || "\u00A0" : "\u00A0"}</span>;
 }
 
-/* ─── Animated Counter ─── */
-function AnimatedCounter({ target, suffix = "" }: { target: number; suffix?: string }) {
-  const [count, setCount] = useState(0);
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true });
-
-  useEffect(() => {
-    if (!isInView) return;
-    let current = 0;
-    const step = Math.ceil(target / 30);
-    const interval = setInterval(() => {
-      current += step;
-      if (current >= target) {
-        setCount(target);
-        clearInterval(interval);
-      } else {
-        setCount(current);
-      }
-    }, 40);
-    return () => clearInterval(interval);
-  }, [isInView, target]);
-
-  return (
-    <div ref={ref} style={{ textAlign: "center" }}>
-      <div style={{ fontSize: "clamp(32px, 5vw, 48px)", fontWeight: 300, fontFamily: SERIF, color: GOLD }}>
-        {count}{suffix}
-      </div>
-    </div>
-  );
-}
-
 /* ─── Intelligence Ticker ─── */
 function IntelTicker() {
   const items = [
@@ -941,7 +910,6 @@ export default function Home() {
               .screenshots-row > div { border-radius: 12px !important; transform: none !important; }
               .pricing-note { font-size: 10px !important; }
               .hero-pill { font-size: 11px !important; padding: 8px 10px !important; text-align: center !important; }
-              .stats-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 20px !important; }
               .hero-break { display: block; height: 16px; }
               .privacy-badge { display: none !important; }
               .redacted-grid { grid-template-columns: 1fr !important; }
@@ -1005,36 +973,6 @@ export default function Home() {
 
           <AnimatedDivider />
           <IntelTicker />
-
-          {/* ═══ STATS ═══ */}
-          <section style={{ position: "relative", padding: "48px 24px", zIndex: 1 }}>
-            <div style={{ maxWidth: 900, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 32, textAlign: "center" }} className="stats-grid">
-              <Fade delay={0}>
-                <div>
-                  <AnimatedCounter target={8} />
-                  <p style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: 4 }}>idiomas</p>
-                </div>
-              </Fade>
-              <Fade delay={100}>
-                <div>
-                  <AnimatedCounter target={6} />
-                  <p style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: 4 }}>países vividos</p>
-                </div>
-              </Fade>
-              <Fade delay={200}>
-                <div>
-                  <AnimatedCounter target={30} suffix="+" />
-                  <p style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: 4 }}>países visitados</p>
-                </div>
-              </Fade>
-              <Fade delay={300}>
-                <div>
-                  <AnimatedCounter target={4} />
-                  <p style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: 4 }}>frentes de valor</p>
-                </div>
-              </Fade>
-            </div>
-          </section>
 
           {/* ═══ 2. O PROBLEMA ═══ */}
           <section id="about" style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
@@ -1245,11 +1183,6 @@ export default function Home() {
                     <p style={{ fontSize: 18, fontWeight: 500, fontFamily: SERIF, color: "white", marginTop: 20, marginBottom: 4 }}>Nando Voyager</p>
                     <a href="https://instagram.com/nandovoyager" target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: GOLD, textDecoration: "none", opacity: 0.85, transition: "opacity 0.2s" }}
                       onMouseEnter={e => (e.currentTarget.style.opacity = "1")} onMouseLeave={e => (e.currentTarget.style.opacity = "0.85")}>@nandovoyager</a>
-                    <div style={{ marginTop: 16, marginBottom: 24 }}>
-                      <p style={{ fontSize: 11, letterSpacing: "0.06em", color: "rgba(201,168,76,0.35)", lineHeight: 1.8, textAlign: "center", maxWidth: 500, margin: "0 auto" }}>
-                        São Paulo → Florida → Argenta → Townsville → Hong Kong → Shanghai → Chongqing → Guangzhou → Busan → Seoul
-                      </p>
-                    </div>
                   </div>
                   <div>
                     <BlurReveal>
@@ -1420,10 +1353,7 @@ export default function Home() {
                   </h2>
                 </BlurReveal>
               </Fade>
-              <Fade delay={200}>
-                <p style={{ fontSize: 16, color: "rgba(255,255,255,0.3)", fontFamily: SERIF, fontStyle: "italic", marginBottom: 8, textAlign: "center" }}>O ambiente onde você opera define o nível do jogo que você joga.</p>
-                <p style={{ fontSize: 15, maxWidth: 480, margin: "0 auto 40px", lineHeight: 1.7, color: "rgba(255,255,255,0.4)" }}>Privado. Curado. Internacional.<br />Feito para quem quer operar com mais contexto, mais conexões e mais capacidade prática.</p>
-              </Fade>
+              <Fade delay={200}><p style={{ fontSize: 15, maxWidth: 480, margin: "0 auto 40px", lineHeight: 1.7, color: "rgba(255,255,255,0.4)" }}>Privado. Curado. Internacional.<br />Feito para quem quer sair do ruído e operar no nível certo.</p></Fade>
               <Fade delay={300}><GoldButton href="pricing" className="cta-glow">Ver meu acesso</GoldButton></Fade>
             </div>
           </section>
