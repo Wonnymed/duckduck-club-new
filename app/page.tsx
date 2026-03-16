@@ -243,6 +243,10 @@ function resolveCheckoutLink(plan: string, extraLanguages: number): string {
   return CARD_LINKS[key] ?? "#";
 }
 
+const BRL_MAP: Record<number, number> = {
+  15: 79, 20: 99, 25: 129, 29: 149, 34: 179, 39: 199, 44: 229, 49: 249,
+};
+
 function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: () => void; onWhatsApp: (plan: string, method: string, totalUSD: number) => void }) {
   const premium = plan === "premium";
   const basePrice = premium ? 29 : 15;
@@ -254,7 +258,7 @@ function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: (
   const extraLanguages = Math.max(0, langs.length - freeIncluded);
   const normalizedExtra = Math.min(extraLanguages, premium ? 1 : 2);
   const total = basePrice + normalizedExtra * 5 + (poly ? 10 : 0);
-  const brl = Math.round(total * 5.2);
+  const brl = BRL_MAP[total] || Math.round(total * 5.2);
   const toggle = (l: string) => setLangs(p => {
     if (p.includes(l)) return p.filter(x => x !== l);
     if (p.length >= maxLangs) return p;
@@ -311,7 +315,7 @@ function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div>
               <div style={{ fontSize: 14, fontWeight: 500, fontFamily: SERIF, marginBottom: 4 }}>Polymarket Lab</div>
-              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)" }}>+US$10/mês · aprox. R$52/mês</div>
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)" }}>+US$10/mês · aprox. R$49/mês</div>
             </div>
             <button onClick={() => setPoly(!poly)} style={{ width: 48, height: 24, borderRadius: 12, position: "relative", border: "none", cursor: "pointer", background: poly ? GOLD : "rgba(255,255,255,0.08)", transition: "background 0.3s ease", flexShrink: 0 }}>
               <div style={{ width: 20, height: 20, borderRadius: 10, position: "absolute", top: 2, left: poly ? 26 : 2, background: poly ? "#0A0A0A" : "rgba(255,255,255,0.4)", transition: "left 0.3s ease" }} />
@@ -326,7 +330,7 @@ function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: (
             {premium && <div style={{ fontSize: 11, color: GOLD, opacity: 0.7 }}>{Math.min(langs.length, freeIncluded)}/{freeIncluded} incluídos</div>}
           </div>
           <p style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginBottom: 14, marginTop: 0 }}>
-            {premium ? "2 incluídos · adicione até 1 extra por +US$5/mês" : "+US$5/mês por idioma · aprox. R$26/mês cada"}
+            {premium ? "2 incluídos · adicione até 1 extra por +US$5/mês" : "+US$5/mês por idioma · aprox. R$25/mês cada"}
           </p>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
             {LANGS.map(l => {
