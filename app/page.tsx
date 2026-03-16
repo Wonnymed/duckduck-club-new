@@ -76,10 +76,11 @@ function TextReveal({ text, gold = false, italic = false, delay = 0 }: { text: s
       {words.map((word, i) => (
         <motion.span
           key={i}
+          className={gold ? "gold-shimmer" : ""}
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.5, delay: delay + i * 0.08, ease: [0.25, 0.1, 0.25, 1] }}
-          style={{ display: "inline-block", marginRight: "0.3em", color: gold ? GOLD : "inherit", fontStyle: italic ? "italic" : "normal" }}
+          style={{ display: "inline-block", marginRight: "0.3em", fontStyle: italic ? "italic" : "normal" }}
         >
           {word}
         </motion.span>
@@ -137,7 +138,7 @@ function Badge({ children }: { children: React.ReactNode }) {
   return <span style={{ display: "inline-flex", alignItems: "center", fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", padding: "6px 16px", borderRadius: 9999, border: "1px solid rgba(201,168,76,0.3)", background: "rgba(201,168,76,0.06)", color: GOLD, fontFamily: SERIF }}>{children}</span>;
 }
 
-function GoldButton({ children, onClick, href, style: extraStyle = {} }: { children: React.ReactNode; onClick?: () => void; href?: string; style?: React.CSSProperties }) {
+function GoldButton({ children, onClick, href, style: extraStyle = {}, className = "" }: { children: React.ReactNode; onClick?: () => void; href?: string; style?: React.CSSProperties; className?: string }) {
   const handleClick = () => {
     if (href) scrollTo(href);
     if (onClick) onClick();
@@ -145,10 +146,11 @@ function GoldButton({ children, onClick, href, style: extraStyle = {} }: { child
   return (
     <motion.button
       onClick={handleClick}
+      className={className}
       whileHover={{ scale: 1.03, boxShadow: "0 0 40px rgba(201,168,76,0.2)" }}
       whileTap={{ scale: 0.97 }}
       transition={{ duration: 0.2 }}
-      style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "16px 32px", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase" as const, fontWeight: 600, fontFamily: SERIF, background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", border: "none", cursor: "pointer", ...extraStyle }}
+      style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "16px 32px", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase" as const, fontWeight: 600, fontFamily: SERIF, background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", border: "none", cursor: "pointer", position: "relative", ...extraStyle }}
     >
       {children}<ArrowRight size={15} />
     </motion.button>
@@ -453,6 +455,149 @@ function CommunityShowcase() {
   );
 }
 
+/* ─── Cursor Spotlight ─── */
+function CursorSpotlight() {
+  const [pos, setPos] = useState({ x: -100, y: -100 });
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const move = (e: MouseEvent) => { setPos({ x: e.clientX, y: e.clientY }); setVisible(true); };
+    const leave = () => setVisible(false);
+    window.addEventListener("mousemove", move);
+    document.addEventListener("mouseleave", leave);
+    return () => { window.removeEventListener("mousemove", move); document.removeEventListener("mouseleave", leave); };
+  }, []);
+
+  if (typeof window !== "undefined" && window.innerWidth < 768) return null;
+
+  return (
+    <div style={{
+      position: "fixed",
+      left: pos.x - 150,
+      top: pos.y - 150,
+      width: 300,
+      height: 300,
+      borderRadius: "50%",
+      background: "radial-gradient(circle, rgba(201,168,76,0.06) 0%, rgba(201,168,76,0.02) 30%, transparent 70%)",
+      pointerEvents: "none",
+      zIndex: 45,
+      opacity: visible ? 1 : 0,
+      transition: "opacity 0.3s ease",
+      transform: "translate3d(0,0,0)",
+    }} />
+  );
+}
+
+/* ─── Gold Particles ─── */
+function GoldParticles() {
+  const particles = Array.from({ length: 18 }, (_, i) => ({
+    id: i,
+    left: Math.random() * 100,
+    delay: Math.random() * 10,
+    duration: 15 + Math.random() * 20,
+    size: 2 + Math.random() * 3,
+    opacity: 0.1 + Math.random() * 0.2,
+  }));
+
+  return (
+    <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 1, overflow: "hidden" }}>
+      {particles.map(p => (
+        <motion.div
+          key={p.id}
+          animate={{ y: [0, typeof window !== "undefined" ? -window.innerHeight : -1000], opacity: [0, p.opacity, p.opacity, 0] }}
+          transition={{ duration: p.duration, repeat: Infinity, delay: p.delay, ease: "linear" }}
+          style={{
+            position: "absolute",
+            left: `${p.left}%`,
+            bottom: -20,
+            width: p.size,
+            height: p.size,
+            borderRadius: "50%",
+            background: "#C9A84C",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* ─── 3D Member Card ─── */
+function MemberCard() {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [rotate, setRotate] = useState({ x: 0, y: 0 });
+  const [glare, setGlare] = useState({ x: 50, y: 50 });
+
+  useEffect(() => {
+    const handleMouse = (e: MouseEvent) => {
+      if (!cardRef.current) return;
+      const rect = cardRef.current.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const rotateY = ((e.clientX - centerX) / rect.width) * 12;
+      const rotateX = -((e.clientY - centerY) / rect.height) * 12;
+      setRotate({ x: rotateX, y: rotateY });
+      setGlare({ x: ((e.clientX - rect.left) / rect.width) * 100, y: ((e.clientY - rect.top) / rect.height) * 100 });
+    };
+    const reset = () => { setRotate({ x: 0, y: 0 }); setGlare({ x: 50, y: 50 }); };
+    window.addEventListener("mousemove", handleMouse);
+    window.addEventListener("mouseleave", reset);
+    return () => { window.removeEventListener("mousemove", handleMouse); window.removeEventListener("mouseleave", reset); };
+  }, []);
+
+  return (
+    <motion.div
+      ref={cardRef}
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1.2, delay: 2.0 }}
+      style={{
+        width: 320,
+        height: 200,
+        borderRadius: 16,
+        position: "relative",
+        overflow: "hidden",
+        background: "linear-gradient(135deg, rgba(20,20,20,0.9) 0%, rgba(15,15,15,0.95) 100%)",
+        border: "1px solid rgba(201,168,76,0.2)",
+        transform: `perspective(1000px) rotateX(${rotate.x}deg) rotateY(${rotate.y}deg)`,
+        transition: "transform 0.1s ease-out",
+        boxShadow: "0 25px 50px rgba(0,0,0,0.5), 0 0 40px rgba(201,168,76,0.05)",
+        padding: 28,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+      }}
+    >
+      <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(201,168,76,0.08) 0%, transparent 60%)`, pointerEvents: "none", zIndex: 1 }} />
+      <div style={{ position: "relative", zIndex: 2 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <img src="/logo.jpeg" alt="" style={{ width: 32, height: 32, objectFit: "contain", borderRadius: "50%", border: "1px solid rgba(201,168,76,0.15)" }} />
+          <span style={{ fontSize: 9, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(201,168,76,0.4)" }}>Private Access</span>
+        </div>
+      </div>
+      <div style={{ position: "relative", zIndex: 2 }}>
+        <div style={{ fontSize: 15, fontWeight: 500, fontFamily: SERIF, color: "white", marginBottom: 4 }}>DuckDuck Club</div>
+        <div style={{ fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(201,168,76,0.5)" }}>Member Card</div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ─── Blur Reveal ─── */
+function BlurReveal({ children }: { children: React.ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ filter: "blur(8px)", opacity: 0, y: 20 }}
+      animate={isInView ? { filter: "blur(0px)", opacity: 1, y: 0 } : {}}
+      transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 /* ═══════════════════════════════
    MAIN PAGE
 ═══════════════════════════════ */
@@ -475,7 +620,7 @@ export default function Home() {
     }
   }, []);
 
-  const { scrollY } = useScroll();
+  const { scrollY, scrollYProgress: pageProgress } = useScroll();
   const heroGlowY = useTransform(scrollY, [0, 600], [0, 100]);
 
   useEffect(() => {
@@ -488,6 +633,8 @@ export default function Home() {
 
   return (
     <>
+      <motion.div style={{ position: "fixed", top: 0, left: 0, right: 0, height: 2, background: "linear-gradient(90deg, #C9A84C, #E8D48B)", zIndex: 50, scaleX: pageProgress, transformOrigin: "left" }} />
+
       <AnimatePresence mode="wait">
         {loading && <LoadingScreen key="loader" onComplete={handleLoadingComplete} videoReady={videoReady} />}
       </AnimatePresence>
@@ -495,6 +642,8 @@ export default function Home() {
       {!loading && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.2 }}>
           <div className="grain-overlay" />
+          <CursorSpotlight />
+          <GoldParticles />
 
           <MobileNav open={menuOpen} onClose={() => setMenuOpen(false)} />
           {checkout && <CheckoutModal plan={checkout} onClose={() => setCheckout(null)} onWhatsApp={(p, m, t) => { setCheckout(null); setTimeout(() => setWhatsappForm({ plan: p, method: m, totalUSD: t }), 200); }} />}
@@ -538,6 +687,7 @@ export default function Home() {
             @media (max-width: 768px) {
               .desktop-nav { display: none !important; }
               .mobile-menu { display: block !important; }
+              .hide-mobile { display: none !important; }
               .hero-tags { display: grid !important; grid-template-columns: 1fr 1fr !important; flex-direction: unset !important; gap: 6px !important; margin-top: 20px !important; }
               .pillar-grid { grid-template-columns: 1fr !important; }
               .pillar-card { flex-direction: column !important; }
@@ -585,8 +735,11 @@ export default function Home() {
                 </p>
               </motion.div>
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 2.8 }}>
-                <GoldButton href="pricing">Ver meu acesso</GoldButton>
+                <GoldButton href="pricing" className="cta-glow">Ver meu acesso</GoldButton>
               </motion.div>
+              <div style={{ marginTop: 40, display: "flex", justifyContent: "center" }} className="hide-mobile">
+                <MemberCard />
+              </div>
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -608,11 +761,13 @@ export default function Home() {
             <div style={{ maxWidth: 1024, margin: "0 auto" }}>
               <Fade>
                 <Badge>O problema</Badge>
-                <h2 style={{ marginTop: 24, fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 24 }}>
-                  <TextReveal text="Ambição sem contexto, sem linguagem e sem estrutura vira" delay={0} />
-                  {" "}
-                  <TextReveal text="desperdício de potencial." gold italic delay={0.8} />
-                </h2>
+                <BlurReveal>
+                  <h2 style={{ marginTop: 24, fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 24 }}>
+                    <TextReveal text="Ambição sem contexto, sem linguagem e sem estrutura vira" delay={0} />
+                    {" "}
+                    <TextReveal text="desperdício de potencial." gold italic delay={0.8} />
+                  </h2>
+                </BlurReveal>
                 <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 40, maxWidth: 720 }}>
                   Muita gente quer crescer e acessar oportunidades maiores. Mas tenta fazer isso com informação espalhada, networking fraco, leitura rasa de cenário e pouca capacidade prática de execução. O resultado é viver ocupada, mas continuar jogando abaixo do próprio potencial.
                 </p>
@@ -643,11 +798,13 @@ export default function Home() {
             <div style={{ maxWidth: 1024, margin: "0 auto" }}>
               <Fade>
                 <Badge>Por dentro</Badge>
-                <h2 style={{ marginTop: 24, fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 16 }}>
-                  <TextReveal text="O que você encontra" delay={0} />
-                  {" "}
-                  <TextReveal text="ao entrar" gold italic delay={0.4} />
-                </h2>
+                <BlurReveal>
+                  <h2 style={{ marginTop: 24, fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 16 }}>
+                    <TextReveal text="O que você encontra" delay={0} />
+                    {" "}
+                    <TextReveal text="ao entrar" gold italic delay={0.4} />
+                  </h2>
+                </BlurReveal>
                 <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 48, maxWidth: 720 }}>
                   Quatro frentes de valor real. Cada uma desenhada para te colocar em uma posição melhor do que você estava ontem.
                 </p>
@@ -690,11 +847,13 @@ export default function Home() {
               <Fade>
                 <div style={{ textAlign: "center", marginBottom: 48 }}>
                   <Badge>O ambiente</Badge>
-                  <h2 style={{ marginTop: 24, fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 16 }}>
-                    <TextReveal text="Um ecossistema" delay={0} />
-                    {" "}
-                    <TextReveal text="real e organizado." gold italic delay={0.3} />
-                  </h2>
+                  <BlurReveal>
+                    <h2 style={{ marginTop: 24, fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 16 }}>
+                      <TextReveal text="Um ecossistema" delay={0} />
+                      {" "}
+                      <TextReveal text="real e organizado." gold italic delay={0.3} />
+                    </h2>
+                  </BlurReveal>
                   <p style={{ fontSize: 15, maxWidth: 560, margin: "0 auto", lineHeight: 1.7, color: "rgba(255,255,255,0.4)" }}>Canais estruturados, inteligência curada e espaços que funcionam — do onboarding ao nível mais operacional.</p>
                 </div>
               </Fade>
@@ -718,11 +877,13 @@ export default function Home() {
                       onMouseEnter={e => (e.currentTarget.style.opacity = "1")} onMouseLeave={e => (e.currentTarget.style.opacity = "0.85")}>@nandovoyager</a>
                   </div>
                   <div>
-                    <h2 style={{ fontSize: "clamp(22px, 3.5vw, 36px)", fontWeight: 300, lineHeight: 1.2, fontFamily: SERIF, marginBottom: 24 }}>
-                      <TextReveal text="A DuckDuck Club nasceu da interseção entre" delay={0} />
-                      {" "}
-                      <TextReveal text="contexto global, operação real e construção de valor." gold italic delay={0.5} />
-                    </h2>
+                    <BlurReveal>
+                      <h2 style={{ fontSize: "clamp(22px, 3.5vw, 36px)", fontWeight: 300, lineHeight: 1.2, fontFamily: SERIF, marginBottom: 24 }}>
+                        <TextReveal text="A DuckDuck Club nasceu da interseção entre" delay={0} />
+                        {" "}
+                        <TextReveal text="contexto global, operação real e construção de valor." gold italic delay={0.5} />
+                      </h2>
+                    </BlurReveal>
                     <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 0 }}>
                       Depois de viver entre países, operar em ambientes diferentes e perceber como idioma, geopolítica, estrutura, network e execução mudam o nível do jogo, eu decidi reunir tudo isso em um ecossistema privado. A DuckDuck Club foi criada para quem quer deixar de depender de improviso, ruído e informação solta — e começar a operar com mais clareza, mais linguagem e mais capacidade prática.
                     </p>
@@ -738,10 +899,12 @@ export default function Home() {
           <section style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
             <div style={{ maxWidth: 1024, margin: "0 auto" }}>
               <Fade>
-                <h2 style={{ fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 48 }}>
-                  <TextReveal text="Isso é para você se" delay={0} />
-                  <span style={{ color: GOLD }}>...</span>
-                </h2>
+                <BlurReveal>
+                  <h2 style={{ fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 48 }}>
+                    <TextReveal text="Isso é para você se" delay={0} />
+                    <span className="gold-shimmer">...</span>
+                  </h2>
+                </BlurReveal>
               </Fade>
               <div className="for-you-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
                 <Fade>
@@ -772,11 +935,13 @@ export default function Home() {
           <section id="pricing" style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
             <div style={{ maxWidth: 1024, margin: "0 auto" }}>
               <Fade>
-                <h2 style={{ fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 12 }}>
-                  <TextReveal text="Escolha seu nível de" delay={0} />
-                  {" "}
-                  <TextReveal text="acesso" gold italic delay={0.4} />
-                </h2>
+                <BlurReveal>
+                  <h2 style={{ fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 12 }}>
+                    <TextReveal text="Escolha seu nível de" delay={0} />
+                    {" "}
+                    <TextReveal text="acesso" gold italic delay={0.4} />
+                  </h2>
+                </BlurReveal>
                 <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 48 }}>Entre pelo core ou desbloqueie a camada mais valiosa do clube.</p>
               </Fade>
               <div className="pricing-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20 }}>
@@ -832,11 +997,13 @@ export default function Home() {
           <section style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
             <div style={{ maxWidth: 720, margin: "0 auto" }}>
               <Fade>
-                <h2 style={{ fontSize: "clamp(24px, 3.5vw, 40px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 40 }}>
-                  <TextReveal text="Perguntas" delay={0} />
-                  {" "}
-                  <TextReveal text="frequentes" gold italic delay={0.3} />
-                </h2>
+                <BlurReveal>
+                  <h2 style={{ fontSize: "clamp(24px, 3.5vw, 40px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 40 }}>
+                    <TextReveal text="Perguntas" delay={0} />
+                    {" "}
+                    <TextReveal text="frequentes" gold italic delay={0.3} />
+                  </h2>
+                </BlurReveal>
               </Fade>
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 {[
@@ -864,14 +1031,16 @@ export default function Home() {
             <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "center", position: "relative", zIndex: 2 }}>
               <Fade><Logo size={48} /></Fade>
               <Fade delay={100}>
-                <h2 style={{ marginTop: 32, fontSize: "clamp(28px, 5vw, 52px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 24 }}>
-                  <TextReveal text="Seu próximo nível começa" delay={0} />
-                  <br />
-                  <TextReveal text="pelo ambiente certo." gold italic delay={0.4} />
-                </h2>
+                <BlurReveal>
+                  <h2 style={{ marginTop: 32, fontSize: "clamp(28px, 5vw, 52px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 24 }}>
+                    <TextReveal text="Seu próximo nível começa" delay={0} />
+                    <br />
+                    <TextReveal text="pelo ambiente certo." gold italic delay={0.4} />
+                  </h2>
+                </BlurReveal>
               </Fade>
               <Fade delay={200}><p style={{ fontSize: 15, maxWidth: 480, margin: "0 auto 40px", lineHeight: 1.7, color: "rgba(255,255,255,0.4)" }}>Privado. Curado. Internacional.<br />Feito para quem quer operar com mais contexto, mais conexões e mais capacidade prática.</p></Fade>
-              <Fade delay={300}><GoldButton href="pricing">Ver meu acesso</GoldButton></Fade>
+              <Fade delay={300}><GoldButton href="pricing" className="cta-glow">Ver meu acesso</GoldButton></Fade>
             </div>
           </section>
 
