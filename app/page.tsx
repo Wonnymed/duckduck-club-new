@@ -453,35 +453,6 @@ function CommunityShowcase() {
   );
 }
 
-/* ═══ PILLAR CARD WITH VIDEO ═══ */
-function PillarCard({ item }: { item: { num: string; title: string; video: string; desc: string } }) {
-  const [hovered, setHovered] = useState(false);
-  return (
-    <div
-      className="pillar-card-video"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{ position: "relative", overflow: "hidden", borderRadius: 16, height: 280, display: "flex", flexDirection: "column", justifyContent: "flex-end", border: "1px solid rgba(255,255,255,0.06)", cursor: "default" }}
-    >
-      {/* Video background */}
-      <video
-        autoPlay muted loop playsInline preload="metadata"
-        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: hovered ? 0.35 : 0.2, zIndex: 0, transition: "opacity 0.5s ease" }}
-      >
-        <source src={item.video} type="video/mp4" />
-      </video>
-      {/* Gradient overlay */}
-      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(10,10,10,0.3) 0%, rgba(10,10,10,0.85) 50%, rgba(10,10,10,0.95) 100%)", zIndex: 1 }} />
-      {/* Content */}
-      <div style={{ position: "relative", zIndex: 2, padding: 28 }}>
-        <div style={{ fontSize: 11, letterSpacing: "0.2em", color: "rgba(201,168,76,0.5)", marginBottom: 8, fontFamily: "'DM Sans', sans-serif" }}>{item.num}</div>
-        <h3 style={{ fontSize: 22, fontWeight: 500, fontFamily: SERIF, marginBottom: 8, margin: "0 0 8px" }}>{item.title}</h3>
-        <p style={{ fontSize: 14, lineHeight: 1.6, color: "rgba(255,255,255,0.5)", margin: 0 }}>{item.desc}</p>
-      </div>
-    </div>
-  );
-}
-
 /* ═══════════════════════════════
    MAIN PAGE
 ═══════════════════════════════ */
@@ -570,7 +541,6 @@ export default function Home() {
               .hero-tags { display: grid !important; grid-template-columns: 1fr 1fr !important; flex-direction: unset !important; gap: 6px !important; margin-top: 20px !important; }
               .pillar-grid { grid-template-columns: 1fr !important; }
               .pillar-card { flex-direction: column !important; }
-              .pillar-card-video { height: auto !important; min-height: 200px !important; }
               .for-you-grid { grid-template-columns: 1fr !important; }
               .pricing-grid { grid-template-columns: 1fr !important; }
               .problem-grid { grid-template-columns: 1fr !important; }
@@ -684,13 +654,27 @@ export default function Home() {
               </Fade>
               <div className="pillar-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
                 {[
-                  { num: "01", title: "Direção", video: "/pillar-direcao.mp4", desc: "Geopolítica, leitura de cenário e contexto estratégico para você antecipar movimentos — enquanto a maioria ainda está reagindo." },
-                  { num: "02", title: "Valor pessoal", video: "/pillar-pessoal.mp4", desc: "Idiomas, repertório e ferramentas práticas para ampliar seu alcance, sua utilidade e o tipo de oportunidade que chega até você." },
-                  { num: "03", title: "Valor relacional", video: "/pillar-relacional.mp4", desc: "Networking, deals e matchmaking que conectam você a operadores, investidores e oportunidades que não circulam no mainstream." },
-                  { num: "04", title: "Valor operacional", video: "/pillar-operacional.mp4", desc: "Offshore, China import, crypto OPSEC e estruturas internacionais — não como teoria, mas como execução real com proteção." },
+                  { num: "01", icon: Compass, title: "Direção", desc: "Geopolítica, leitura de cenário e contexto estratégico para você antecipar movimentos — enquanto a maioria ainda está reagindo." },
+                  { num: "02", icon: BookOpen, title: "Valor pessoal", desc: "Idiomas, repertório e ferramentas práticas para ampliar seu alcance, sua utilidade e o tipo de oportunidade que chega até você." },
+                  { num: "03", icon: Handshake, title: "Valor relacional", desc: "Networking, deals e matchmaking que conectam você a operadores, investidores e oportunidades que não circulam no mainstream." },
+                  { num: "04", icon: Settings, title: "Valor operacional", desc: "Offshore, China import, crypto OPSEC e estruturas internacionais — não como teoria, mas como execução real com proteção." },
                 ].map((item, i) => (
                   <Fade key={item.title} delay={i * 80}>
-                    <PillarCard item={item} />
+                    <motion.div
+                      className="pillar-card"
+                      whileHover={{ y: -4, borderColor: "rgba(201,168,76,0.2)" }}
+                      transition={{ duration: 0.2 }}
+                      style={{ padding: "28px 32px", borderRadius: 16, background: "rgba(255,255,255,0.02)", borderWidth: 1, borderStyle: "solid", borderColor: "rgba(255,255,255,0.06)", height: "100%", display: "flex", gap: 24, alignItems: "flex-start" }}
+                    >
+                      <div style={{ width: 44, height: 44, minWidth: 44, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.15)", marginTop: 2 }}>
+                        <item.icon size={20} color={GOLD} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 11, letterSpacing: "0.2em", color: "rgba(201,168,76,0.4)", marginBottom: 8, fontFamily: "'DM Sans', sans-serif" }}>{item.num}</div>
+                        <h3 style={{ fontSize: 20, fontWeight: 500, fontFamily: SERIF, marginBottom: 8 }}>{item.title}</h3>
+                        <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 0 }}>{item.desc}</p>
+                      </div>
+                    </motion.div>
                   </Fade>
                 ))}
               </div>
