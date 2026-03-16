@@ -934,9 +934,6 @@ export default function Home() {
             <div style={{ position: "absolute", inset: 0, zIndex: 1, background: "linear-gradient(180deg, rgba(10,10,10,0.1) 0%, rgba(10,10,10,0.6) 50%, rgba(10,10,10,1) 100%)" }} />
             <div style={{ maxWidth: 896, margin: "0 auto", textAlign: "center", position: "relative", zIndex: 2 }}>
               <GeoIntel />
-              <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.5 }}>
-                <Badge>Ecossistema Privado</Badge>
-              </motion.div>
               <motion.h1
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
