@@ -997,10 +997,10 @@ export default function Home() {
                 transition={{ duration: 0.3, delay: 0.5 }}
                 style={{ marginTop: 40, marginBottom: 28, fontSize: "clamp(30px, 6vw, 72px)", fontWeight: 300, lineHeight: 1.1, fontFamily: SERIF }}
               >
-                <DecryptText text="Antes de pensar em crescer financeiramente," delay={800} speed={40} />
+                <DecryptText text="Antes de pensar em crescer financeiramente," delay={800} speed={35} />
                 <br />
                 <span className="gold-shimmer" style={{ fontStyle: "italic" }}>
-                  <DecryptText text="aumente o seu valor no jogo." delay={2400} speed={40} />
+                  <DecryptText text="aumente o seu valor no jogo." delay={4200} speed={35} />
                 </span>
               </motion.h1>
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 2.4 }}>
