@@ -439,7 +439,7 @@ function CommunityShowcase() {
               transition={{ duration: 4 + i * 0.5, repeat: Infinity, ease: "easeInOut", delay: i * 0.5 }}
             >
               <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 60%, rgba(10,10,10,0.4) 100%)", zIndex: 2, pointerEvents: "none" }} />
-              <img src={s.src} alt={s.alt} style={{ width: "100%", height: "auto", display: "block", filter: s.featured ? "brightness(0.95)" : "brightness(0.85)" }} />
+              <img src={s.src} alt={s.alt} loading="lazy" style={{ width: "100%", height: "auto", display: "block", filter: s.featured ? "brightness(0.95)" : "brightness(0.85)" }} />
             </motion.div>
           </motion.div>
         ))}
@@ -738,7 +738,7 @@ function FloatingCTA() {
           width: "100%",
           padding: "14px 0",
           borderRadius: 8,
-          background: "linear-gradient(135deg, #C9A84C, #A0832A)",
+          background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`,
           color: "#0A0A0A",
           fontSize: 13,
           fontWeight: 600,
@@ -1224,7 +1224,7 @@ export default function Home() {
                 </span>
               </motion.h1>
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 3.8 }}>
-                <p style={{ maxWidth: 640, margin: "0 auto 40px", fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)" }}>
+                <p style={{ maxWidth: 640, margin: "0 auto 40px", fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.5)" }}>
                   Um ecossistema privado pra quem quer operar no mundo com mais direção, mais linguagem e mais acesso.
                 </p>
               </motion.div>
@@ -1314,7 +1314,7 @@ export default function Home() {
 
           <AnimatedDivider />
 
-          {/* ═══ 5. COMMUNITY SCREENSHOTS ═══ */}
+          {/* ═══ 4. COMMUNITY SCREENSHOTS ═══ */}
           <section style={{ position: "relative", padding: "80px 24px", overflow: "hidden", zIndex: 1 }}>
             <div style={{ maxWidth: 1100, margin: "0 auto" }}>
               <Fade><Badge>O ambiente</Badge></Fade>
@@ -1335,14 +1335,18 @@ export default function Home() {
 
           <AnimatedDivider />
 
-          {/* ═══ 5. CLASSIFICADO — REDACTED INTEL ═══ */}
+          {/* ═══ 5. CLASSIFICADO ═══ */}
           <section style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
             <div style={{ maxWidth: 1100, margin: "0 auto" }}>
               <Fade><Badge>Classificado</Badge></Fade>
               <Fade delay={100}>
-                <h2 style={{ marginTop: 20, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 12 }}>
-                  O que está sendo discutido <span className="gold-shimmer" style={{ fontStyle: "italic" }}>agora lá dentro.</span>
-                </h2>
+                <BlurReveal>
+                  <h2 style={{ marginTop: 20, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 12 }}>
+                    <TextReveal text="O que está sendo discutido" delay={0} />
+                    {" "}
+                    <TextReveal text="agora lá dentro." gold italic delay={0.4} />
+                  </h2>
+                </BlurReveal>
               </Fade>
               <Fade delay={400}>
                 <p style={{ fontSize: 15, lineHeight: 1.6, color: "rgba(255,255,255,0.5)", marginBottom: 40, maxWidth: 600 }}>
@@ -1366,7 +1370,7 @@ export default function Home() {
               <div className="founder-grid" style={{ marginTop: 20, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 48, alignItems: "center" }}>
                 <Fade delay={200}>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                    <img src="/founder-photo.jpeg" alt="Nando Voyager — Founder" className="founder-photo" style={{ width: 320, height: 320, minWidth: 320, borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(201,168,76,0.3)" }} />
+                    <img src="/founder-photo.jpeg" alt="Nando Voyager — Founder" loading="lazy" className="founder-photo" style={{ width: 320, height: 320, minWidth: 320, borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(201,168,76,0.3)" }} />
                     <p style={{ fontSize: 18, fontWeight: 500, fontFamily: SANS, color: "white", marginTop: 20, marginBottom: 4 }}>Nando Voyager</p>
                     <a href="https://instagram.com/nandovoyager" target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: GOLD, textDecoration: "none", opacity: 0.85, transition: "opacity 0.2s" }}
                       onMouseEnter={e => (e.currentTarget.style.opacity = "1")} onMouseLeave={e => (e.currentTarget.style.opacity = "0.85")}>@nandovoyager</a>
@@ -1375,7 +1379,7 @@ export default function Home() {
                 <div>
                   <Fade delay={300}>
                     <BlurReveal>
-                      <h2 style={{ fontSize: "clamp(20px, 3vw, 32px)", fontWeight: 300, lineHeight: 1.2, fontFamily: SERIF, marginBottom: 20 }}>
+                      <h2 style={{ fontSize: "clamp(20px, 3vw, 32px)", fontWeight: 300, lineHeight: 1.2, fontFamily: SERIF, marginBottom: 12 }}>
                         <TextReveal text="A DuckDuck Club nasceu da interseção entre" delay={0} />
                         {" "}
                         <TextReveal text="contexto global, operação real e construção de valor." gold italic delay={0.5} />
@@ -1397,7 +1401,7 @@ export default function Home() {
 
           <AnimatedDivider />
 
-          {/* ═══ 6. PARA VOCÊ SE... ═══ */}
+          {/* ═══ 7. PARA VOCÊ SE... ═══ */}
           <section style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
             <div style={{ maxWidth: 1100, margin: "0 auto" }}>
               <Fade>
@@ -1434,10 +1438,10 @@ export default function Home() {
           <AnimatedDivider />
           <div className="mobile-hide"><IntelTicker /></div>
 
-          {/* ═══ 7. PRICING ═══ */}
+          {/* ═══ 8. PRICING ═══ */}
           <PricingSection />
 
-          {/* ═══ 8. FAQ ═══ */}
+          {/* ═══ 9. FAQ ═══ */}
           <FAQSection />
 
           {/* PRIVACY STATEMENT */}
