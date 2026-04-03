@@ -539,7 +539,7 @@ function LanguageCard({ flag, lang, unlock, delay }: { flag: string; lang: strin
 }
 
 /* ─── Pillar Card with intel preview ─── */
-function PillarCard({ num, icon: Icon, title, desc, delay, mobileHide = false }: { num: string; icon: React.ComponentType<{ size: number; color: string }>; title: string; desc: string; delay: number; mobileHide?: boolean }) {
+function PillarCard({ num, icon: Icon, title, desc, delay }: { num: string; icon: React.ComponentType<{ size: number; color: string }>; title: string; desc: string; delay: number }) {
   const [hovered, setHovered] = useState(false);
   return (
     <Fade delay={delay}>
@@ -547,7 +547,7 @@ function PillarCard({ num, icon: Icon, title, desc, delay, mobileHide = false }:
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         style={{ padding: 24, borderRadius: 12, background: hovered ? "rgba(201,168,76,0.03)" : "rgba(255,255,255,0.02)", border: `1px solid ${hovered ? "rgba(201,168,76,0.15)" : "rgba(201,168,76,0.12)"}`, height: "100%", transition: "all 0.3s" }}
-        className={`pillar-card${mobileHide ? " mobile-hide" : ""}`}
+        className="pillar-card"
       >
         <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 12 }}>
           <div style={{ width: 40, height: 40, minWidth: 40, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.15)" }}>
@@ -558,7 +558,7 @@ function PillarCard({ num, icon: Icon, title, desc, delay, mobileHide = false }:
             <div style={{ fontSize: 17, fontWeight: 600, fontFamily: SANS }}>{title}</div>
           </div>
         </div>
-        <div style={{ fontSize: 14, lineHeight: 1.6, color: "rgba(255,255,255,0.45)" }}>{desc}</div>
+        <div className="pillar-desc" style={{ fontSize: 14, lineHeight: 1.6, color: "rgba(255,255,255,0.45)" }}>{desc}</div>
       </div>
     </Fade>
   );
@@ -1153,21 +1153,24 @@ export default function Home() {
               .hero-break { display: block; height: 16px; }
 
               /* Grids → 1 column */
-              .pillar-grid { grid-template-columns: 1fr !important; }
-              .pillar-card { flex-direction: column !important; padding: 16px !important; }
+              .pillar-grid { grid-template-columns: 1fr !important; gap: 8px !important; }
+              .pillar-card { padding: 16px !important; }
+              .pillar-desc { display: none !important; }
+              .pillar-card > div:first-child { margin-bottom: 0 !important; }
               .for-you-grid { grid-template-columns: 1fr !important; }
               .pricing-grid { grid-template-columns: 1fr !important; }
               .pricing-grid > div:last-child { order: -1; }
-              .problem-grid { grid-template-columns: 1fr !important; }
+              .problem-grid { grid-template-columns: 1fr !important; gap: 8px !important; }
+              .problem-grid > div > div { padding: 16px !important; }
               .founder-grid { grid-template-columns: 1fr !important; text-align: center; }
               .redacted-grid { grid-template-columns: 1fr !important; }
 
               /* Founder */
-              .founder-photo { width: 200px !important; height: 200px !important; min-width: 200px !important; }
+              .founder-photo { width: 150px !important; height: 150px !important; min-width: 150px !important; }
 
-              /* Screenshots */
-              .screenshots-row { gap: 8px !important; }
-              .screenshots-row > div { border-radius: 12px !important; transform: none !important; }
+              /* Screenshots — horizontal scroll */
+              .screenshots-row { gap: 8px !important; flex-wrap: nowrap !important; overflow-x: auto !important; scroll-snap-type: x mandatory !important; -webkit-overflow-scrolling: touch; padding-bottom: 8px !important; }
+              .screenshots-row > div { flex-shrink: 0 !important; width: 70% !important; border-radius: 12px !important; transform: none !important; scroll-snap-align: center !important; }
 
               /* Pricing */
               .pricing-note { font-size: 10px !important; }
@@ -1191,9 +1194,8 @@ export default function Home() {
               /* Mobile hide */
               .mobile-hide { display: none !important; }
 
-              /* Founder mobile */
-              .founder-photo { width: 150px !important; height: 150px !important; min-width: 150px !important; }
-              .founder-stats { display: none !important; }
+              /* Founder mobile — stats visible */
+              .founder-stats { font-size: 11px !important; }
             }
             .hero-break { display: none; }
             input::placeholder { color: rgba(255,255,255,0.25) !important; }
@@ -1249,7 +1251,7 @@ export default function Home() {
             </div>
           </section>
 
-          <div className="mobile-hide"><AnimatedDivider /></div>
+          <AnimatedDivider />
           <IntelTicker />
 
           {/* ═══ 2. O PROBLEMA ═══ */}
@@ -1267,13 +1269,13 @@ export default function Home() {
               </Fade>
               <div className="problem-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                 {[
-                  { t: "Conteúdo Sem Direção", d: "Consome o dia inteiro mas não sabe o que fazer com tanta informação. Falta filtro, falta contexto.", mh: false },
-                  { t: "Network Sem Valor", d: "Seguidores não são conexões. Sem as pessoas certas por perto, as oportunidades não chegam.", mh: true },
-                  { t: "Sem Idioma, Sem Mesa", d: "O mundo opera em inglês, mandarim e espanhol. Quem só fala português fica de fora das melhores mesas.", mh: true },
-                  { t: "IA Passou e Você Não Viu", d: "Quem domina IA já opera 10x mais rápido. A distância entre quem usa e quem não usa só aumenta.", mh: false },
+                  { t: "Conteúdo Sem Direção", d: "Consome o dia inteiro mas não sabe o que fazer com tanta informação. Falta filtro, falta contexto." },
+                  { t: "Network Sem Valor", d: "Seguidores não são conexões. Sem as pessoas certas por perto, as oportunidades não chegam." },
+                  { t: "Sem Idioma, Sem Mesa", d: "O mundo opera em inglês, mandarim e espanhol. Quem só fala português fica de fora das melhores mesas." },
+                  { t: "IA Passou e Você Não Viu", d: "Quem domina IA já opera 10x mais rápido. A distância entre quem usa e quem não usa só aumenta." },
                 ].map((item, i) => (
                   <Fade key={item.t} delay={i * 80}>
-                    <div className={item.mh ? "mobile-hide" : ""} style={{ padding: 24, borderRadius: 12, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(201,168,76,0.12)", borderLeft: "3px solid rgba(201,168,76,0.5)", height: "100%" }}>
+                    <div style={{ padding: 24, borderRadius: 12, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(201,168,76,0.12)", borderLeft: "3px solid rgba(201,168,76,0.5)", height: "100%" }}>
                       <h3 style={{ fontSize: 17, fontWeight: 700, fontFamily: SANS, margin: "0 0 8px", color: "white" }}>{item.t}</h3>
                       <p style={{ fontSize: 14, lineHeight: 1.6, color: "rgba(255,255,255,0.4)", margin: 0 }}>{item.d}</p>
                     </div>
@@ -1301,24 +1303,24 @@ export default function Home() {
               </Fade>
               <div className="pillar-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
                 {[
-                  { num: "01", icon: Cpu, title: "Inteligência Artificial", desc: "IA pra negócios, vibe coding, automação, análise de mercado e construção de produtos. Workflows reais, não teoria.", mh: false },
-                  { num: "02", icon: Handshake, title: "Deals & Networking", desc: "Parcerias, rev share, oportunidades e conexão direta com operadores. Membros fechando deals entre si toda semana.", mh: false },
-                  { num: "03", icon: BookOpen, title: "Idiomas", desc: "8 idiomas com material curado pra negócios. Vocabulário de negociação, contratos e operação real.", mh: true },
-                  { num: "04", icon: Globe, title: "China Ops", desc: "Sourcing, fornecedores, feiras, importação e abertura de empresa em Hong Kong. Por quem está lá.", mh: false },
-                  { num: "05", icon: Shield, title: "Crypto & Offshore", desc: "Estruturas internacionais, proteção patrimonial, OPSEC e operações com privacidade real.", mh: true },
-                  { num: "06", icon: Compass, title: "Geopolítica", desc: "Leitura de cenário e contexto estratégico pra antecipar enquanto a maioria ainda está reagindo.", mh: true },
+                  { num: "01", icon: Cpu, title: "Inteligência Artificial", desc: "IA pra negócios, vibe coding, automação, análise de mercado e construção de produtos. Workflows reais, não teoria." },
+                  { num: "02", icon: Handshake, title: "Deals & Networking", desc: "Parcerias, rev share, oportunidades e conexão direta com operadores. Membros fechando deals entre si toda semana." },
+                  { num: "03", icon: BookOpen, title: "Idiomas", desc: "8 idiomas com material curado pra negócios. Vocabulário de negociação, contratos e operação real." },
+                  { num: "04", icon: Globe, title: "China Ops", desc: "Sourcing, fornecedores, feiras, importação e abertura de empresa em Hong Kong. Por quem está lá." },
+                  { num: "05", icon: Shield, title: "Crypto & Offshore", desc: "Estruturas internacionais, proteção patrimonial, OPSEC e operações com privacidade real." },
+                  { num: "06", icon: Compass, title: "Geopolítica", desc: "Leitura de cenário e contexto estratégico pra antecipar enquanto a maioria ainda está reagindo." },
                 ].map((item, i) => (
-                  <PillarCard key={item.title} num={item.num} icon={item.icon} title={item.title} desc={item.desc} delay={i * 60} mobileHide={item.mh} />
+                  <PillarCard key={item.title} num={item.num} icon={item.icon} title={item.title} desc={item.desc} delay={i * 60} />
                 ))}
               </div>
               <Fade delay={350}><div style={{ marginTop: 56, textAlign: "center" }}><GoldButton href="pricing">Entrar no ecossistema</GoldButton></div></Fade>
             </div>
           </section>
 
-          <div className="mobile-hide"><AnimatedDivider /></div>
+          <AnimatedDivider />
 
           {/* ═══ 5. COMMUNITY SCREENSHOTS ═══ */}
-          <section className="mobile-hide" style={{ position: "relative", padding: "80px 24px", overflow: "hidden", zIndex: 1 }}>
+          <section style={{ position: "relative", padding: "80px 24px", overflow: "hidden", zIndex: 1 }}>
             <div style={{ maxWidth: 1100, margin: "0 auto" }}>
               <Fade>
                 <div style={{ textAlign: "center", marginBottom: 40 }}>
@@ -1338,7 +1340,7 @@ export default function Home() {
             </div>
           </section>
 
-          <div className="mobile-hide"><AnimatedDivider /></div>
+          <AnimatedDivider />
 
           {/* ═══ 5. CLASSIFICADO — REDACTED INTEL ═══ */}
           <section style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
@@ -1360,7 +1362,7 @@ export default function Home() {
             </div>
           </section>
 
-          <div className="mobile-hide"><AnimatedDivider /></div>
+          <AnimatedDivider />
 
           {/* ═══ 6. SOBRE O CRIADOR ═══ */}
           <section style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
@@ -1392,10 +1394,10 @@ export default function Home() {
             </div>
           </section>
 
-          <div className="mobile-hide"><AnimatedDivider /></div>
+          <AnimatedDivider />
 
           {/* ═══ 6. PARA VOCÊ SE... ═══ */}
-          <section className="mobile-hide" style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
+          <section style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
             <div style={{ maxWidth: 900, margin: "0 auto" }}>
               <Fade>
                 <BlurReveal>
@@ -1428,7 +1430,7 @@ export default function Home() {
             </div>
           </section>
 
-          <div className="mobile-hide"><AnimatedDivider /></div>
+          <AnimatedDivider />
           <div className="mobile-hide"><IntelTicker /></div>
 
           {/* ═══ 7. PRICING ═══ */}
