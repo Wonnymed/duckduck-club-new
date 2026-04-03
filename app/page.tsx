@@ -435,12 +435,8 @@ function CommunityShowcase() {
       <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "radial-gradient(ellipse at center, rgba(201,168,76,0.04) 0%, transparent 70%)" }} />
       <div className="screenshots-row" style={{ display: "flex", justifyContent: "center", gap: "2%", alignItems: "flex-end" }}>
         {screens.map((s, i) => (
-          <motion.div
+          <div
             key={i}
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: i * 0.2 }}
             style={{
               width: s.w,
               maxWidth: 260,
@@ -453,14 +449,9 @@ function CommunityShowcase() {
               zIndex: s.featured ? 3 : 1,
             }}
           >
-            <motion.div
-              animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 4 + i * 0.5, repeat: Infinity, ease: "easeInOut", delay: i * 0.5 }}
-            >
-              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 60%, rgba(10,10,10,0.4) 100%)", zIndex: 2, pointerEvents: "none" }} />
-              <img src={s.src} alt={s.alt} loading="lazy" style={{ width: "100%", height: "auto", display: "block", filter: s.featured ? "brightness(0.95)" : "brightness(0.85)" }} />
-            </motion.div>
-          </motion.div>
+            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 60%, rgba(10,10,10,0.4) 100%)", zIndex: 2, pointerEvents: "none" }} />
+            <img src={s.src} alt={s.alt} loading="lazy" style={{ width: "100%", height: "auto", display: "block", filter: s.featured ? "brightness(0.95)" : "brightness(0.85)" }} />
+          </div>
         ))}
       </div>
     </div>
@@ -1357,7 +1348,7 @@ export default function Home() {
                 </BlurReveal>
               </Fade>
               <Fade delay={400}><p style={{ fontSize: 15, maxWidth: 600, lineHeight: 1.6, color: "rgba(255,255,255,0.5)", marginBottom: 40 }}>{t.envSubtitle}</p></Fade>
-              <Fade delay={600}><CommunityShowcase /></Fade>
+              <CommunityShowcase />
               <Fade delay={800}><p style={{ marginTop: 40, fontSize: 12, color: "rgba(255,255,255,0.25)" }}>{t.envNote}</p></Fade>
             </div>
           </section>
