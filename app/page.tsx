@@ -1,13 +1,28 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, createContext, useContext } from "react";
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from "framer-motion";
 import { ArrowRight, Menu, X, Check, ChevronDown, Compass, BookOpen, Handshake, Settings, Lock, Globe, Cpu, Shield } from "lucide-react";
+import { texts, type Lang } from "./i18n";
 
 const GOLD = "#C9A84C";
 const GOLD_DIM = "#A0832A";
 const SERIF = "'Cormorant Garamond', serif";
 const SANS = "'DM Sans', sans-serif";
+
+/* ─── Language Context ─── */
+const LangContext = createContext<{ lang: Lang; t: Record<string, string>; setLang: (l: Lang) => void }>({ lang: "pt", t: texts.pt, setLang: () => {} });
+function useLang() { return useContext(LangContext); }
+function LangToggle() {
+  const { lang, setLang } = useLang();
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: SANS }}>
+      <button onClick={() => setLang("pt")} style={{ background: "none", border: "none", cursor: "pointer", color: lang === "pt" ? GOLD : "rgba(255,255,255,0.3)", fontFamily: SANS, fontSize: 11, letterSpacing: "0.1em", padding: 0, transition: "color 0.2s" }}>PT</button>
+      <span style={{ color: "rgba(255,255,255,0.15)" }}>|</span>
+      <button onClick={() => setLang("en")} style={{ background: "none", border: "none", cursor: "pointer", color: lang === "en" ? GOLD : "rgba(255,255,255,0.3)", fontFamily: SANS, fontSize: 11, letterSpacing: "0.1em", padding: 0, transition: "color 0.2s" }}>EN</button>
+    </div>
+  );
+}
 
 /* ─── Loading Screen ─── */
 function LoadingScreen({ onComplete }: { onComplete: () => void }) {
@@ -194,6 +209,7 @@ function FAQItem({ q, a, open, onToggle }: { q: string; a: string; open: boolean
 
 /* ─── Mobile Nav ─── */
 function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const { t } = useLang();
   if (!open) return null;
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", flexDirection: "column", background: "rgba(10,10,10,0.97)", backdropFilter: "blur(20px)" }}>
@@ -202,7 +218,8 @@ function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
         <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer" }}><X size={22} color="rgba(255,255,255,0.6)" /></button>
       </div>
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1, gap: 32 }}>
-        <GoldButton href="pricing" onClick={onClose}>Ver meu acesso</GoldButton>
+        <LangToggle />
+        <GoldButton href="pricing" onClick={onClose}>{t.heroCta}</GoldButton>
       </div>
     </div>
   );
@@ -605,20 +622,8 @@ function DecryptText({ text, delay = 0, className = "" }: { text: string; delay?
 
 /* ─── Intelligence Ticker ─── */
 function IntelTicker() {
-  const items = [
-    "AI OPS · Automação de prospecção com IA · workflow ativo",
-    "DEAL · Rev share fechado entre membros · esta semana",
-    "CHINA OPS · Fornecedor ████████ · preço 40% abaixo · verificado",
-    "AI BUILD · Membro construindo SaaS com vibe coding · em andamento",
-    "OPSEC · Vulnerabilidade crítica em ████ wallet · alerta membros",
-    "DEAL · Parceria cross-border entre 2 membros · em execução",
-    "SIGNAL · Risco de desvalorização CNY · corredor HK ativo",
-    "LANGUAGES · Novo módulo de Mandarin business · disponível",
-    "MACRO · Fluxo de capital saindo da Europa · oportunidade detectada",
-    "GLOBAL · Nova jurisdição offshore aberta · briefing disponível",
-    "AI OPS · Análise de mercado automatizada com IA · publicado",
-    "NETWORK · Deal cross-border fechado entre membros · esta semana",
-  ];
+  const { t } = useLang();
+  const items = [t.tk1, t.tk2, t.tk3, t.tk4, t.tk5, t.tk6, t.tk7, t.tk8, t.tk9, t.tk10, t.tk11, t.tk12];
 
   const duplicated = [...items, ...items];
 
@@ -701,6 +706,7 @@ function GeoIntel() {
 
 /* ─── Floating CTA Mobile ─── */
 function FloatingCTA() {
+  const { t } = useLang();
   const [visible, setVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -749,7 +755,7 @@ function FloatingCTA() {
           cursor: "pointer",
         }}
       >
-        Ver meu acesso →
+        {t.heroCta} →
       </button>
     </motion.div>
   );
@@ -852,25 +858,26 @@ function BlurReveal({ children }: { children: React.ReactNode }) {
    PRICING SECTION (two cards)
 ═══════════════════════════════ */
 function PricingSection() {
+  const { t } = useLang();
   const baseFeatures: [string, string | null][] = [
-    ["Conteúdo de IA e ferramentas", null],
-    ["Networking entre membros", null],
-    ["Geopolítica e leitura de cenário", null],
-    ["Comunidade no app e desktop", null],
-    ["Acesso imediato", null],
-    ["Idiomas disponíveis por +US$5/mês", null],
+    [t.bf1, null],
+    [t.bf2, null],
+    [t.bf3, null],
+    [t.bf4, null],
+    [t.bf5, null],
+    [t.bf6, null],
   ];
 
   const premiumFeatures: [string, string | null][] = [
-    ["Tudo do Base", null],
-    ["Lives exclusivas + Q&A direto", null],
-    ["Contato direto com o fundador via WhatsApp", null],
-    ["IA avançada", "vibe coding, automação, construção"],
-    ["Deals, rev share e parcerias entre membros", null],
-    ["China Ops", "sourcing, feiras, empresa em HK"],
-    ["Crypto e offshore", "OPSEC, estruturas"],
-    ["2 idiomas completos incluídos", null],
-    ["Ebooks e materiais exclusivos incluídos", null],
+    [t.pf1, null],
+    [t.pf2, null],
+    [t.pf3, null],
+    [t.pf4, t.pf4s],
+    [t.pf5, null],
+    [t.pf6, t.pf6s],
+    [t.pf7, t.pf7s],
+    [t.pf8, null],
+    [t.pf9, null],
   ];
 
   const featureRow = (name: string, sub: string | null, gold: boolean) => (
@@ -885,16 +892,16 @@ function PricingSection() {
   return (
     <section id="pricing" style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-        <Fade><Badge>Planos</Badge></Fade>
+        <Fade><Badge>{t.pricingBadge}</Badge></Fade>
         <Fade delay={100}>
           <BlurReveal>
             <h2 style={{ marginTop: 20, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 12 }}>
-              <TextReveal text="Escolha seu nível de" delay={0} />
+              <TextReveal text={t.pricingTitle1} delay={0} />
               {" "}
-              <TextReveal text="acesso" gold italic delay={0.4} />
+              <TextReveal text={t.pricingTitle2} gold italic delay={0.4} />
             </h2>
           </BlurReveal>
-          <p style={{ fontSize: 15, lineHeight: 1.6, color: "rgba(255,255,255,0.5)", marginBottom: 40 }}>Cancele quando quiser. Sem contrato.</p>
+          <p style={{ fontSize: 15, lineHeight: 1.6, color: "rgba(255,255,255,0.5)", marginBottom: 40 }}>{t.pricingSubtitle}</p>
         </Fade>
 
         {/* Two cards grid */}
@@ -935,7 +942,7 @@ function PricingSection() {
                 onMouseEnter={e => { e.currentTarget.style.borderColor = GOLD; e.currentTarget.style.background = "rgba(201,168,76,0.06)"; }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(201,168,76,0.3)"; e.currentTarget.style.background = "transparent"; }}
               >
-                Escolher Base
+                {t.pricingBaseCta}
               </a>
             </motion.div>
           </Fade>
@@ -953,7 +960,7 @@ function PricingSection() {
               {/* Badge */}
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 0 }}>
                 <span style={{ display: "inline-flex", fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase", padding: "5px 14px", borderRadius: 9999, border: `1px solid ${GOLD}`, background: "rgba(201,168,76,0.1)", color: GOLD, fontFamily: SANS }}>Premium</span>
-                <span style={{ fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(201,168,76,0.6)" }}>★ Mais popular</span>
+                <span style={{ fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(201,168,76,0.6)" }}>{t.pricingPopular}</span>
               </div>
 
               <div style={{ marginTop: 20, marginBottom: 4 }}>
@@ -982,7 +989,7 @@ function PricingSection() {
                 onMouseEnter={e => (e.currentTarget.style.boxShadow = "0 0 40px rgba(201,168,76,0.2), 0 8px 32px rgba(0,0,0,0.4)")}
                 onMouseLeave={e => (e.currentTarget.style.boxShadow = "none")}
               >
-                Garantir meu acesso
+                {t.pricingPremiumCta}
               </a>
             </motion.div>
           </Fade>
@@ -990,7 +997,7 @@ function PricingSection() {
 
         {/* Payment note */}
         <Fade delay={200}>
-          <p className="pricing-note" style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", margin: "24px 0 0" }}>Cobrança via Stripe · Cancele quando quiser</p>
+          <p className="pricing-note" style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", margin: "24px 0 0" }}>{t.pricingNote}</p>
         </Fade>
 
         {/* Pix + Crypto inline */}
@@ -999,7 +1006,7 @@ function PricingSection() {
             <span style={{ color: "#32BCAD", fontWeight: 600 }}>Pix</span>
             {" · "}
             <span style={{ color: "#F7931A", fontWeight: 600 }}>Crypto</span>
-            {" — Pagamento direto pelo WhatsApp. "}
+            {" — "}{t.pricingPix}{" "}
             <a
               href={`https://wa.me/15615966097?text=${encodeURIComponent("Olá! Quero entrar no DuckDuck Club e pagar com Pix ou crypto.")}`}
               target="_blank"
@@ -1007,7 +1014,7 @@ function PricingSection() {
               style={{ color: "#32BCAD", textDecoration: "none", transition: "opacity 0.2s" }}
               onMouseEnter={e => (e.currentTarget.style.opacity = "0.7")}
               onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
-            >Falar no WhatsApp →</a>
+            >{t.pricingPixCta}</a>
           </p>
         </Fade>
       </div>
@@ -1019,11 +1026,12 @@ function PricingSection() {
    FAQ SECTION (accordion)
 ═══════════════════════════════ */
 function FAQSection() {
+  const { t } = useLang();
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   const items = [
-    { q: "O que eu recebo ao entrar?", a: "Acesso imediato à plataforma (app e desktop) com: IA e ferramentas, deals e networking, idiomas pra negócios, China ops, crypto e offshore, geopolítica. No Premium, tudo isso mais 2 idiomas completos e acesso avançado." },
-    { q: "Como funciona o pagamento?", a: "Cobrança mensal via Stripe (cartão internacional). Também aceita Pix e crypto com atendimento direto via WhatsApp." },
-    { q: "Posso cancelar quando quiser?", a: "Sim. Sem contrato, sem multa. Cancela direto na plataforma." },
+    { q: t.faq1q, a: t.faq1a },
+    { q: t.faq2q, a: t.faq2a },
+    { q: t.faq3q, a: t.faq3a },
   ];
   return (
     <section style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
@@ -1031,9 +1039,9 @@ function FAQSection() {
         <Fade>
           <BlurReveal>
             <h2 style={{ fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 40 }}>
-              <TextReveal text="Perguntas" delay={0} />
+              <TextReveal text={t.faqTitle1} delay={0} />
               {" "}
-              <TextReveal text="frequentes" gold italic delay={0.3} />
+              <TextReveal text={t.faqTitle2} gold italic delay={0.3} />
             </h2>
           </BlurReveal>
         </Fade>
@@ -1059,10 +1067,25 @@ export default function Home() {
   const [whatsappForm, setWhatsappForm] = useState<{ plan: string; method: string; totalUSD: number } | null>(null);
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
+  const [lang, setLangState] = useState<Lang>("pt");
+
+  const setLang = (l: Lang) => {
+    setLangState(l);
+    try { localStorage.setItem("ddc-lang", l); } catch {}
+    const url = new URL(window.location.href);
+    if (l === "en") url.searchParams.set("lang", "en"); else url.searchParams.delete("lang");
+    window.history.replaceState({}, "", url.toString());
+  };
 
   useEffect(() => {
     setMounted(true);
+    const params = new URLSearchParams(window.location.search);
+    const urlLang = params.get("lang");
+    if (urlLang === "en") { setLangState("en"); return; }
+    try { const saved = localStorage.getItem("ddc-lang"); if (saved === "en") setLangState("en"); } catch {}
   }, []);
+
+  const t = texts[lang];
 
   const { scrollY, scrollYProgress: pageProgress } = useScroll();
   const heroGlowY = useTransform(scrollY, [0, 600], [0, 100]);
@@ -1077,6 +1100,7 @@ export default function Home() {
   if (!mounted) return null;
 
   return (
+    <LangContext.Provider value={{ lang, t, setLang }}>
     <>
       <motion.div style={{ position: "fixed", top: 0, left: 0, right: 0, height: 2, background: "linear-gradient(90deg, #C9A84C, #E8D48B)", zIndex: 50, scaleX: pageProgress, transformOrigin: "left" }} />
 
@@ -1117,11 +1141,12 @@ export default function Home() {
                   <span style={{ fontSize: 9, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(74,222,128,0.5)" }}>Private</span>
                 </div>
               </div>
-              <div style={{ display: "flex", alignItems: "center" }} className="desktop-nav">
+              <div style={{ display: "flex", alignItems: "center", gap: 16 }} className="desktop-nav">
+                <LangToggle />
                 <button onClick={() => scrollTo("pricing")} style={{ fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase", padding: "10px 20px", borderRadius: 8, background: "rgba(201,168,76,0.1)", color: GOLD, border: "1px solid rgba(201,168,76,0.2)", fontFamily: SANS, cursor: "pointer", transition: "all 0.3s" }}
                   onMouseEnter={e => { e.currentTarget.style.background = "rgba(201,168,76,0.15)"; e.currentTarget.style.borderColor = "rgba(201,168,76,0.4)"; }}
                   onMouseLeave={e => { e.currentTarget.style.background = "rgba(201,168,76,0.1)"; e.currentTarget.style.borderColor = "rgba(201,168,76,0.2)"; }}>
-                  Ver meu acesso
+                  {t.navCta}
                 </button>
               </div>
               <button onClick={() => setMenuOpen(true)} className="mobile-menu" style={{ background: "none", border: "none", cursor: "pointer", display: "none" }}><Menu size={22} color="rgba(255,255,255,0.6)" /></button>
@@ -1217,19 +1242,19 @@ export default function Home() {
                 transition={{ duration: 0.3, delay: 0.5 }}
                 style={{ marginTop: 40, marginBottom: 28, fontSize: "clamp(28px, 8vw, 72px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF }}
               >
-                <DecryptText text="Você não está atrasado." delay={800} />
+                <DecryptText text={t.heroTitle1} delay={800} />
                 <br />
                 <span className="gold-shimmer" style={{ fontStyle: "italic" }}>
-                  <DecryptText text="Você está no grupo errado." delay={2200} />
+                  <DecryptText text={t.heroTitle2} delay={2200} />
                 </span>
               </motion.h1>
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 3.8 }}>
                 <p style={{ maxWidth: 640, margin: "0 auto 40px", fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.5)" }}>
-                  Um ecossistema privado pra quem quer operar no mundo com mais direção, mais linguagem e mais acesso.
-                </p>
+                  {t.heroSubtitle}
+</p>
               </motion.div>
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 4.2 }} style={{ textAlign: "center" }}>
-                <GoldButton href="pricing" className="cta-glow">Ver meu acesso</GoldButton>
+                <GoldButton href="pricing" className="cta-glow">{t.heroCta}</GoldButton>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0 }}
@@ -1238,8 +1263,8 @@ export default function Home() {
                 className="hero-tags"
                 style={{ marginTop: 48, display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 12 }}
               >
-                {["Inteligência Artificial", "Deals & Networking", "Idiomas pra negócios", "China Ops", "Crypto & Offshore", "Geopolítica"].map(t => (
-                  <span key={t} className="hero-pill" style={{ fontSize: 12, padding: "8px 16px", borderRadius: 9999, border: "1px solid rgba(201,168,76,0.12)", background: "rgba(201,168,76,0.03)", color: "rgba(255,255,255,0.45)", minHeight: 40, display: "flex", alignItems: "center", justifyContent: "center" }}>{t}</span>
+                {[t.tag1, t.tag2, t.tag3, t.tag4, t.tag5, t.tag6].map(tag => (
+                  <span key={tag} className="hero-pill" style={{ fontSize: 12, padding: "8px 16px", borderRadius: 9999, border: "1px solid rgba(201,168,76,0.12)", background: "rgba(201,168,76,0.03)", color: "rgba(255,255,255,0.45)", minHeight: 40, display: "flex", alignItems: "center", justifyContent: "center" }}>{tag}</span>
                 ))}
               </motion.div>
             </div>
@@ -1251,22 +1276,22 @@ export default function Home() {
           {/* ═══ 2. O PROBLEMA ═══ */}
           <section id="about" style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
             <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-              <Fade><Badge>O problema</Badge></Fade>
+              <Fade><Badge>{t.problemBadge}</Badge></Fade>
               <Fade delay={100}>
                 <BlurReveal>
                   <h2 style={{ marginTop: 20, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 40 }}>
-                    <TextReveal text="Todo mundo quer crescer." delay={0} />
+                    <TextReveal text={t.problemTitle1} delay={0} />
                     <br />
-                    <TextReveal text="Quase ninguém sabe como." gold italic delay={0.4} />
+                    <TextReveal text={t.problemTitle2} gold italic delay={0.4} />
                   </h2>
                 </BlurReveal>
               </Fade>
               <div className="problem-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                 {[
-                  { t: "Conteúdo Sem Direção", d: "Consome o dia inteiro mas não sabe o que fazer com tanta informação. Falta filtro, falta contexto." },
-                  { t: "Network Sem Valor", d: "Seguidores não são conexões. Sem as pessoas certas por perto, as oportunidades não chegam." },
-                  { t: "Sem Idioma, Sem Mesa", d: "O mundo opera em inglês, mandarim e espanhol. Quem só fala português fica de fora das melhores mesas." },
-                  { t: "IA Passou e Você Não Viu", d: "Quem domina IA já opera 10x mais rápido. A distância entre quem usa e quem não usa só aumenta." },
+                  { t: t.pc1t, d: t.pc1d },
+                  { t: t.pc2t, d: t.pc2d },
+                  { t: t.pc3t, d: t.pc3d },
+                  { t: t.pc4t, d: t.pc4d },
                 ].map((item, i) => (
                   <Fade key={item.t} delay={600 + i * 80}>
                     <div style={{ padding: 24, borderRadius: 12, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(201,168,76,0.12)", borderLeft: "3px solid rgba(201,168,76,0.5)", height: "100%" }}>
@@ -1282,29 +1307,29 @@ export default function Home() {
           {/* ═══ 3. POR DENTRO ═══ */}
           <section id="inside" style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
             <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-              <Fade><Badge>Por dentro</Badge></Fade>
+              <Fade><Badge>{t.insideBadge}</Badge></Fade>
               <Fade delay={100}>
                 <BlurReveal>
                   <h2 style={{ marginTop: 20, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 12 }}>
-                    <TextReveal text="O que você encontra" delay={0} />
+                    <TextReveal text={t.insideTitle1} delay={0} />
                     {" "}
-                    <TextReveal text="ao entrar" gold italic delay={0.4} />
+                    <TextReveal text={t.insideTitle2} gold italic delay={0.4} />
                   </h2>
                 </BlurReveal>
               </Fade>
               <Fade delay={400}>
                 <p style={{ fontSize: 15, lineHeight: 1.6, color: "rgba(255,255,255,0.5)", marginBottom: 40, maxWidth: 600 }}>
-                  Seis frentes. Uma posição melhor que ontem.
+                  {t.insideSubtitle}
                 </p>
               </Fade>
               <div className="pillar-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
                 {[
-                  { num: "01", icon: Cpu, title: "Inteligência Artificial", desc: "IA pra negócios, vibe coding, automação, análise de mercado e construção de produtos. Workflows reais, não teoria." },
-                  { num: "02", icon: Handshake, title: "Deals & Networking", desc: "Parcerias, rev share, oportunidades e conexão direta com operadores. Membros fechando deals entre si toda semana." },
-                  { num: "03", icon: BookOpen, title: "Idiomas", desc: "8 idiomas com material curado pra negócios. Vocabulário de negociação, contratos e operação real." },
-                  { num: "04", icon: Globe, title: "China Ops", desc: "Sourcing, fornecedores, feiras, importação e abertura de empresa em Hong Kong. Por quem está lá." },
-                  { num: "05", icon: Shield, title: "Crypto & Offshore", desc: "Estruturas internacionais, proteção patrimonial, OPSEC e operações com privacidade real." },
-                  { num: "06", icon: Compass, title: "Geopolítica", desc: "Leitura de cenário e contexto estratégico pra antecipar enquanto a maioria ainda está reagindo." },
+                  { num: "01", icon: Cpu, title: t.p1, desc: t.p1d },
+                  { num: "02", icon: Handshake, title: t.p2, desc: t.p2d },
+                  { num: "03", icon: BookOpen, title: t.p3, desc: t.p3d },
+                  { num: "04", icon: Globe, title: t.p4, desc: t.p4d },
+                  { num: "05", icon: Shield, title: t.p5, desc: t.p5d },
+                  { num: "06", icon: Compass, title: t.p6, desc: t.p6d },
                 ].map((item, i) => (
                   <PillarCard key={item.title} num={item.num} icon={item.icon} title={item.title} desc={item.desc} delay={600 + i * 60} />
                 ))}
@@ -1317,19 +1342,19 @@ export default function Home() {
           {/* ═══ 4. COMMUNITY SCREENSHOTS ═══ */}
           <section style={{ position: "relative", padding: "80px 24px", overflow: "hidden", zIndex: 1 }}>
             <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-              <Fade><Badge>O ambiente</Badge></Fade>
+              <Fade><Badge>{t.envBadge}</Badge></Fade>
               <Fade delay={100}>
                 <BlurReveal>
                   <h2 style={{ marginTop: 20, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 12 }}>
-                    <TextReveal text="Um ecossistema" delay={0} />
+                    <TextReveal text={t.envTitle1} delay={0} />
                     {" "}
-                    <TextReveal text="real e organizado." gold italic delay={0.3} />
+                    <TextReveal text={t.envTitle2} gold italic delay={0.3} />
                   </h2>
                 </BlurReveal>
               </Fade>
-              <Fade delay={400}><p style={{ fontSize: 15, maxWidth: 600, lineHeight: 1.6, color: "rgba(255,255,255,0.5)", marginBottom: 40 }}>É assim que o clube é organizado por dentro.</p></Fade>
+              <Fade delay={400}><p style={{ fontSize: 15, maxWidth: 600, lineHeight: 1.6, color: "rgba(255,255,255,0.5)", marginBottom: 40 }}>{t.envSubtitle}</p></Fade>
               <Fade delay={600}><CommunityShowcase /></Fade>
-              <Fade delay={800}><p style={{ marginTop: 40, fontSize: 12, color: "rgba(255,255,255,0.25)" }}>Plataforma via app e desktop · Acesso imediato após checkout</p></Fade>
+              <Fade delay={800}><p style={{ marginTop: 40, fontSize: 12, color: "rgba(255,255,255,0.25)" }}>{t.envNote}</p></Fade>
             </div>
           </section>
 
@@ -1338,25 +1363,25 @@ export default function Home() {
           {/* ═══ 5. CLASSIFICADO ═══ */}
           <section style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
             <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-              <Fade><Badge>Classificado</Badge></Fade>
+              <Fade><Badge>{t.classBadge}</Badge></Fade>
               <Fade delay={100}>
                 <BlurReveal>
                   <h2 style={{ marginTop: 20, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 12 }}>
-                    <TextReveal text="O que está sendo discutido" delay={0} />
+                    <TextReveal text={t.classTitle1} delay={0} />
                     {" "}
-                    <TextReveal text="agora lá dentro." gold italic delay={0.4} />
+                    <TextReveal text={t.classTitle2} gold italic delay={0.4} />
                   </h2>
                 </BlurReveal>
               </Fade>
               <Fade delay={400}>
                 <p style={{ fontSize: 15, lineHeight: 1.6, color: "rgba(255,255,255,0.5)", marginBottom: 40, maxWidth: 600 }}>
-                  Teasers reais do ecossistema. O conteúdo completo é exclusivo para membros.
+                  {t.classSubtitle}
                 </p>
               </Fade>
               <div className="redacted-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
-                <Fade delay={600}><RedactedCard classification="AI OPS" title="10 workflows de IA que economizam 10+ horas por semana" preview="Prompts, estruturas e sistemas reais que uso pra pesquisa, análise, conteúdo e automação." expires="3 dias" /></Fade>
-                <Fade delay={700}><div className="mobile-hide"><RedactedCard classification="OPSEC · Crypto" title="Como receber pagamentos em carteira descentralizada com privacidade" preview="Sem Pix, sem CPF, sem rastreio. O protocolo completo pra operar com privacidade real." expires="2 dias" /></div></Fade>
-                <Fade delay={800}><div className="mobile-hide"><RedactedCard classification="Intel · Decisão" title="A matemática invisível por trás de quase toda decisão" preview="O framework pra parar de decidir no instinto e começar a decidir com dados." expires="6 dias" /></div></Fade>
+                <Fade delay={600}><RedactedCard classification="AI OPS" title={t.classCard1} preview={t.classCard1d} expires="3 dias" /></Fade>
+                <Fade delay={700}><div className="mobile-hide"><RedactedCard classification="OPSEC · Crypto" title={t.classCard2} preview={t.classCard2d} expires="2 dias" /></div></Fade>
+                <Fade delay={800}><div className="mobile-hide"><RedactedCard classification="Intel · Decisão" title={t.classCard3} preview={t.classCard3d} expires="6 dias" /></div></Fade>
               </div>
             </div>
           </section>
@@ -1366,7 +1391,7 @@ export default function Home() {
           {/* ═══ 6. SOBRE O CRIADOR ═══ */}
           <section style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
             <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-              <Fade><Badge>Sobre o criador</Badge></Fade>
+              <Fade><Badge>{t.founderBadge}</Badge></Fade>
               <div className="founder-grid" style={{ marginTop: 20, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 48, alignItems: "center" }}>
                 <Fade delay={200}>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -1380,19 +1405,19 @@ export default function Home() {
                   <Fade delay={300}>
                     <BlurReveal>
                       <h2 style={{ fontSize: "clamp(20px, 3vw, 32px)", fontWeight: 300, lineHeight: 1.2, fontFamily: SERIF, marginBottom: 12 }}>
-                        <TextReveal text="A DuckDuck Club nasceu da interseção entre" delay={0} />
+                        <TextReveal text={t.founderTitle1} delay={0} />
                         {" "}
-                        <TextReveal text="contexto global, operação real e construção de valor." gold italic delay={0.5} />
+                        <TextReveal text={t.founderTitle2} gold italic delay={0.5} />
                       </h2>
                     </BlurReveal>
                   </Fade>
                   <Fade delay={600}>
                     <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 0 }}>
-                      Saí do Brasil aos 18. Morei nos EUA, Itália, Austrália, China e Coreia. Abri empresa em Hong Kong. Tudo antes dos 22. Criei esse ecossistema pra quem quer parar de improvisar e começar a operar de verdade.
+                      {t.founderBio}
                     </p>
                   </Fade>
                   <Fade delay={800}>
-                    <p className="founder-stats" style={{ fontSize: 13, color: GOLD, letterSpacing: "0.08em", marginTop: 16, marginBottom: 0, opacity: 0.7 }}>22 anos · 6 países · 4 idiomas · 30+ países visitados</p>
+                    <p className="founder-stats" style={{ fontSize: 13, color: GOLD, letterSpacing: "0.08em", marginTop: 16, marginBottom: 0, opacity: 0.7 }}>{t.founderStats}</p>
                   </Fade>
                 </div>
               </div>
@@ -1407,7 +1432,7 @@ export default function Home() {
               <Fade>
                 <BlurReveal>
                   <h2 style={{ fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 40 }}>
-                    <TextReveal text="Isso é para você se" delay={0} />
+                    <TextReveal text={t.forYouTitle} delay={0} />
                     <span className="gold-shimmer">...</span>
                   </h2>
                 </BlurReveal>
@@ -1416,7 +1441,7 @@ export default function Home() {
                 <Fade delay={400}>
                   <div style={{ padding: 24, borderRadius: 12, background: "rgba(201,168,76,0.02)", border: "1px solid rgba(201,168,76,0.12)", height: "100%" }}>
                     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-                      {["Quer usar IA pra construir e operar mais rápido", "Quer networking real — deals, parcerias e rev share", "Quer aprender idiomas pra fechar negócios, não pra turismo", "Quer operar global — China, offshore e crypto"].map(item => (
+                      {[t.fy1, t.fy2, t.fy3, t.fy4].map(item => (
                         <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: 12 }}><Check size={16} color={GOLD} style={{ marginTop: 2, flexShrink: 0 }} /><span style={{ fontSize: 14, lineHeight: 1.6, color: "rgba(255,255,255,0.65)" }}>{item}</span></div>
                       ))}
                     </div>
@@ -1425,7 +1450,7 @@ export default function Home() {
                 <Fade delay={500}>
                   <div style={{ padding: 24, borderRadius: 12, background: "rgba(255,255,255,0.015)", border: "1px solid rgba(201,168,76,0.12)", height: "100%" }}>
                     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-                      {["Quer fórmula mágica e resultado sem esforço", "Quer só consumir conteúdo sem aplicar nada", "Acha que um curso de R$29 resolve tudo", "Não quer investir tempo em aprender e executar"].map(item => (
+                      {[t.fn1, t.fn2, t.fn3, t.fn4].map(item => (
                         <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: 12 }}><X size={16} color="rgba(255,255,255,0.1)" style={{ marginTop: 2, flexShrink: 0 }} /><span style={{ fontSize: 14, lineHeight: 1.6, color: "rgba(255,255,255,0.15)", textDecoration: "line-through", textDecorationColor: "rgba(255,255,255,0.08)" }}>{item}</span></div>
                       ))}
                     </div>
@@ -1448,14 +1473,14 @@ export default function Home() {
           <div style={{ padding: "16px 24px", borderTop: "1px solid rgba(74,222,128,0.04)", background: "rgba(74,222,128,0.01)", textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
             <Lock size={12} color="rgba(74,222,128,0.4)" />
             <span style={{ fontSize: 11, letterSpacing: "0.06em", color: "rgba(255,255,255,0.2)" }}>
-              Este site não rastreia você. Sem cookies de terceiros. Sua privacidade é o padrão.
+              {t.footerPrivacy}
             </span>
           </div>
 
           {/* FOOTER */}
           <footer style={{ position: "relative", padding: "32px 24px", borderTop: "1px solid rgba(255,255,255,0.04)", zIndex: 1 }}>
             <div style={{ maxWidth: 1024, margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center", gap: 12, textAlign: "center" }}>
-              <span style={{ fontSize: 11, letterSpacing: "0.15em", color: "rgba(255,255,255,0.2)", textTransform: "uppercase" }}>DuckDuck Club · Encrypted · Private · International</span>
+              <span style={{ fontSize: 11, letterSpacing: "0.15em", color: "rgba(255,255,255,0.2)", textTransform: "uppercase" }}>{t.footerTagline}</span>
               <div style={{ display: "flex", gap: 20 }}>
                 {[
                   { label: "Instagram", href: "https://instagram.com/duckduck.club" },
@@ -1473,5 +1498,6 @@ export default function Home() {
         </motion.div>
       )}
     </>
+    </LangContext.Provider>
   );
 }
