@@ -997,32 +997,22 @@ function PricingSection() {
           <p className="pricing-note" style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", margin: "24px 0 0", textAlign: "center" }}>Cobrança via Stripe · Cancele quando quiser</p>
         </Fade>
 
-        {/* Pix + Crypto block */}
+        {/* Pix + Crypto inline */}
         <Fade delay={300}>
-          <div style={{ marginTop: 20, padding: "20px 28px", borderRadius: 16, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", display: "flex", flexDirection: "column", alignItems: "center", gap: 12, textAlign: "center" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-              <span style={{ fontSize: 14, fontWeight: 600, color: "#32BCAD", letterSpacing: "0.05em" }}>Pix</span>
-              <span style={{ color: "rgba(255,255,255,0.15)" }}>·</span>
-              <span style={{ fontSize: 14, fontWeight: 600, color: "#F7931A", letterSpacing: "0.05em" }}>Crypto</span>
-            </div>
-            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.35)", margin: 0 }}>Pagamento direto pelo WhatsApp.</p>
+          <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", margin: "16px 0 0", textAlign: "center" }}>
+            <span style={{ color: "#32BCAD", fontWeight: 600 }}>Pix</span>
+            {" · "}
+            <span style={{ color: "#F7931A", fontWeight: 600 }}>Crypto</span>
+            {" — Pagamento direto pelo WhatsApp. "}
             <a
               href={`https://wa.me/15615966097?text=${encodeURIComponent("Olá! Quero entrar no DuckDuck Club e pagar com Pix ou crypto.")}`}
               target="_blank"
               rel="noopener noreferrer"
-              style={{
-                display: "inline-flex", alignItems: "center", gap: 6,
-                fontSize: 13, fontWeight: 500, color: "#32BCAD",
-                textDecoration: "none", padding: "10px 20px", borderRadius: 10,
-                border: "1px solid rgba(50,188,173,0.2)", background: "rgba(50,188,173,0.04)",
-                transition: "all 0.2s ease",
-              }}
-              onMouseEnter={e => { e.currentTarget.style.background = "rgba(50,188,173,0.1)"; e.currentTarget.style.borderColor = "rgba(50,188,173,0.35)"; }}
-              onMouseLeave={e => { e.currentTarget.style.background = "rgba(50,188,173,0.04)"; e.currentTarget.style.borderColor = "rgba(50,188,173,0.2)"; }}
-            >
-              Falar no WhatsApp →
-            </a>
-          </div>
+              style={{ color: "#32BCAD", textDecoration: "none", transition: "opacity 0.2s" }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = "0.7")}
+              onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+            >Falar no WhatsApp →</a>
+          </p>
         </Fade>
       </div>
     </section>
@@ -1189,7 +1179,7 @@ export default function Home() {
               .privacy-badge { display: none !important; }
 
               /* Hero CTA normal size */
-              .cta-glow { width: auto !important; display: inline-flex !important; padding: 14px 40px !important; }
+              .cta-glow { width: auto !important; max-width: fit-content !important; display: inline-flex !important; padding: 14px 40px !important; margin: 0 auto !important; }
 
               /* FAQ tighter padding */
               .faq-item > div:first-child { padding: 16px 16px !important; }
@@ -1242,7 +1232,7 @@ export default function Home() {
                   Um ecossistema privado pra quem quer operar no mundo com mais direção, mais linguagem e mais acesso.
                 </p>
               </motion.div>
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 2.8 }}>
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 2.8 }} style={{ textAlign: "center" }}>
                 <GoldButton href="pricing" className="cta-glow">Ver meu acesso</GoldButton>
               </motion.div>
               <motion.div
