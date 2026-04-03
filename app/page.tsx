@@ -889,16 +889,16 @@ function PricingSection() {
 
   return (
     <section id="pricing" style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
-      <div style={{ maxWidth: 900, margin: "0 auto" }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
         <Fade>
           <BlurReveal>
-            <h2 style={{ fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 12, textAlign: "center" }}>
+            <h2 style={{ fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 12 }}>
               <TextReveal text="Escolha seu nível de" delay={0} />
               {" "}
               <TextReveal text="acesso" gold italic delay={0.4} />
             </h2>
           </BlurReveal>
-          <p style={{ fontSize: 15, lineHeight: 1.6, color: "rgba(255,255,255,0.5)", marginBottom: 40, textAlign: "center" }}>Cancele quando quiser. Sem contrato.</p>
+          <p style={{ fontSize: 15, lineHeight: 1.6, color: "rgba(255,255,255,0.5)", marginBottom: 40 }}>Cancele quando quiser. Sem contrato.</p>
         </Fade>
 
         {/* Two cards grid */}
@@ -994,12 +994,12 @@ function PricingSection() {
 
         {/* Payment note */}
         <Fade delay={200}>
-          <p className="pricing-note" style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", margin: "24px 0 0", textAlign: "center" }}>Cobrança via Stripe · Cancele quando quiser</p>
+          <p className="pricing-note" style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", margin: "24px 0 0" }}>Cobrança via Stripe · Cancele quando quiser</p>
         </Fade>
 
         {/* Pix + Crypto inline */}
         <Fade delay={300}>
-          <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", margin: "16px 0 0", textAlign: "center" }}>
+          <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", margin: "16px 0 0" }}>
             <span style={{ color: "#32BCAD", fontWeight: 600 }}>Pix</span>
             {" · "}
             <span style={{ color: "#F7931A", fontWeight: 600 }}>Crypto</span>
@@ -1031,7 +1031,7 @@ function FAQSection() {
   ];
   return (
     <section style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
-      <div style={{ maxWidth: 900, margin: "0 auto" }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
         <Fade>
           <BlurReveal>
             <h2 style={{ fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 40 }}>
@@ -1256,11 +1256,11 @@ export default function Home() {
 
           {/* ═══ 2. O PROBLEMA ═══ */}
           <section id="about" style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
-            <div style={{ maxWidth: 900, margin: "0 auto" }}>
+            <div style={{ maxWidth: 1100, margin: "0 auto" }}>
               <Fade>
                 <Badge>O problema</Badge>
                 <BlurReveal>
-                  <h2 style={{ marginTop: 20, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 40, textAlign: "center" }}>
+                  <h2 style={{ marginTop: 20, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 40 }}>
                     <TextReveal text="Todo mundo quer crescer." delay={0} />
                     <br />
                     <TextReveal text="Quase ninguém sabe como." gold italic delay={0.4} />
@@ -1287,7 +1287,7 @@ export default function Home() {
 
           {/* ═══ 3. POR DENTRO ═══ */}
           <section id="inside" style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
-            <div style={{ maxWidth: 900, margin: "0 auto" }}>
+            <div style={{ maxWidth: 1100, margin: "0 auto" }}>
               <Fade>
                 <Badge>Por dentro</Badge>
                 <BlurReveal>
@@ -1313,7 +1313,7 @@ export default function Home() {
                   <PillarCard key={item.title} num={item.num} icon={item.icon} title={item.title} desc={item.desc} delay={i * 60} />
                 ))}
               </div>
-              <Fade delay={350}><div style={{ marginTop: 56, textAlign: "center" }}><GoldButton href="pricing">Entrar no ecossistema</GoldButton></div></Fade>
+              <Fade delay={350}><div style={{ marginTop: 48 }}><GoldButton href="pricing">Entrar no ecossistema</GoldButton></div></Fade>
             </div>
           </section>
 
@@ -1323,20 +1323,18 @@ export default function Home() {
           <section style={{ position: "relative", padding: "80px 24px", overflow: "hidden", zIndex: 1 }}>
             <div style={{ maxWidth: 1100, margin: "0 auto" }}>
               <Fade>
-                <div style={{ textAlign: "center", marginBottom: 40 }}>
-                  <Badge>O ambiente</Badge>
-                  <BlurReveal>
-                    <h2 style={{ marginTop: 20, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 12 }}>
-                      <TextReveal text="Um ecossistema" delay={0} />
-                      {" "}
-                      <TextReveal text="real e organizado." gold italic delay={0.3} />
-                    </h2>
-                  </BlurReveal>
-                  <p style={{ fontSize: 15, maxWidth: 600, margin: "0 auto", lineHeight: 1.6, color: "rgba(255,255,255,0.5)" }}>É assim que o clube é organizado por dentro.</p>
-                </div>
+                <Badge>O ambiente</Badge>
+                <BlurReveal>
+                  <h2 style={{ marginTop: 20, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 12 }}>
+                    <TextReveal text="Um ecossistema" delay={0} />
+                    {" "}
+                    <TextReveal text="real e organizado." gold italic delay={0.3} />
+                  </h2>
+                </BlurReveal>
+                <p style={{ fontSize: 15, maxWidth: 600, lineHeight: 1.6, color: "rgba(255,255,255,0.5)", marginBottom: 40 }}>É assim que o clube é organizado por dentro.</p>
               </Fade>
               <Fade delay={200}><CommunityShowcase /></Fade>
-              <Fade delay={350}><p style={{ textAlign: "center", marginTop: 40, fontSize: 12, color: "rgba(255,255,255,0.25)" }}>Plataforma via app e desktop · Acesso imediato após checkout</p></Fade>
+              <Fade delay={350}><p style={{ marginTop: 40, fontSize: 12, color: "rgba(255,255,255,0.25)" }}>Plataforma via app e desktop · Acesso imediato após checkout</p></Fade>
             </div>
           </section>
 
@@ -1344,7 +1342,7 @@ export default function Home() {
 
           {/* ═══ 5. CLASSIFICADO — REDACTED INTEL ═══ */}
           <section style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
-            <div style={{ maxWidth: 900, margin: "0 auto" }}>
+            <div style={{ maxWidth: 1100, margin: "0 auto" }}>
               <Fade>
                 <Badge>Classificado</Badge>
                 <h2 style={{ marginTop: 20, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 12 }}>
@@ -1366,7 +1364,7 @@ export default function Home() {
 
           {/* ═══ 6. SOBRE O CRIADOR ═══ */}
           <section style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
-            <div style={{ maxWidth: 900, margin: "0 auto" }}>
+            <div style={{ maxWidth: 1100, margin: "0 auto" }}>
               <Fade>
                 <Badge>Sobre o criador</Badge>
                 <div className="founder-grid" style={{ marginTop: 20, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 48, alignItems: "center" }}>
@@ -1398,7 +1396,7 @@ export default function Home() {
 
           {/* ═══ 6. PARA VOCÊ SE... ═══ */}
           <section style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
-            <div style={{ maxWidth: 900, margin: "0 auto" }}>
+            <div style={{ maxWidth: 1100, margin: "0 auto" }}>
               <Fade>
                 <BlurReveal>
                   <h2 style={{ fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 40 }}>
