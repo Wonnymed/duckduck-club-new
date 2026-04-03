@@ -1269,18 +1269,18 @@ export default function Home() {
                 <Badge>O problema</Badge>
                 <BlurReveal>
                   <h2 style={{ marginTop: 20, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 40, textAlign: "center" }}>
-                    <TextReveal text="Você ainda tenta crescer" delay={0} />
+                    <TextReveal text="Todo mundo quer crescer." delay={0} />
                     <br />
-                    <TextReveal text="do jeito antigo." gold italic delay={0.3} />
+                    <TextReveal text="Quase ninguém sabe como." gold italic delay={0.4} />
                   </h2>
                 </BlurReveal>
               </Fade>
               <div className="problem-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                 {[
-                  { t: "Informação Sem Filtro", d: "Todo mundo tem acesso à mesma informação. Poucos sabem o que fazer com ela.", mh: false },
-                  { t: "Networking de Mentira", d: "Seguidores não são conexões. Você não conhece ninguém que possa te levar pro próximo nível.", mh: true },
-                  { t: "Sem Idioma, Sem Mesa", d: "Deals, contratos e oportunidades acontecem em outros idiomas. Se você não fala, você não senta na mesa.", mh: true },
-                  { t: "IA Passou e Você Ficou", d: "Quem domina IA já está automatizando, construindo e operando 10x mais rápido. Quem não domina, está ficando pra trás.", mh: false },
+                  { t: "Consumindo Lixo", d: "Passa o dia inteiro no YouTube e Twitter achando que está aprendendo. Não está. Está procrastinando com conteúdo.", mh: false },
+                  { t: "Networking de Fachada", d: "Tem 10 mil seguidores e não conhece uma pessoa que pode mudar sua vida. Isso não é network. É plateia.", mh: true },
+                  { t: "Monoglota e Orgulhoso", d: "O mundo inteiro opera em inglês, mandarim e espanhol. Você opera em português e acha que vai competir.", mh: true },
+                  { t: "IA Passou e Você Nem Viu", d: "Enquanto você ainda faz tudo manual, quem domina IA já opera 10x mais rápido. A distância só aumenta.", mh: false },
                 ].map((item, i) => (
                   <Fade key={item.t} delay={i * 80}>
                     <div className={item.mh ? "mobile-hide" : ""} style={{ padding: 24, borderRadius: 12, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(201,168,76,0.12)", borderLeft: "3px solid rgba(201,168,76,0.5)", height: "100%" }}>
