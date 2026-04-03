@@ -914,9 +914,10 @@ function PricingSection() {
   return (
     <section id="pricing" style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-        <Fade>
+        <Fade><Badge>Planos</Badge></Fade>
+        <Fade delay={100}>
           <BlurReveal>
-            <h2 style={{ fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 12 }}>
+            <h2 style={{ marginTop: 20, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 12 }}>
               <TextReveal text="Escolha seu nível de" delay={0} />
               {" "}
               <TextReveal text="acesso" gold italic delay={0.4} />
@@ -1281,8 +1282,8 @@ export default function Home() {
           {/* ═══ 2. O PROBLEMA ═══ */}
           <section id="about" style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
             <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-              <Fade>
-                <Badge>O problema</Badge>
+              <Fade><Badge>O problema</Badge></Fade>
+              <Fade delay={100}>
                 <BlurReveal>
                   <h2 style={{ marginTop: 20, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 40 }}>
                     <TextReveal text="Todo mundo quer crescer." delay={0} />
@@ -1298,7 +1299,7 @@ export default function Home() {
                   { t: "Sem Idioma, Sem Mesa", d: "O mundo opera em inglês, mandarim e espanhol. Quem só fala português fica de fora das melhores mesas." },
                   { t: "IA Passou e Você Não Viu", d: "Quem domina IA já opera 10x mais rápido. A distância entre quem usa e quem não usa só aumenta." },
                 ].map((item, i) => (
-                  <Fade key={item.t} delay={i * 80}>
+                  <Fade key={item.t} delay={600 + i * 80}>
                     <div style={{ padding: 24, borderRadius: 12, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(201,168,76,0.12)", borderLeft: "3px solid rgba(201,168,76,0.5)", height: "100%" }}>
                       <h3 style={{ fontSize: 17, fontWeight: 700, fontFamily: SANS, margin: "0 0 8px", color: "white" }}>{item.t}</h3>
                       <p style={{ fontSize: 14, lineHeight: 1.6, color: "rgba(255,255,255,0.4)", margin: 0 }}>{item.d}</p>
@@ -1312,8 +1313,8 @@ export default function Home() {
           {/* ═══ 3. POR DENTRO ═══ */}
           <section id="inside" style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
             <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-              <Fade>
-                <Badge>Por dentro</Badge>
+              <Fade><Badge>Por dentro</Badge></Fade>
+              <Fade delay={100}>
                 <BlurReveal>
                   <h2 style={{ marginTop: 20, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 12 }}>
                     <TextReveal text="O que você encontra" delay={0} />
@@ -1321,6 +1322,8 @@ export default function Home() {
                     <TextReveal text="ao entrar" gold italic delay={0.4} />
                   </h2>
                 </BlurReveal>
+              </Fade>
+              <Fade delay={400}>
                 <p style={{ fontSize: 15, lineHeight: 1.6, color: "rgba(255,255,255,0.5)", marginBottom: 40, maxWidth: 600 }}>
                   Seis frentes. Uma posição melhor que ontem.
                 </p>
@@ -1334,10 +1337,9 @@ export default function Home() {
                   { num: "05", icon: Shield, title: "Crypto & Offshore", desc: "Estruturas internacionais, proteção patrimonial, OPSEC e operações com privacidade real." },
                   { num: "06", icon: Compass, title: "Geopolítica", desc: "Leitura de cenário e contexto estratégico pra antecipar enquanto a maioria ainda está reagindo." },
                 ].map((item, i) => (
-                  <PillarCard key={item.title} num={item.num} icon={item.icon} title={item.title} desc={item.desc} delay={i * 60} />
+                  <PillarCard key={item.title} num={item.num} icon={item.icon} title={item.title} desc={item.desc} delay={600 + i * 60} />
                 ))}
               </div>
-              <Fade delay={350}><div style={{ marginTop: 48 }}><GoldButton href="pricing">Entrar no ecossistema</GoldButton></div></Fade>
             </div>
           </section>
 
@@ -1346,8 +1348,8 @@ export default function Home() {
           {/* ═══ 5. COMMUNITY SCREENSHOTS ═══ */}
           <section style={{ position: "relative", padding: "80px 24px", overflow: "hidden", zIndex: 1 }}>
             <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-              <Fade>
-                <Badge>O ambiente</Badge>
+              <Fade><Badge>O ambiente</Badge></Fade>
+              <Fade delay={100}>
                 <BlurReveal>
                   <h2 style={{ marginTop: 20, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 12 }}>
                     <TextReveal text="Um ecossistema" delay={0} />
@@ -1355,10 +1357,10 @@ export default function Home() {
                     <TextReveal text="real e organizado." gold italic delay={0.3} />
                   </h2>
                 </BlurReveal>
-                <p style={{ fontSize: 15, maxWidth: 600, lineHeight: 1.6, color: "rgba(255,255,255,0.5)", marginBottom: 40 }}>É assim que o clube é organizado por dentro.</p>
               </Fade>
-              <Fade delay={200}><CommunityShowcase /></Fade>
-              <Fade delay={350}><p style={{ marginTop: 40, fontSize: 12, color: "rgba(255,255,255,0.25)" }}>Plataforma via app e desktop · Acesso imediato após checkout</p></Fade>
+              <Fade delay={400}><p style={{ fontSize: 15, maxWidth: 600, lineHeight: 1.6, color: "rgba(255,255,255,0.5)", marginBottom: 40 }}>É assim que o clube é organizado por dentro.</p></Fade>
+              <Fade delay={600}><CommunityShowcase /></Fade>
+              <Fade delay={800}><p style={{ marginTop: 40, fontSize: 12, color: "rgba(255,255,255,0.25)" }}>Plataforma via app e desktop · Acesso imediato após checkout</p></Fade>
             </div>
           </section>
 
@@ -1367,19 +1369,21 @@ export default function Home() {
           {/* ═══ 5. CLASSIFICADO — REDACTED INTEL ═══ */}
           <section style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
             <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-              <Fade>
-                <Badge>Classificado</Badge>
+              <Fade><Badge>Classificado</Badge></Fade>
+              <Fade delay={100}>
                 <h2 style={{ marginTop: 20, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 12 }}>
                   O que está sendo discutido <span className="gold-shimmer" style={{ fontStyle: "italic" }}>agora lá dentro.</span>
                 </h2>
+              </Fade>
+              <Fade delay={400}>
                 <p style={{ fontSize: 15, lineHeight: 1.6, color: "rgba(255,255,255,0.5)", marginBottom: 40, maxWidth: 600 }}>
                   Teasers reais do ecossistema. O conteúdo completo é exclusivo para membros.
                 </p>
               </Fade>
               <div className="redacted-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
-                <Fade delay={0}><RedactedCard classification="AI OPS" title="10 workflows de IA que economizam 10+ horas por semana" preview="Prompts, estruturas e sistemas reais que uso pra pesquisa, análise, conteúdo e automação." expires="3 dias" /></Fade>
-                <Fade delay={100}><div className="mobile-hide"><RedactedCard classification="OPSEC · Crypto" title="Como receber pagamentos em carteira descentralizada com privacidade" preview="Sem Pix, sem CPF, sem rastreio. O protocolo completo pra operar com privacidade real." expires="2 dias" /></div></Fade>
-                <Fade delay={200}><div className="mobile-hide"><RedactedCard classification="Intel · Decisão" title="A matemática invisível por trás de quase toda decisão" preview="O framework pra parar de decidir no instinto e começar a decidir com dados." expires="6 dias" /></div></Fade>
+                <Fade delay={600}><RedactedCard classification="AI OPS" title="10 workflows de IA que economizam 10+ horas por semana" preview="Prompts, estruturas e sistemas reais que uso pra pesquisa, análise, conteúdo e automação." expires="3 dias" /></Fade>
+                <Fade delay={700}><div className="mobile-hide"><RedactedCard classification="OPSEC · Crypto" title="Como receber pagamentos em carteira descentralizada com privacidade" preview="Sem Pix, sem CPF, sem rastreio. O protocolo completo pra operar com privacidade real." expires="2 dias" /></div></Fade>
+                <Fade delay={800}><div className="mobile-hide"><RedactedCard classification="Intel · Decisão" title="A matemática invisível por trás de quase toda decisão" preview="O framework pra parar de decidir no instinto e começar a decidir com dados." expires="6 dias" /></div></Fade>
               </div>
             </div>
           </section>
@@ -1389,16 +1393,18 @@ export default function Home() {
           {/* ═══ 6. SOBRE O CRIADOR ═══ */}
           <section style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
             <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-              <Fade>
-                <Badge>Sobre o criador</Badge>
-                <div className="founder-grid" style={{ marginTop: 20, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 48, alignItems: "center" }}>
+              <Fade><Badge>Sobre o criador</Badge></Fade>
+              <div className="founder-grid" style={{ marginTop: 20, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 48, alignItems: "center" }}>
+                <Fade delay={200}>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                     <img src="/founder-photo.jpeg" alt="Nando Voyager — Founder" className="founder-photo" style={{ width: 320, height: 320, minWidth: 320, borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(201,168,76,0.3)" }} />
                     <p style={{ fontSize: 18, fontWeight: 500, fontFamily: SANS, color: "white", marginTop: 20, marginBottom: 4 }}>Nando Voyager</p>
                     <a href="https://instagram.com/nandovoyager" target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: GOLD, textDecoration: "none", opacity: 0.85, transition: "opacity 0.2s" }}
                       onMouseEnter={e => (e.currentTarget.style.opacity = "1")} onMouseLeave={e => (e.currentTarget.style.opacity = "0.85")}>@nandovoyager</a>
                   </div>
-                  <div>
+                </Fade>
+                <div>
+                  <Fade delay={300}>
                     <BlurReveal>
                       <h2 style={{ fontSize: "clamp(20px, 3vw, 32px)", fontWeight: 300, lineHeight: 1.2, fontFamily: SERIF, marginBottom: 20 }}>
                         <TextReveal text="A DuckDuck Club nasceu da interseção entre" delay={0} />
@@ -1406,13 +1412,17 @@ export default function Home() {
                         <TextReveal text="contexto global, operação real e construção de valor." gold italic delay={0.5} />
                       </h2>
                     </BlurReveal>
+                  </Fade>
+                  <Fade delay={600}>
                     <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 0 }}>
                       Saí do Brasil aos 18. Morei nos EUA, Itália, Austrália, China e Coreia. Abri empresa em Hong Kong. Tudo antes dos 22. Criei esse ecossistema pra quem quer parar de improvisar e começar a operar de verdade.
                     </p>
+                  </Fade>
+                  <Fade delay={800}>
                     <p className="founder-stats" style={{ fontSize: 13, color: GOLD, letterSpacing: "0.08em", marginTop: 16, marginBottom: 0, opacity: 0.7 }}>22 anos · 6 países · 4 idiomas · 30+ países visitados</p>
-                  </div>
+                  </Fade>
                 </div>
-              </Fade>
+              </div>
             </div>
           </section>
 
@@ -1430,7 +1440,7 @@ export default function Home() {
                 </BlurReveal>
               </Fade>
               <div className="for-you-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-                <Fade>
+                <Fade delay={400}>
                   <div style={{ padding: 24, borderRadius: 12, background: "rgba(201,168,76,0.02)", border: "1px solid rgba(201,168,76,0.12)", height: "100%" }}>
                     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
                       {["Quer usar IA pra construir e operar mais rápido", "Quer networking real — deals, parcerias e rev share", "Quer aprender idiomas pra fechar negócios, não pra turismo", "Quer operar global — China, offshore e crypto"].map(item => (
@@ -1439,7 +1449,7 @@ export default function Home() {
                     </div>
                   </div>
                 </Fade>
-                <Fade delay={100}>
+                <Fade delay={500}>
                   <div style={{ padding: 24, borderRadius: 12, background: "rgba(255,255,255,0.015)", border: "1px solid rgba(201,168,76,0.12)", height: "100%" }}>
                     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
                       {["Quer fórmula mágica e resultado sem esforço", "Quer só consumir conteúdo sem aplicar nada", "Acha que um curso de R$29 resolve tudo", "Não quer investir tempo em aprender e executar"].map(item => (
