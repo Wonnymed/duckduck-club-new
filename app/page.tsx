@@ -340,7 +340,7 @@ function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: (
           <div style={{ fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", marginBottom: 12 }}>{t.checkoutPayMethod}</div>
           <div style={{ display: "flex", gap: 8 }}>
             {([["card", t.checkoutCard], ["pix", "Pix"], ["crypto", "Crypto"]] as [string, string][]).map(([method, label]) => (
-              <button key={method} onClick={() => setPayMethod(method)}
+              <button key={method} onClick={() => setPayMethod(method as "card" | "pix" | "crypto")}
                 style={{ flex: 1, padding: "12px 0", borderRadius: 10, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase", fontFamily: SANS, cursor: "pointer", transition: "all 0.3s ease", background: payMethod === method ? "rgba(201,168,76,0.08)" : "rgba(255,255,255,0.02)", border: `1px solid ${payMethod === method ? GOLD : "rgba(255,255,255,0.07)"}`, color: payMethod === method ? GOLD : "rgba(255,255,255,0.4)", boxShadow: payMethod === method ? "0 0 20px rgba(201,168,76,0.1)" : "none" }}>
                 {label}
               </button>
