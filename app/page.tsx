@@ -865,14 +865,14 @@ function PricingSection() {
 
   const premiumFeatures: [string, string | null][] = [
     [t.pf1, null],
-    [t.pf2, null],
-    [t.pf3, null],
     [t.pf4, t.pf4s],
     [t.pf5, null],
     [t.pf6, t.pf6s],
     [t.pf7, t.pf7s],
     [t.pf8, null],
     [t.pf9, null],
+    [t.pf2, null],
+    [t.pf3, null],
   ];
 
   const featureRow = (name: string, sub: string | null, gold: boolean) => (
