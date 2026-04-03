@@ -1277,10 +1277,10 @@ export default function Home() {
               </Fade>
               <div className="problem-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                 {[
-                  { t: "Consumindo Lixo", d: "Passa o dia inteiro no YouTube e Twitter achando que está aprendendo. Não está. Está procrastinando com conteúdo.", mh: false },
-                  { t: "Networking de Fachada", d: "Tem 10 mil seguidores e não conhece uma pessoa que pode mudar sua vida. Isso não é network. É plateia.", mh: true },
-                  { t: "Monoglota e Orgulhoso", d: "O mundo inteiro opera em inglês, mandarim e espanhol. Você opera em português e acha que vai competir.", mh: true },
-                  { t: "IA Passou e Você Nem Viu", d: "Enquanto você ainda faz tudo manual, quem domina IA já opera 10x mais rápido. A distância só aumenta.", mh: false },
+                  { t: "Conteúdo Sem Direção", d: "Consome o dia inteiro mas não sabe o que fazer com tanta informação. Falta filtro, falta contexto.", mh: false },
+                  { t: "Network Sem Valor", d: "Seguidores não são conexões. Sem as pessoas certas por perto, as oportunidades não chegam.", mh: true },
+                  { t: "Sem Idioma, Sem Mesa", d: "O mundo opera em inglês, mandarim e espanhol. Quem só fala português fica de fora das melhores mesas.", mh: true },
+                  { t: "IA Passou e Você Não Viu", d: "Quem domina IA já opera 10x mais rápido. A distância entre quem usa e quem não usa só aumenta.", mh: false },
                 ].map((item, i) => (
                   <Fade key={item.t} delay={i * 80}>
                     <div className={item.mh ? "mobile-hide" : ""} style={{ padding: 24, borderRadius: 12, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(201,168,76,0.12)", borderLeft: "3px solid rgba(201,168,76,0.5)", height: "100%" }}>
