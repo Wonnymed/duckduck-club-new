@@ -702,16 +702,16 @@ function GeoIntel() {
 /* ─── Floating CTA Mobile ─── */
 function FloatingCTA() {
   const [visible, setVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setVisible(window.scrollY > 600);
-    };
+    setIsMobile(window.innerWidth <= 768);
+    const handleScroll = () => setVisible(window.scrollY > 600);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  if (typeof window !== "undefined" && window.innerWidth > 768) return null;
+  if (!isMobile) return null;
 
   return (
     <motion.div
@@ -757,31 +757,38 @@ function FloatingCTA() {
 
 /* ─── Cursor Spotlight ─── */
 function CursorSpotlight() {
-  const [pos, setPos] = useState({ x: -100, y: -100 });
-  const [visible, setVisible] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const [isDesktop, setIsDesktop] = useState(false);
 
   useEffect(() => {
-    const move = (e: MouseEvent) => { setPos({ x: e.clientX, y: e.clientY }); setVisible(true); };
-    const leave = () => setVisible(false);
+    setIsDesktop(window.innerWidth >= 768);
+    const move = (e: MouseEvent) => {
+      if (ref.current) {
+        ref.current.style.left = `${e.clientX - 150}px`;
+        ref.current.style.top = `${e.clientY - 150}px`;
+        ref.current.style.opacity = "1";
+      }
+    };
+    const leave = () => { if (ref.current) ref.current.style.opacity = "0"; };
     window.addEventListener("mousemove", move);
     document.addEventListener("mouseleave", leave);
     return () => { window.removeEventListener("mousemove", move); document.removeEventListener("mouseleave", leave); };
   }, []);
 
-  if (typeof window !== "undefined" && window.innerWidth < 768) return null;
+  if (!isDesktop) return null;
 
   return (
-    <div style={{
+    <div ref={ref} style={{
       position: "fixed",
-      left: pos.x - 150,
-      top: pos.y - 150,
+      left: -150,
+      top: -150,
       width: 300,
       height: 300,
       borderRadius: "50%",
       background: "radial-gradient(circle, rgba(201,168,76,0.06) 0%, rgba(201,168,76,0.02) 30%, transparent 70%)",
       pointerEvents: "none",
       zIndex: 45,
-      opacity: visible ? 1 : 0,
+      opacity: 0,
       transition: "opacity 0.3s ease",
       transform: "translate3d(0,0,0)",
     }} />
@@ -790,8 +797,9 @@ function CursorSpotlight() {
 
 /* ─── Gold Particles ─── */
 function GoldParticles() {
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
-  const particleCount = isMobile ? 8 : 18;
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const particleCount = mounted && window.innerWidth < 768 ? 8 : 18;
   const particles = Array.from({ length: particleCount }, (_, i) => ({
     id: i,
     left: Math.random() * 100,
@@ -1171,8 +1179,8 @@ export default function Home() {
               .cta-glow { width: auto !important; max-width: fit-content !important; display: inline-flex !important; padding: 14px 40px !important; margin: 0 auto !important; }
 
               /* FAQ tighter padding */
-              .faq-item > div:first-child { padding: 16px 16px !important; }
-              .faq-item > div:last-child { padding: 0 16px 16px !important; }
+              .faq-item { padding: 0 !important; }
+              .faq-item > div { padding-left: 16px !important; padding-right: 16px !important; }
 
               /* Pricing cards full-width buttons */
               .pricing-grid a { width: 100% !important; }
