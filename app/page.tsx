@@ -564,56 +564,80 @@ function PillarCard({ num, icon: Icon, title, desc, delay }: { num: string; icon
   );
 }
 
-/* ─── Decrypt Text ─── */
-function DecryptText({ text, delay = 0, speed = 35, className = "" }: { text: string; delay?: number; speed?: number; className?: string }) {
-  const [displayed, setDisplayed] = useState("");
-  const [started, setStarted] = useState(false);
+/* ─── Decrypt Text (cinematic) ─── */
+function DecryptText({ text, delay = 0, className = "" }: { text: string; delay?: number; className?: string }) {
+  const [output, setOutput] = useState("");
+  const [phase, setPhase] = useState<"idle" | "running" | "done">("idle");
+  const cancelled = useRef(false);
 
-  // Hex-style characters — looks like encrypted data, not random noise
-  const chars = "0123456789abcdef";
+  const hex = "0123456789abcdef";
+  const rand = () => hex[Math.floor(Math.random() * hex.length)];
 
   useEffect(() => {
-    const startTimer = setTimeout(() => setStarted(true), delay);
-    return () => clearTimeout(startTimer);
+    const t = setTimeout(() => setPhase("running"), delay);
+    return () => { clearTimeout(t); cancelled.current = true; };
   }, [delay]);
 
   useEffect(() => {
-    if (!started) return;
-    let currentIndex = 0;
-    let phase = 0;
+    if (phase !== "running") return;
+    cancelled.current = false;
 
-    const interval = setInterval(() => {
-      if (currentIndex >= text.length) {
-        clearInterval(interval);
-        setDisplayed(text);
+    // State: which chars are locked
+    const locked = new Array(text.length).fill(false);
+    text.split("").forEach((c, i) => { if (c === " ") locked[i] = true; });
+    let cursor = 0; // next char to lock
+    let tick = 0;
+
+    const render = () => {
+      let s = "";
+      for (let i = 0; i < text.length; i++) {
+        if (locked[i]) { s += text[i]; }
+        else if (i < cursor + 3) { s += rand(); } // scramble zone
+        else { s += " "; }
+      }
+      return s;
+    };
+
+    const iv = setInterval(() => {
+      if (cancelled.current) { clearInterval(iv); return; }
+      tick++;
+
+      // Every 3 ticks, lock the next non-space char
+      if (tick % 3 === 0) {
+        while (cursor < text.length && locked[cursor]) cursor++;
+        if (cursor < text.length) { locked[cursor] = true; cursor++; }
+      }
+
+      // Check if all locked
+      if (locked.every(Boolean)) {
+        clearInterval(iv);
+        setOutput(text);
+        setPhase("done");
         return;
       }
 
-      phase++;
-      let result = text.substring(0, currentIndex);
+      setOutput(render());
+    }, 25);
 
-      // 3 characters of hex scramble ahead
-      const ahead = Math.min(3, text.length - currentIndex);
-      for (let i = 0; i < ahead; i++) {
-        if (text[currentIndex + i] === " ") {
-          result += " ";
-        } else {
-          result += chars[Math.floor(Math.random() * chars.length)];
-        }
-      }
+    // Safety fallback
+    const safety = setTimeout(() => { clearInterval(iv); setOutput(text); setPhase("done"); }, 4000);
 
-      // Every 2 phases, lock one real character
-      if (phase % 2 === 0) {
-        currentIndex++;
-      }
+    return () => { cancelled.current = true; clearInterval(iv); clearTimeout(safety); };
+  }, [phase, text]);
 
-      setDisplayed(result);
-    }, speed);
+  if (phase === "idle") return <span className={className}>{"\u00A0"}</span>;
+  if (phase === "done") return <span className={className}>{text}</span>;
 
-    return () => clearInterval(interval);
-  }, [started, text, speed]);
-
-  return <span className={className} style={{ transition: "opacity 0.3s" }}>{started ? displayed || "\u00A0" : "\u00A0"}</span>;
+  return (
+    <span className={className}>
+      {output.split("").map((c, i) => {
+        const isReal = i < text.length && c === text[i];
+        return (
+          <span key={i} style={{ color: isReal ? "inherit" : GOLD, opacity: isReal ? 1 : 0.35, transition: "color 0.1s, opacity 0.1s" }}>{c}</span>
+        );
+      })}
+    </span>
+  );
 }
 
 /* ─── Intelligence Ticker ─── */
@@ -1223,24 +1247,24 @@ export default function Home() {
                 transition={{ duration: 0.3, delay: 0.5 }}
                 style={{ marginTop: 40, marginBottom: 28, fontSize: "clamp(28px, 8vw, 72px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF }}
               >
-                <DecryptText text="Você não está atrasado." delay={800} speed={35} />
+                <DecryptText text="Você não está atrasado." delay={800} />
                 <br />
                 <span className="gold-shimmer" style={{ fontStyle: "italic" }}>
-                  <DecryptText text="Você está no grupo errado." delay={2500} speed={35} />
+                  <DecryptText text="Você está no grupo errado." delay={2200} />
                 </span>
               </motion.h1>
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 2.4 }}>
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 3.8 }}>
                 <p style={{ maxWidth: 640, margin: "0 auto 40px", fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)" }}>
                   Um ecossistema privado pra quem quer operar no mundo com mais direção, mais linguagem e mais acesso.
                 </p>
               </motion.div>
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 2.8 }} style={{ textAlign: "center" }}>
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 4.2 }} style={{ textAlign: "center" }}>
                 <GoldButton href="pricing" className="cta-glow">Ver meu acesso</GoldButton>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.8, delay: 3.2 }}
+                transition={{ duration: 0.8, delay: 4.6 }}
                 className="hero-tags"
                 style={{ marginTop: 48, display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 12 }}
               >
