@@ -106,7 +106,7 @@ function LoadingScreen({ onComplete }: { onComplete: () => void }) {
 /* ─── Text Reveal word by word ─── */
 function TextReveal({ text, gold = false, italic = false, delay = 0 }: { text: string; gold?: boolean; italic?: boolean; delay?: number }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: true, amount: 0.1 });
   const words = text.split(" ");
   return (
     <span ref={ref} style={{ display: "inline" }}>
@@ -129,14 +129,14 @@ function TextReveal({ text, gold = false, italic = false, delay = 0 }: { text: s
 /* ─── Fade-in on scroll ─── */
 function Fade({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const isInView = useInView(ref, { once: true, amount: 0.1 });
   return (
     <motion.div
       ref={ref}
       className={className}
-      initial={{ opacity: 0, y: 30 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-      transition={{ duration: 0.8, delay: delay / 1000, ease: [0.25, 0.1, 0.25, 1] }}
+      initial={{ opacity: 0, y: 24 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.6, delay: delay / 1000, ease: "easeOut" }}
     >
       {children}
     </motion.div>
@@ -845,7 +845,7 @@ function GoldParticles() {
 /* ─── Blur Reveal ─── */
 function BlurReveal({ children }: { children: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: true, amount: 0.1 });
   return (
     <motion.div
       ref={ref}
