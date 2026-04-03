@@ -3,21 +3,21 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "DuckDuck Club — Ecossistema Privado",
-  description: "Direção. Contexto. Valor real. Ecossistema privado para quem quer operar com mais clareza, mais linguagem e mais acesso.",
+  description: "IA, deals, idiomas, China ops, crypto e geopolítica. Ecossistema privado por @nandovoyager.",
   openGraph: {
     title: "DuckDuck Club — Ecossistema Privado",
-    description: "Direção. Contexto. Valor real. Ecossistema privado para quem quer operar com mais clareza, mais linguagem e mais acesso.",
+    description: "IA, deals, idiomas, China ops, crypto e geopolítica. Ecossistema privado por @nandovoyager.",
     url: "https://www.duckduck.club",
     siteName: "DuckDuck Club",
     locale: "pt_BR",
     type: "website",
-    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "DuckDuck Club — Ecossistema Privado" }],
+    images: [{ url: "https://www.duckduck.club/og-image.jpg", width: 1200, height: 630, alt: "DuckDuck Club — Ecossistema Privado" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "DuckDuck Club — Ecossistema Privado",
-    description: "Direção. Contexto. Valor real. Ecossistema privado para quem quer operar com mais clareza, mais linguagem e mais acesso.",
-    images: ["/og-image.jpg"],
+    description: "IA, deals, idiomas, China ops, crypto e geopolítica. Ecossistema privado por @nandovoyager.",
+    images: ["https://www.duckduck.club/og-image.jpg"],
   },
 };
 

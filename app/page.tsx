@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from "framer-motion";
-import { ArrowRight, Menu, X, Check, ChevronDown, Compass, BookOpen, Handshake, Settings, Lock } from "lucide-react";
+import { ArrowRight, Menu, X, Check, ChevronDown, Compass, BookOpen, Handshake, Settings, Lock, Globe, Cpu, Shield } from "lucide-react";
 
 const GOLD = "#C9A84C";
 const GOLD_DIM = "#A0832A";
 const SERIF = "'Cormorant Garamond', serif";
+const SANS = "'DM Sans', sans-serif";
 
 /* ─── Loading Screen ─── */
 function LoadingScreen({ onComplete }: { onComplete: () => void }) {
@@ -81,7 +82,7 @@ function LoadingScreen({ onComplete }: { onComplete: () => void }) {
       {/* Subtle DuckDuck logo watermark */}
       <div style={{ position: "absolute", bottom: 40, left: "50%", transform: "translateX(-50%)", display: "flex", alignItems: "center", gap: 10, opacity: lines.length >= 4 ? 0.3 : 0, transition: "opacity 0.5s" }}>
         <img src="/logo.jpeg" alt="" style={{ width: 20, height: 20, objectFit: "contain", borderRadius: "50%" }} />
-        <span style={{ fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(201,168,76,0.5)", fontFamily: SERIF }}>DuckDuck Club</span>
+        <span style={{ fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(201,168,76,0.5)", fontFamily: SANS }}>DuckDuck Club</span>
       </div>
     </motion.div>
   );
@@ -156,7 +157,7 @@ function Logo({ size = 36 }: { size?: number }) {
 
 /* ─── Shared UI ─── */
 function Badge({ children }: { children: React.ReactNode }) {
-  return <span style={{ display: "inline-flex", alignItems: "center", fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", padding: "6px 16px", borderRadius: 9999, border: "1px solid rgba(201,168,76,0.3)", background: "rgba(201,168,76,0.06)", color: GOLD, fontFamily: SERIF }}>{children}</span>;
+  return <span style={{ display: "inline-flex", alignItems: "center", fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", padding: "6px 16px", borderRadius: 9999, border: "1px solid rgba(201,168,76,0.3)", background: "rgba(201,168,76,0.06)", color: GOLD, fontFamily: SANS }}>{children}</span>;
 }
 
 function GoldButton({ children, onClick, href, style: extraStyle = {}, className = "" }: { children: React.ReactNode; onClick?: () => void; href?: string; style?: React.CSSProperties; className?: string }) {
@@ -171,7 +172,7 @@ function GoldButton({ children, onClick, href, style: extraStyle = {}, className
       whileHover={{ scale: 1.03, boxShadow: "0 0 40px rgba(201,168,76,0.2)" }}
       whileTap={{ scale: 0.97 }}
       transition={{ duration: 0.2 }}
-      style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "16px 32px", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase" as const, fontWeight: 600, fontFamily: SERIF, background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", border: "none", cursor: "pointer", position: "relative", ...extraStyle }}
+      style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "16px 32px", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase" as const, fontWeight: 600, fontFamily: SANS, background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", border: "none", cursor: "pointer", position: "relative", ...extraStyle }}
     >
       {children}<ArrowRight size={15} />
     </motion.button>
@@ -185,7 +186,7 @@ function OutlineButton({ children, onClick }: { children: React.ReactNode; onCli
       whileHover={{ scale: 1.03, boxShadow: "0 0 40px rgba(201,168,76,0.2)" }}
       whileTap={{ scale: 0.97 }}
       transition={{ duration: 0.2 }}
-      style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "14px 28px", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase" as const, fontFamily: SERIF, color: GOLD, border: "1px solid rgba(201,168,76,0.3)", background: "transparent", cursor: "pointer", width: "100%" }}
+      style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "14px 28px", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase" as const, fontFamily: SANS, color: GOLD, border: "1px solid rgba(201,168,76,0.3)", background: "transparent", cursor: "pointer", width: "100%" }}
       onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => { e.currentTarget.style.borderColor = GOLD; e.currentTarget.style.background = "rgba(201,168,76,0.06)"; }}
       onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => { e.currentTarget.style.borderColor = "rgba(201,168,76,0.3)"; e.currentTarget.style.background = "transparent"; }}
     >
@@ -194,13 +195,12 @@ function OutlineButton({ children, onClick }: { children: React.ReactNode; onCli
   );
 }
 
-function FAQItem({ q, a }: { q: string; a: string }) {
-  const [open, setOpen] = useState(false);
+function FAQItem({ q, a, open, onToggle }: { q: string; a: string; open: boolean; onToggle: () => void }) {
   return (
-    <div onClick={() => setOpen(!open)} className="faq-item" style={{ borderRadius: 12, background: "rgba(255,255,255,0.02)", border: `1px solid ${open ? "rgba(201,168,76,0.15)" : "rgba(255,255,255,0.06)"}`, cursor: "pointer", transition: "border-color 0.3s" }}>
+    <div onClick={onToggle} className="faq-item" style={{ borderRadius: 12, background: "rgba(255,255,255,0.02)", border: `1px solid ${open ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.08)"}`, cursor: "pointer", transition: "border-color 0.3s" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 24px" }}>
-        <h4 style={{ fontSize: 15, fontWeight: 500, fontFamily: SERIF, color: open ? GOLD : "white", paddingRight: 16, margin: 0 }}>{q}</h4>
-        <ChevronDown size={18} style={{ color: "rgba(255,255,255,0.3)", transform: open ? "rotate(180deg)" : "rotate(0)", transition: "transform 0.3s", flexShrink: 0 }} />
+        <h4 style={{ fontSize: 15, fontWeight: 500, fontFamily: SANS, color: open ? GOLD : "white", paddingRight: 16, margin: 0 }}>{q}</h4>
+        <span style={{ fontSize: 20, color: "rgba(255,255,255,0.3)", flexShrink: 0, lineHeight: 1, transition: "transform 0.2s" }}>{open ? "−" : "+"}</span>
       </div>
       {open && <div style={{ padding: "0 24px 20px" }}><p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", margin: 0 }}>{a}</p></div>}
     </div>
@@ -213,13 +213,10 @@ function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", flexDirection: "column", background: "rgba(10,10,10,0.97)", backdropFilter: "blur(20px)" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 24px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}><Logo size={28} /><span style={{ color: "white", fontSize: 14, letterSpacing: "0.15em", textTransform: "uppercase", fontFamily: SERIF }}>DuckDuck Club</span></div>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}><Logo size={28} /><span style={{ color: "white", fontSize: 14, letterSpacing: "0.15em", textTransform: "uppercase", fontFamily: SANS }}>DuckDuck Club</span></div>
         <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer" }}><X size={22} color="rgba(255,255,255,0.6)" /></button>
       </div>
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1, gap: 32 }}>
-        {[["O clube", "about"], ["Por dentro", "inside"]].map(([l, h]) => (
-          <button key={l} onClick={() => { onClose(); setTimeout(() => scrollTo(h), 200); }} style={{ fontSize: 24, color: "rgba(255,255,255,0.7)", background: "none", border: "none", cursor: "pointer", fontFamily: SERIF, letterSpacing: "0.1em" }}>{l}</button>
-        ))}
         <GoldButton href="pricing" onClick={onClose}>Ver meu acesso</GoldButton>
       </div>
     </div>
@@ -257,7 +254,7 @@ function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: (
   const maxLangs = premium ? 3 : 2;
   const extraLanguages = Math.max(0, langs.length - freeIncluded);
   const normalizedExtra = Math.min(extraLanguages, premium ? 1 : 2);
-  const total = basePrice + normalizedExtra * 5 + (poly ? 10 : 0);
+  const total = basePrice + normalizedExtra * 5;
   const brl = BRL_MAP[total] || Math.round(total * 5.2);
   const toggle = (l: string) => setLangs(p => {
     if (p.includes(l)) return p.filter(x => x !== l);
@@ -293,9 +290,9 @@ function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: (
         </div>
 
         {/* Headline */}
-        <h3 style={{ fontSize: 28, fontWeight: 300, fontFamily: SERIF, marginBottom: 8, marginTop: 0 }}>Personalize seu acesso</h3>
+        <h3 style={{ fontSize: 28, fontWeight: 300, fontFamily: SANS, marginBottom: 8, marginTop: 0 }}>Personalize seu acesso</h3>
         <p style={{ fontSize: 14, lineHeight: 1.6, color: "rgba(255,255,255,0.4)", marginBottom: 0 }}>
-          {premium ? "Seus 2 primeiros idiomas estão incluídos. Adicione extras ou o Polymarket Lab." : "Nenhum idioma incluído. Escolha até 2 por +US$5/mês cada."}
+          {premium ? "Seus 2 primeiros idiomas estão incluídos. Adicione extras se quiser." : "Nenhum idioma incluído. Escolha até 2 por +US$5/mês cada."}
         </p>
 
         {/* Divider */}
@@ -303,30 +300,17 @@ function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: (
 
         {/* Total em destaque */}
         <div style={{ textAlign: "center", marginBottom: 24 }}>
-          <div style={{ fontSize: 48, fontWeight: 300, fontFamily: SERIF, lineHeight: 1 }}>US${total}</div>
+          <div style={{ fontSize: 48, fontWeight: 300, fontFamily: SANS, lineHeight: 1 }}>US${total}</div>
           <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginTop: 6 }}>aprox. R${brl}/mês</div>
         </div>
 
         {/* Divider */}
         <div style={{ width: 40, height: 1, background: "rgba(201,168,76,0.3)", margin: "0 auto 24px" }} />
 
-        {/* Polymarket toggle */}
-        <div style={block}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <div>
-              <div style={{ fontSize: 14, fontWeight: 500, fontFamily: SERIF, marginBottom: 4 }}>Polymarket Lab</div>
-              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)" }}>+US$10/mês · aprox. R$49/mês</div>
-            </div>
-            <button onClick={() => setPoly(!poly)} style={{ width: 48, height: 24, borderRadius: 12, position: "relative", border: "none", cursor: "pointer", background: poly ? GOLD : "rgba(255,255,255,0.08)", transition: "background 0.3s ease", flexShrink: 0 }}>
-              <div style={{ width: 20, height: 20, borderRadius: 10, position: "absolute", top: 2, left: poly ? 26 : 2, background: poly ? "#0A0A0A" : "rgba(255,255,255,0.4)", transition: "left 0.3s ease" }} />
-            </button>
-          </div>
-        </div>
-
         {/* Idiomas */}
         <div style={block}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
-            <div style={{ fontSize: 14, fontWeight: 500, fontFamily: SERIF }}>{premium ? "Escolha seus idiomas" : "Idiomas disponíveis"}</div>
+            <div style={{ fontSize: 14, fontWeight: 500, fontFamily: SANS }}>{premium ? "Escolha seus idiomas" : "Idiomas disponíveis"}</div>
             {premium && <div style={{ fontSize: 11, color: GOLD, opacity: 0.7 }}>{Math.min(langs.length, freeIncluded)}/{freeIncluded} incluídos</div>}
           </div>
           <p style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginBottom: 14, marginTop: 0 }}>
@@ -355,7 +339,7 @@ function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: (
           <div style={{ display: "flex", gap: 8 }}>
             {([["card", "Cartão"], ["pix", "Pix"], ["crypto", "Crypto"]] as const).map(([method, label]) => (
               <button key={method} onClick={() => setPayMethod(method)}
-                style={{ flex: 1, padding: "12px 0", borderRadius: 10, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase", fontFamily: SERIF, cursor: "pointer", transition: "all 0.3s ease", background: payMethod === method ? "rgba(201,168,76,0.08)" : "rgba(255,255,255,0.02)", border: `1px solid ${payMethod === method ? GOLD : "rgba(255,255,255,0.07)"}`, color: payMethod === method ? GOLD : "rgba(255,255,255,0.4)", boxShadow: payMethod === method ? "0 0 20px rgba(201,168,76,0.1)" : "none" }}>
+                style={{ flex: 1, padding: "12px 0", borderRadius: 10, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase", fontFamily: SANS, cursor: "pointer", transition: "all 0.3s ease", background: payMethod === method ? "rgba(201,168,76,0.08)" : "rgba(255,255,255,0.02)", border: `1px solid ${payMethod === method ? GOLD : "rgba(255,255,255,0.07)"}`, color: payMethod === method ? GOLD : "rgba(255,255,255,0.4)", boxShadow: payMethod === method ? "0 0 20px rgba(201,168,76,0.1)" : "none" }}>
                 {label}
               </button>
             ))}
@@ -367,7 +351,7 @@ function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: (
           {[
             ["Plano", premium ? "Premium" : "Base"],
             ["Idiomas", langs.length > 0 ? langs.join(", ") : "Nenhum"],
-            ["Extensões", poly ? "Polymarket Lab" : "Nenhum"],
+            ["Extras", extraLanguages > 0 ? `${extraLanguages} idioma(s) extra(s)` : "Nenhum"],
           ].map(([label, value], i) => (
             <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", paddingTop: i > 0 ? 10 : 0, marginTop: i > 0 ? 10 : 0, borderTop: i > 0 ? "1px solid rgba(255,255,255,0.04)" : "none" }}>
               <span style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.15em", color: "rgba(255,255,255,0.25)" }}>{label}</span>
@@ -379,7 +363,7 @@ function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: (
         {/* CTA */}
         <button
           onClick={() => { if (payMethod === "card") { window.open(resolveCheckoutLink(plan, extraLanguages), "_blank"); } else { onWhatsApp(plan, payMethod, total); onClose(); } }}
-          style={{ width: "100%", padding: "18px 0", borderRadius: 10, fontSize: 15, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, fontFamily: SERIF, background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", border: "none", cursor: "pointer", transition: "opacity 0.2s ease" }}
+          style={{ width: "100%", padding: "18px 0", borderRadius: 10, fontSize: 15, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, fontFamily: SANS, background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", border: "none", cursor: "pointer", transition: "opacity 0.2s ease" }}
           onMouseEnter={e => (e.currentTarget.style.opacity = "0.9")}
           onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
         >
@@ -411,16 +395,16 @@ function WhatsAppFormModal({ plan, method, totalUSD, onClose }: { plan: string; 
     <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 60, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, background: "rgba(0,0,0,0.85)", backdropFilter: "blur(16px)" }}>
       <div onClick={e => e.stopPropagation()} className="whatsapp-modal" style={{ maxWidth: 480, width: "100%", borderRadius: 16, background: "#111", border: "1px solid rgba(255,255,255,0.08)", padding: 32, position: "relative" }}>
         <button onClick={onClose} style={{ position: "absolute", top: 16, right: 16, width: 32, height: 32, borderRadius: 9999, background: "rgba(255,255,255,0.05)", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><X size={16} color="rgba(255,255,255,0.6)" /></button>
-        <h3 style={{ fontSize: 24, fontWeight: 300, fontFamily: SERIF, marginBottom: 8 }}>Finalize seu acesso</h3>
+        <h3 style={{ fontSize: 24, fontWeight: 300, fontFamily: SANS, marginBottom: 8 }}>Finalize seu acesso</h3>
         <p style={{ fontSize: 14, color: "rgba(255,255,255,0.45)", marginBottom: 28 }}>Pix e crypto com atendimento direto via WhatsApp.</p>
         <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
           <div style={{ flex: 1, padding: 14, borderRadius: 10, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
             <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.15em", color: "rgba(255,255,255,0.3)", marginBottom: 6 }}>Plano</div>
-            <div style={{ fontSize: 15, color: "white", fontFamily: SERIF }}>{planLabel} · US${totalUSD}/mês</div>
+            <div style={{ fontSize: 15, color: "white", fontFamily: SANS }}>{planLabel} · US${totalUSD}/mês</div>
           </div>
           <div style={{ flex: 1, padding: 14, borderRadius: 10, background: "rgba(201,168,76,0.04)", border: "1px solid rgba(201,168,76,0.12)" }}>
             <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.15em", color: "rgba(255,255,255,0.3)", marginBottom: 6 }}>Pagamento</div>
-            <div style={{ fontSize: 15, color: GOLD, fontFamily: SERIF }}>{methodLabel}</div>
+            <div style={{ fontSize: 15, color: GOLD, fontFamily: SANS }}>{methodLabel}</div>
           </div>
         </div>
         <div style={{ marginBottom: 12 }}>
@@ -429,7 +413,7 @@ function WhatsAppFormModal({ plan, method, totalUSD, onClose }: { plan: string; 
         <div style={{ marginBottom: 24 }}>
           <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Seu melhor email" type="email" style={{ width: "100%", padding: "14px 16px", borderRadius: 8, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "white", fontSize: 14, outline: "none", boxSizing: "border-box", fontFamily: "'DM Sans', sans-serif" }} />
         </div>
-        <button onClick={handleSubmit} disabled={!name.trim() || !email.trim()} style={{ width: "100%", padding: "16px 0", borderRadius: 8, background: (!name.trim() || !email.trim()) ? "rgba(201,168,76,0.3)" : `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", fontSize: 14, fontWeight: 600, fontFamily: SERIF, letterSpacing: "0.12em", textTransform: "uppercase", cursor: (!name.trim() || !email.trim()) ? "not-allowed" : "pointer", border: "none", opacity: (!name.trim() || !email.trim()) ? 0.5 : 1, transition: "opacity 0.3s" }}>Continuar no WhatsApp</button>
+        <button onClick={handleSubmit} disabled={!name.trim() || !email.trim()} style={{ width: "100%", padding: "16px 0", borderRadius: 8, background: (!name.trim() || !email.trim()) ? "rgba(201,168,76,0.3)" : `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", fontSize: 14, fontWeight: 600, fontFamily: SANS, letterSpacing: "0.12em", textTransform: "uppercase", cursor: (!name.trim() || !email.trim()) ? "not-allowed" : "pointer", border: "none", opacity: (!name.trim() || !email.trim()) ? 0.5 : 1, transition: "opacity 0.3s" }}>Continuar no WhatsApp</button>
         <p style={{ fontSize: 11, color: "rgba(255,255,255,0.2)", textAlign: "center", marginTop: 14 }}>Você será redirecionado para o WhatsApp para finalizar.</p>
       </div>
     </div>
@@ -441,7 +425,7 @@ function CommunityShowcase() {
   const screens = [
     { src: "/club-screen-1.png", alt: "The Portal & Core", rotate: -3, ty: 12, w: "28%" },
     { src: "/club-screen-2.png", alt: "The Sanctum & Duck Tank", rotate: 0, ty: 0, w: "32%", featured: true },
-    { src: "/club-screen-3.png", alt: "Languages & Polymarket", rotate: 3, ty: 12, w: "28%" },
+    { src: "/club-screen-3.png", alt: "Languages & Tools", rotate: 3, ty: 12, w: "28%" },
   ];
   return (
     <div style={{ position: "relative" }}>
@@ -504,7 +488,7 @@ function RedactedCard({ title, preview, classification, expires }: { title: stri
           <Lock size={12} color="rgba(201,168,76,0.3)" />
         </div>
       </div>
-      <div style={{ fontSize: 15, fontWeight: 500, fontFamily: SERIF, color: "white", marginBottom: 8 }}>{title}</div>
+      <div style={{ fontSize: 15, fontWeight: 500, fontFamily: SANS, color: "white", marginBottom: 8 }}>{title}</div>
       <div style={{ position: "relative" }}>
         <p style={{ fontSize: 13, lineHeight: 1.6, color: "rgba(255,255,255,0.35)", margin: 0 }}>{preview}</p>
         <div style={{
@@ -547,7 +531,7 @@ function LanguageCard({ flag, lang, unlock, delay }: { flag: string; lang: strin
             {locked ? "🔒" : "🔓"}
           </span>
         </div>
-        <div style={{ fontSize: 15, fontWeight: 500, fontFamily: SERIF, color: "white", marginBottom: 6 }}>{lang}</div>
+        <div style={{ fontSize: 15, fontWeight: 500, fontFamily: SANS, color: "white", marginBottom: 6 }}>{lang}</div>
         <div style={{ fontSize: 11, lineHeight: 1.5, color: locked ? "rgba(255,255,255,0.3)" : "rgba(201,168,76,0.5)", transition: "color 0.3s" }}>{unlock}</div>
       </div>
     </Fade>
@@ -555,27 +539,26 @@ function LanguageCard({ flag, lang, unlock, delay }: { flag: string; lang: strin
 }
 
 /* ─── Pillar Card with intel preview ─── */
-function PillarCard({ num, icon: Icon, title, desc, intel, delay }: { num: string; icon: React.ComponentType<{ size: number; color: string }>; title: string; desc: string; intel: string; delay: number }) {
+function PillarCard({ num, icon: Icon, title, desc, delay, mobileHide = false }: { num: string; icon: React.ComponentType<{ size: number; color: string }>; title: string; desc: string; delay: number; mobileHide?: boolean }) {
   const [hovered, setHovered] = useState(false);
   return (
     <Fade delay={delay}>
       <div
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        style={{ padding: "28px 32px", borderRadius: 16, background: hovered ? "rgba(201,168,76,0.03)" : "rgba(255,255,255,0.02)", border: hovered ? "1px solid rgba(201,168,76,0.15)" : "1px solid rgba(255,255,255,0.06)", height: "100%", display: "flex", gap: 24, alignItems: "flex-start", transition: "all 0.3s", position: "relative", overflow: "hidden" }}
-        className="pillar-card"
+        style={{ padding: 24, borderRadius: 12, background: hovered ? "rgba(201,168,76,0.03)" : "rgba(255,255,255,0.02)", border: `1px solid ${hovered ? "rgba(201,168,76,0.15)" : "rgba(201,168,76,0.12)"}`, height: "100%", transition: "all 0.3s" }}
+        className={`pillar-card${mobileHide ? " mobile-hide" : ""}`}
       >
-        <div style={{ width: 44, height: 44, minWidth: 44, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.15)", marginTop: 2 }}>
-          <Icon size={20} color={GOLD} />
-        </div>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 11, letterSpacing: "0.2em", color: "rgba(201,168,76,0.4)", marginBottom: 8, fontFamily: "'DM Sans', sans-serif" }}>{num}</div>
-          <div style={{ fontSize: 20, fontWeight: 500, fontFamily: SERIF, marginBottom: 8 }}>{title}</div>
-          <div style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.45)" }}>{desc}</div>
-          <div style={{ marginTop: hovered ? 12 : 0, maxHeight: hovered ? 60 : 0, opacity: hovered ? 1 : 0, overflow: "hidden", transition: "all 0.4s ease", padding: hovered ? "8px 12px" : "0 12px", borderRadius: 8, background: "rgba(201,168,76,0.04)", border: hovered ? "1px solid rgba(201,168,76,0.08)" : "1px solid transparent" }}>
-            <span className="intel-preview" style={{ fontSize: 11, color: "rgba(201,168,76,0.5)", fontStyle: "italic" }}>🔒 {intel}</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 12 }}>
+          <div style={{ width: 40, height: 40, minWidth: 40, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.15)" }}>
+            <Icon size={18} color={GOLD} />
+          </div>
+          <div>
+            <div style={{ fontSize: 10, letterSpacing: "0.2em", color: "rgba(201,168,76,0.4)", marginBottom: 2 }}>{num}</div>
+            <div style={{ fontSize: 17, fontWeight: 600, fontFamily: SANS }}>{title}</div>
           </div>
         </div>
+        <div style={{ fontSize: 14, lineHeight: 1.6, color: "rgba(255,255,255,0.45)" }}>{desc}</div>
       </div>
     </Fade>
   );
@@ -636,17 +619,18 @@ function DecryptText({ text, delay = 0, speed = 35, className = "" }: { text: st
 /* ─── Intelligence Ticker ─── */
 function IntelTicker() {
   const items = [
-    "INTEL 052 · Holding structure em ████████ · acesso restrito",
-    "SIGNAL · Risco de desvalorização CNY · corredor HK ativo",
-    "OPSEC · Vulnerabilidade crítica em ████ wallet · alerta membros",
-    "MACRO · Fluxo de capital saindo da Europa · oportunidade detectada",
+    "AI OPS · Automação de prospecção com IA · workflow ativo",
+    "DEAL · Rev share fechado entre membros · esta semana",
     "CHINA OPS · Fornecedor ████████ · preço 40% abaixo · verificado",
-    "GLOBAL · Nova jurisdição offshore aberta · briefing disponível",
-    "NETWORK · Deal cross-border fechado entre membros · esta semana",
+    "AI BUILD · Membro construindo SaaS com vibe coding · em andamento",
+    "OPSEC · Vulnerabilidade crítica em ████ wallet · alerta membros",
+    "DEAL · Parceria cross-border entre 2 membros · em execução",
+    "SIGNAL · Risco de desvalorização CNY · corredor HK ativo",
     "LANGUAGES · Novo módulo de Mandarin business · disponível",
-    "LANGUAGE · Módulo de negociação em Mandarin · atualizado",
-    "LANGUAGE · Vocabulário de contratos em alemão · novo",
-    "LANGUAGE · Guia de imersão business Korean · disponível",
+    "MACRO · Fluxo de capital saindo da Europa · oportunidade detectada",
+    "GLOBAL · Nova jurisdição offshore aberta · briefing disponível",
+    "AI OPS · Análise de mercado automatizada com IA · publicado",
+    "NETWORK · Deal cross-border fechado entre membros · esta semana",
   ];
 
   const duplicated = [...items, ...items];
@@ -771,7 +755,7 @@ function FloatingCTA() {
           color: "#0A0A0A",
           fontSize: 13,
           fontWeight: 600,
-          fontFamily: SERIF,
+          fontFamily: SANS,
           letterSpacing: "0.12em",
           textTransform: "uppercase",
           border: "none",
@@ -870,6 +854,216 @@ function BlurReveal({ children }: { children: React.ReactNode }) {
 }
 
 /* ═══════════════════════════════
+   PRICING SECTION (two cards)
+═══════════════════════════════ */
+function PricingSection() {
+  const baseFeatures: [string, string | null][] = [
+    ["Conteúdo de IA e ferramentas", null],
+    ["Networking entre membros", null],
+    ["Geopolítica e leitura de cenário", null],
+    ["Comunidade no app e desktop", null],
+    ["Acesso imediato", null],
+    ["Idiomas disponíveis por +US$5/mês", null],
+  ];
+
+  const premiumFeatures: [string, string | null][] = [
+    ["Tudo do Base", null],
+    ["Lives exclusivas + Q&A direto", null],
+    ["Contato direto com o fundador via WhatsApp", null],
+    ["IA avançada", "vibe coding, automação, construção"],
+    ["Deals, rev share e parcerias entre membros", null],
+    ["China Ops", "sourcing, feiras, empresa em HK"],
+    ["Crypto e offshore", "OPSEC, estruturas"],
+    ["2 idiomas completos incluídos", null],
+    ["Ebooks e materiais exclusivos incluídos", null],
+  ];
+
+  const featureRow = (name: string, sub: string | null, gold: boolean) => (
+    <div key={name} style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+      <span style={{ color: GOLD, fontSize: 13, marginTop: 2, flexShrink: 0 }}>→</span>
+      <span style={{ fontSize: 14, lineHeight: 1.5, color: gold ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.55)" }}>
+        {name}{sub && <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 12 }}> ({sub})</span>}
+      </span>
+    </div>
+  );
+
+  return (
+    <section id="pricing" style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
+      <div style={{ maxWidth: 900, margin: "0 auto" }}>
+        <Fade>
+          <BlurReveal>
+            <h2 style={{ fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 12, textAlign: "center" }}>
+              <TextReveal text="Escolha seu nível de" delay={0} />
+              {" "}
+              <TextReveal text="acesso" gold italic delay={0.4} />
+            </h2>
+          </BlurReveal>
+          <p style={{ fontSize: 15, lineHeight: 1.6, color: "rgba(255,255,255,0.5)", marginBottom: 40, textAlign: "center" }}>Cancele quando quiser. Sem contrato.</p>
+        </Fade>
+
+        {/* Two cards grid */}
+        <div className="pricing-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+
+          {/* BASE card */}
+          <Fade>
+            <motion.div
+              whileHover={{ y: -4, borderColor: "rgba(201,168,76,0.15)" }}
+              transition={{ duration: 0.2 }}
+              style={{ padding: 24, borderRadius: 12, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(201,168,76,0.12)", display: "flex", flexDirection: "column", height: "100%" }}
+            >
+              <span style={{ display: "inline-flex", alignSelf: "flex-start", fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase", padding: "5px 14px", borderRadius: 9999, border: "1px solid rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.03)", color: "rgba(255,255,255,0.5)", fontFamily: SANS }}>Base</span>
+
+              <div style={{ marginTop: 20, marginBottom: 4 }}>
+                <span style={{ fontSize: "clamp(32px, 4vw, 44px)", fontWeight: 600, fontFamily: SANS }}>US$15</span>
+                <span style={{ fontSize: 14, marginLeft: 4, color: "rgba(255,255,255,0.35)" }}>/mês</span>
+              </div>
+              <p style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", marginBottom: 24, marginTop: 0 }}>aprox. R$79/mês</p>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 28, flex: 1 }}>
+                {baseFeatures.map(([n, s]) => featureRow(n, s, false))}
+              </div>
+
+              {/* Outline CTA */}
+              <a
+                href="https://app.duckduck.club/checkout/base-access"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  width: "100%", padding: "14px 0", borderRadius: 12,
+                  border: `1px solid rgba(201,168,76,0.3)`, background: "transparent",
+                  color: GOLD, fontSize: 13, letterSpacing: "0.12em", textTransform: "uppercase",
+                  fontFamily: SANS, fontWeight: 600, textDecoration: "none",
+                  transition: "all 0.3s ease",
+                }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = GOLD; e.currentTarget.style.background = "rgba(201,168,76,0.06)"; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(201,168,76,0.3)"; e.currentTarget.style.background = "transparent"; }}
+              >
+                Escolher Base
+              </a>
+            </motion.div>
+          </Fade>
+
+          {/* PREMIUM card */}
+          <Fade delay={100}>
+            <motion.div
+              whileHover={{ y: -4, borderColor: "rgba(201,168,76,0.4)" }}
+              transition={{ duration: 0.2 }}
+              style={{ padding: 24, borderRadius: 12, background: "rgba(201,168,76,0.03)", border: "1px solid rgba(201,168,76,0.2)", display: "flex", flexDirection: "column", height: "100%", position: "relative", overflow: "hidden" }}
+            >
+              {/* Glow */}
+              <div style={{ position: "absolute", top: 0, right: 0, width: 180, height: 180, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%)", transform: "translate(30%, -30%)", pointerEvents: "none" }} />
+
+              {/* Badge */}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 0 }}>
+                <span style={{ display: "inline-flex", fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase", padding: "5px 14px", borderRadius: 9999, border: `1px solid ${GOLD}`, background: "rgba(201,168,76,0.1)", color: GOLD, fontFamily: SANS }}>Premium</span>
+                <span style={{ fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(201,168,76,0.6)" }}>★ Mais popular</span>
+              </div>
+
+              <div style={{ marginTop: 20, marginBottom: 4 }}>
+                <span style={{ fontSize: "clamp(32px, 4vw, 44px)", fontWeight: 600, fontFamily: SANS, color: GOLD }}>US$29</span>
+                <span style={{ fontSize: 14, marginLeft: 4, color: "rgba(201,168,76,0.5)" }}>/mês</span>
+              </div>
+              <p style={{ fontSize: 12, color: "rgba(201,168,76,0.35)", marginBottom: 24, marginTop: 0 }}>aprox. R$149/mês</p>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 28, flex: 1 }}>
+                {premiumFeatures.map(([n, s]) => featureRow(n, s, true))}
+              </div>
+
+              {/* Gold CTA */}
+              <a
+                href="https://app.duckduck.club/checkout/premium-access"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  width: "100%", padding: "14px 0", borderRadius: 12,
+                  border: "none", background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`,
+                  color: "#0A0A0A", fontSize: 13, letterSpacing: "0.12em", textTransform: "uppercase",
+                  fontFamily: SANS, fontWeight: 600, textDecoration: "none",
+                  transition: "box-shadow 0.3s ease",
+                }}
+                onMouseEnter={e => (e.currentTarget.style.boxShadow = "0 0 40px rgba(201,168,76,0.2), 0 8px 32px rgba(0,0,0,0.4)")}
+                onMouseLeave={e => (e.currentTarget.style.boxShadow = "none")}
+              >
+                Garantir meu acesso
+              </a>
+            </motion.div>
+          </Fade>
+        </div>
+
+        {/* Payment note */}
+        <Fade delay={200}>
+          <p className="pricing-note" style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", margin: "24px 0 0", textAlign: "center" }}>Cobrança via Stripe · Cancele quando quiser</p>
+        </Fade>
+
+        {/* Pix + Crypto block */}
+        <Fade delay={300}>
+          <div style={{ marginTop: 20, padding: "20px 28px", borderRadius: 16, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", display: "flex", flexDirection: "column", alignItems: "center", gap: 12, textAlign: "center" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <span style={{ fontSize: 14, fontWeight: 600, color: "#32BCAD", letterSpacing: "0.05em" }}>Pix</span>
+              <span style={{ color: "rgba(255,255,255,0.15)" }}>·</span>
+              <span style={{ fontSize: 14, fontWeight: 600, color: "#F7931A", letterSpacing: "0.05em" }}>Crypto</span>
+            </div>
+            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.35)", margin: 0 }}>Pagamento direto pelo WhatsApp.</p>
+            <a
+              href={`https://wa.me/15615966097?text=${encodeURIComponent("Olá! Quero entrar no DuckDuck Club e pagar com Pix ou crypto.")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 6,
+                fontSize: 13, fontWeight: 500, color: "#32BCAD",
+                textDecoration: "none", padding: "10px 20px", borderRadius: 10,
+                border: "1px solid rgba(50,188,173,0.2)", background: "rgba(50,188,173,0.04)",
+                transition: "all 0.2s ease",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = "rgba(50,188,173,0.1)"; e.currentTarget.style.borderColor = "rgba(50,188,173,0.35)"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "rgba(50,188,173,0.04)"; e.currentTarget.style.borderColor = "rgba(50,188,173,0.2)"; }}
+            >
+              Falar no WhatsApp →
+            </a>
+          </div>
+        </Fade>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════
+   FAQ SECTION (accordion)
+═══════════════════════════════ */
+function FAQSection() {
+  const [openIdx, setOpenIdx] = useState<number | null>(null);
+  const items = [
+    { q: "O que eu recebo ao entrar?", a: "Acesso imediato à plataforma (app e desktop) com: IA e ferramentas, deals e networking, idiomas pra negócios, China ops, crypto e offshore, geopolítica. No Premium, tudo isso mais 2 idiomas completos e acesso avançado." },
+    { q: "Como funciona o pagamento?", a: "Cobrança mensal via Stripe (cartão internacional). Também aceita Pix e crypto com atendimento direto via WhatsApp." },
+    { q: "Posso cancelar quando quiser?", a: "Sim. Sem contrato, sem multa. Cancela direto na plataforma." },
+  ];
+  return (
+    <section style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
+      <div style={{ maxWidth: 900, margin: "0 auto" }}>
+        <Fade>
+          <BlurReveal>
+            <h2 style={{ fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 40 }}>
+              <TextReveal text="Perguntas" delay={0} />
+              {" "}
+              <TextReveal text="frequentes" gold italic delay={0.3} />
+            </h2>
+          </BlurReveal>
+        </Fade>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {items.map((item, i) => (
+            <Fade key={i} delay={i * 40}>
+              <FAQItem q={item.q} a={item.a} open={openIdx === i} onToggle={() => setOpenIdx(openIdx === i ? null : i)} />
+            </Fade>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════
    MAIN PAGE
 ═══════════════════════════════ */
 export default function Home() {
@@ -933,18 +1127,14 @@ export default function Home() {
             <div style={{ maxWidth: 1152, margin: "0 auto", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <Logo size={30} />
-                <span style={{ color: "white", fontSize: 14, letterSpacing: "0.15em", textTransform: "uppercase", fontFamily: SERIF }}>DuckDuck Club</span>
+                <span style={{ color: "white", fontSize: 14, letterSpacing: "0.15em", textTransform: "uppercase", fontFamily: SANS }}>DuckDuck Club</span>
                 <div className="privacy-badge" style={{ display: "flex", alignItems: "center", gap: 5, marginLeft: 0, padding: "3px 10px", borderRadius: 20, background: "rgba(74,222,128,0.06)", border: "1px solid rgba(74,222,128,0.1)" }}>
                   <Lock size={10} color="rgba(74,222,128,0.6)" />
                   <span style={{ fontSize: 9, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(74,222,128,0.5)" }}>Private</span>
                 </div>
               </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 32 }} className="desktop-nav">
-                {[["O clube", "about"], ["Por dentro", "inside"]].map(([l, h]) => (
-                  <button key={l} onClick={() => scrollTo(h)} style={{ fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", background: "none", border: "none", cursor: "pointer", fontFamily: SERIF, transition: "color 0.3s" }}
-                    onMouseEnter={e => (e.currentTarget.style.color = GOLD)} onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.4)")}>{l}</button>
-                ))}
-                <button onClick={() => scrollTo("pricing")} style={{ fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase", padding: "10px 20px", borderRadius: 8, background: "rgba(201,168,76,0.1)", color: GOLD, border: "1px solid rgba(201,168,76,0.2)", fontFamily: SERIF, cursor: "pointer", transition: "all 0.3s" }}
+              <div style={{ display: "flex", alignItems: "center" }} className="desktop-nav">
+                <button onClick={() => scrollTo("pricing")} style={{ fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase", padding: "10px 20px", borderRadius: 8, background: "rgba(201,168,76,0.1)", color: GOLD, border: "1px solid rgba(201,168,76,0.2)", fontFamily: SANS, cursor: "pointer", transition: "all 0.3s" }}
                   onMouseEnter={e => { e.currentTarget.style.background = "rgba(201,168,76,0.15)"; e.currentTarget.style.borderColor = "rgba(201,168,76,0.4)"; }}
                   onMouseLeave={e => { e.currentTarget.style.background = "rgba(201,168,76,0.1)"; e.currentTarget.style.borderColor = "rgba(201,168,76,0.2)"; }}>
                   Ver meu acesso
@@ -956,27 +1146,64 @@ export default function Home() {
 
           {/* Responsive CSS */}
           <style>{`
+            @media (max-width: 1024px) and (min-width: 769px) {
+              .pillar-grid { grid-template-columns: 1fr 1fr !important; }
+            }
             @media (max-width: 768px) {
-              .desktop-nav { display: none !important; }
-              .mobile-menu { display: block !important; }
+              /* Nav — keep desktop layout, no hamburger */
+              .mobile-menu { display: none !important; }
+
+              /* Global */
+              html, body { overflow-x: hidden !important; }
+              section { padding-left: 16px !important; padding-right: 16px !important; }
+
+              /* Hero */
               .hero-tags { display: grid !important; grid-template-columns: 1fr 1fr !important; flex-direction: unset !important; gap: 6px !important; margin-top: 20px !important; }
+              .hero-pill { font-size: 10px !important; padding: 6px 10px !important; text-align: center !important; min-height: 34px !important; }
+              .hero-break { display: block; height: 16px; }
+
+              /* Grids → 1 column */
               .pillar-grid { grid-template-columns: 1fr !important; }
-              .pillar-card { flex-direction: column !important; }
+              .pillar-card { flex-direction: column !important; padding: 16px !important; }
               .for-you-grid { grid-template-columns: 1fr !important; }
               .pricing-grid { grid-template-columns: 1fr !important; }
+              .pricing-grid > div:last-child { order: -1; }
               .problem-grid { grid-template-columns: 1fr !important; }
-              .founder-grid { grid-template-columns: 1fr !important; }
-              .checkout-modal { max-width: 100% !important; margin: 0 !important; border-radius: 20px 20px 0 0 !important; position: fixed !important; bottom: 0 !important; padding: 24px !important; max-height: 90vh !important; overflow-y: auto !important; }
+              .founder-grid { grid-template-columns: 1fr !important; text-align: center; }
+              .redacted-grid { grid-template-columns: 1fr !important; }
+
+              /* Founder */
+              .founder-photo { width: 200px !important; height: 200px !important; min-width: 200px !important; }
+
+              /* Screenshots */
               .screenshots-row { gap: 8px !important; }
               .screenshots-row > div { border-radius: 12px !important; transform: none !important; }
+
+              /* Pricing */
               .pricing-note { font-size: 10px !important; }
-              .hero-pill { font-size: 11px !important; padding: 8px 10px !important; text-align: center !important; }
-              .hero-break { display: block; height: 16px; }
+
+              /* Checkout modal */
+              .checkout-modal { max-width: 100% !important; margin: 0 !important; border-radius: 20px 20px 0 0 !important; position: fixed !important; bottom: 0 !important; padding: 24px !important; max-height: 90vh !important; overflow-y: auto !important; }
+
+              /* Privacy */
               .privacy-badge { display: none !important; }
-              .redacted-grid { grid-template-columns: 1fr !important; }
-              .lang-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
-              .lang-callout { flex-direction: column !important; gap: 12px !important; }
-              .lang-includes-grid { grid-template-columns: 1fr !important; }
+
+              /* Hero CTA normal size */
+              .cta-glow { width: auto !important; display: inline-flex !important; padding: 14px 40px !important; }
+
+              /* FAQ tighter padding */
+              .faq-item > div:first-child { padding: 16px 16px !important; }
+              .faq-item > div:last-child { padding: 0 16px 16px !important; }
+
+              /* Pricing cards full-width buttons */
+              .pricing-grid a { width: 100% !important; }
+
+              /* Mobile hide */
+              .mobile-hide { display: none !important; }
+
+              /* Founder mobile */
+              .founder-photo { width: 150px !important; height: 150px !important; min-width: 150px !important; }
+              .founder-stats { display: none !important; }
             }
             .hero-break { display: none; }
             input::placeholder { color: rgba(255,255,255,0.25) !important; }
@@ -984,7 +1211,7 @@ export default function Home() {
           `}</style>
 
           {/* ═══ 1. HERO ═══ */}
-          <section style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "96px 24px 80px", zIndex: 1, overflow: "hidden" }}>
+          <section style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "120px 24px 80px", zIndex: 1, overflow: "hidden" }}>
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.25 }}
@@ -1004,15 +1231,15 @@ export default function Home() {
                 transition={{ duration: 0.3, delay: 0.5 }}
                 style={{ marginTop: 40, marginBottom: 28, fontSize: "clamp(28px, 8vw, 72px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF }}
               >
-                <DecryptText text="Antes de pensar em crescer financeiramente," delay={800} speed={35} />
+                <DecryptText text="Você não está atrasado." delay={800} speed={35} />
                 <br />
                 <span className="gold-shimmer" style={{ fontStyle: "italic" }}>
-                  <DecryptText text="aumente o seu valor no jogo." delay={4200} speed={35} />
+                  <DecryptText text="Você está no grupo errado." delay={2500} speed={35} />
                 </span>
               </motion.h1>
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 2.4 }}>
                 <p style={{ maxWidth: 640, margin: "0 auto 40px", fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)" }}>
-                  Direção. Contexto. Valor real. Um ecossistema privado para quem quer operar com mais clareza, mais linguagem e mais acesso — de offshore e geopolítica a idiomas, networking e operação global.
+                  Um ecossistema privado pra quem quer operar no mundo com mais direção, mais linguagem e mais acesso.
                 </p>
               </motion.div>
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 2.8 }}>
@@ -1025,53 +1252,41 @@ export default function Home() {
                 className="hero-tags"
                 style={{ marginTop: 48, display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 12 }}
               >
-                {["Idiomas para acesso global", "Network, deals e matchmaking", "Offshore, China e geopolítica", "Privado, curado, sem ruído"].map(t => (
+                {["Inteligência Artificial", "Deals & Networking", "Idiomas pra negócios", "China Ops", "Crypto & Offshore", "Geopolítica"].map(t => (
                   <span key={t} className="hero-pill" style={{ fontSize: 12, padding: "8px 16px", borderRadius: 9999, border: "1px solid rgba(201,168,76,0.12)", background: "rgba(201,168,76,0.03)", color: "rgba(255,255,255,0.45)", minHeight: 40, display: "flex", alignItems: "center", justifyContent: "center" }}>{t}</span>
                 ))}
               </motion.div>
             </div>
           </section>
 
-          <AnimatedDivider />
+          <div className="mobile-hide"><AnimatedDivider /></div>
           <IntelTicker />
 
           {/* ═══ 2. O PROBLEMA ═══ */}
-          <section id="about" style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
-            <div style={{ maxWidth: 1024, margin: "0 auto" }}>
+          <section id="about" style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
+            <div style={{ maxWidth: 900, margin: "0 auto" }}>
               <Fade>
                 <Badge>O problema</Badge>
                 <BlurReveal>
-                  <h2 style={{ marginTop: 24, fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 24 }}>
-                    <TextReveal text="Ambição sem contexto, sem linguagem e sem estrutura vira" delay={0} />
-                    {" "}
-                    <TextReveal text="desperdício de potencial." gold italic delay={0.8} />
+                  <h2 style={{ marginTop: 20, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 40, textAlign: "center" }}>
+                    <TextReveal text="Você ainda tenta crescer" delay={0} />
+                    <br />
+                    <TextReveal text="do jeito antigo." gold italic delay={0.3} />
                   </h2>
                 </BlurReveal>
-                <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 32, maxWidth: 720 }}>
-                  Muita gente quer crescer e acessar oportunidades maiores. Mas tenta fazer isso com informação espalhada, networking fraco, leitura rasa de cenário e pouca capacidade prática de execução. O resultado é viver ocupada, mas continuar jogando abaixo do próprio potencial.
-                </p>
-                <div className="cost-alert" style={{ padding: "18px 24px", borderRadius: 12, background: "rgba(255,80,80,0.03)", border: "1px solid rgba(255,80,80,0.1)", display: "flex", alignItems: "flex-start", gap: 14, maxWidth: 720, marginBottom: 40 }}>
-                  <span style={{ fontSize: 18, flexShrink: 0 }}>⚠️</span>
-                  <p style={{ fontSize: 13, lineHeight: 1.7, color: "rgba(255,255,255,0.35)", margin: 0 }}>
-                    Cada mês sem contexto real, sem idioma e sem as pessoas certas tem um custo — oportunidades que passam, deals que não fecham, posições que outros ocupam. Inação também tem preço.
-                  </p>
-                </div>
               </Fade>
-              <div className="problem-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 20 }}>
+              <div className="problem-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                 {[
-                  { t: "Muito conteúdo, pouca direção", d: "Sem leitura de cenário e geopolítica, a maioria reage tarde e decide no ruído." },
-                  { t: "Muito potencial, pouco acesso", d: "Sem linguagem, repertório e as pessoas certas por perto, oportunidades simplesmente não chegam." },
-                  { t: "Muita ambição, pouca estrutura", d: "Sem ferramentas, proteção e operações globais bem entendidas, o jogo fica mais caro e mais lento." },
+                  { t: "Informação Sem Filtro", d: "Todo mundo tem acesso à mesma informação. Poucos sabem o que fazer com ela.", mh: false },
+                  { t: "Networking de Mentira", d: "Seguidores não são conexões. Você não conhece ninguém que possa te levar pro próximo nível.", mh: true },
+                  { t: "Sem Idioma, Sem Mesa", d: "Deals, contratos e oportunidades acontecem em outros idiomas. Se você não fala, você não senta na mesa.", mh: true },
+                  { t: "IA Passou e Você Ficou", d: "Quem domina IA já está automatizando, construindo e operando 10x mais rápido. Quem não domina, está ficando pra trás.", mh: false },
                 ].map((item, i) => (
-                  <Fade key={item.t} delay={i * 100}>
-                    <motion.div
-                      whileHover={{ y: -4, borderColor: "rgba(201,168,76,0.2)" }}
-                      transition={{ duration: 0.2 }}
-                      style={{ padding: "24px 28px", borderRadius: 16, background: "rgba(255,255,255,0.02)", borderWidth: 1, borderStyle: "solid", borderColor: "rgba(255,255,255,0.06)", height: "100%" }}
-                    >
-                      <h3 style={{ fontSize: 18, fontWeight: 500, fontFamily: SERIF, marginBottom: 12 }}>{item.t}</h3>
-                      <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.4)", margin: 0 }}>{item.d}</p>
-                    </motion.div>
+                  <Fade key={item.t} delay={i * 80}>
+                    <div className={item.mh ? "mobile-hide" : ""} style={{ padding: 24, borderRadius: 12, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(201,168,76,0.12)", borderLeft: "3px solid rgba(201,168,76,0.5)", height: "100%" }}>
+                      <h3 style={{ fontSize: 17, fontWeight: 700, fontFamily: SANS, margin: "0 0 8px", color: "white" }}>{item.t}</h3>
+                      <p style={{ fontSize: 14, lineHeight: 1.6, color: "rgba(255,255,255,0.4)", margin: 0 }}>{item.d}</p>
+                    </div>
                   </Fade>
                 ))}
               </div>
@@ -1079,129 +1294,53 @@ export default function Home() {
           </section>
 
           {/* ═══ 3. POR DENTRO ═══ */}
-          <section id="inside" style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
-            <div style={{ maxWidth: 1024, margin: "0 auto" }}>
+          <section id="inside" style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
+            <div style={{ maxWidth: 900, margin: "0 auto" }}>
               <Fade>
                 <Badge>Por dentro</Badge>
                 <BlurReveal>
-                  <h2 style={{ marginTop: 24, fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 16 }}>
+                  <h2 style={{ marginTop: 20, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 12 }}>
                     <TextReveal text="O que você encontra" delay={0} />
                     {" "}
                     <TextReveal text="ao entrar" gold italic delay={0.4} />
                   </h2>
                 </BlurReveal>
-                <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 48, maxWidth: 720 }}>
-                  Quatro frentes de valor real. Cada uma desenhada para te colocar em uma posição melhor do que você estava ontem.
+                <p style={{ fontSize: 15, lineHeight: 1.6, color: "rgba(255,255,255,0.5)", marginBottom: 40, maxWidth: 600 }}>
+                  Seis frentes. Uma posição melhor que ontem.
                 </p>
               </Fade>
-              <div className="pillar-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+              <div className="pillar-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
                 {[
-                  { num: "01", icon: Compass, title: "Direção", desc: "Geopolítica, leitura de cenário e contexto estratégico para você antecipar movimentos — enquanto a maioria ainda está reagindo.", intel: "Alta do petróleo prevista antes do bloqueio de Hormuz — membros avisados com antecedência" },
-                  { num: "02", icon: BookOpen, title: "Valor pessoal", desc: "Idiomas, repertório e ferramentas práticas para ampliar seu alcance, sua utilidade e o tipo de oportunidade que chega até você.", intel: "Novo módulo: Vocabulário de negociação em Mandarin para importadores" },
-                  { num: "03", icon: Handshake, title: "Valor relacional", desc: "Networking, deals e matchmaking que conectam você a operadores, investidores e oportunidades que não circulam no mainstream.", intel: "Estruturação concluída: abertura de empresa em Hong Kong para membro do setor de mineração e joalheria" },
-                  { num: "04", icon: Settings, title: "Valor operacional", desc: "Offshore, China import, crypto OPSEC e estruturas internacionais — não como teoria, mas como execução real com proteção.", intel: "OPSEC: como receber pagamentos em carteira descentralizada com privacidade real — protocolo publicado" },
+                  { num: "01", icon: Cpu, title: "Inteligência Artificial", desc: "IA pra negócios, vibe coding, automação, análise de mercado e construção de produtos. Workflows reais, não teoria.", mh: false },
+                  { num: "02", icon: Handshake, title: "Deals & Networking", desc: "Parcerias, rev share, oportunidades e conexão direta com operadores. Membros fechando deals entre si toda semana.", mh: false },
+                  { num: "03", icon: BookOpen, title: "Idiomas", desc: "8 idiomas com material curado pra negócios. Vocabulário de negociação, contratos e operação real.", mh: true },
+                  { num: "04", icon: Globe, title: "China Ops", desc: "Sourcing, fornecedores, feiras, importação e abertura de empresa em Hong Kong. Por quem está lá.", mh: false },
+                  { num: "05", icon: Shield, title: "Crypto & Offshore", desc: "Estruturas internacionais, proteção patrimonial, OPSEC e operações com privacidade real.", mh: true },
+                  { num: "06", icon: Compass, title: "Geopolítica", desc: "Leitura de cenário e contexto estratégico pra antecipar enquanto a maioria ainda está reagindo.", mh: true },
                 ].map((item, i) => (
-                  <PillarCard key={item.title} num={item.num} icon={item.icon} title={item.title} desc={item.desc} intel={item.intel} delay={i * 80} />
+                  <PillarCard key={item.title} num={item.num} icon={item.icon} title={item.title} desc={item.desc} delay={i * 60} mobileHide={item.mh} />
                 ))}
               </div>
               <Fade delay={350}><div style={{ marginTop: 56, textAlign: "center" }}><GoldButton href="pricing">Entrar no ecossistema</GoldButton></div></Fade>
             </div>
           </section>
 
-          <AnimatedDivider />
-
-          {/* ═══ 4. LANGUAGE ARSENAL ═══ */}
-          <section style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1, overflow: "hidden" }}>
-            <div style={{ maxWidth: 1024, margin: "0 auto" }}>
-              <Fade>
-                <Badge>Language Arsenal</Badge>
-                <h2 style={{ marginTop: 24, fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 16 }}>
-                  Quem não fala a língua certa,{" "}
-                  <span className="gold-shimmer" style={{ fontStyle: "italic" }}>não entra na sala certa.</span>
-                </h2>
-                <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 48, maxWidth: 680 }}>
-                  Negócios acontecem em idiomas. Contratos se fecham em idiomas. Conexões se formam em idiomas. Cada língua que você não fala é uma porta que permanece trancada — e alguém do outro lado já está operando sem você.
-                </p>
-              </Fade>
-
-              <div className="lang-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 48 }}>
-                {[
-                  { flag: "🇬🇧", lang: "English", unlock: "Acesso global, negócios, tech, finanças" },
-                  { flag: "🇪🇸", lang: "Español", unlock: "LATAM, 500M+ de falantes, mercados emergentes" },
-                  { flag: "🇮🇹", lang: "Italiano", unlock: "Europa, cidadania, luxo, gastronomia" },
-                  { flag: "🇫🇷", lang: "Français", unlock: "África, diplomacia, Europa, Canadá" },
-                  { flag: "🇩🇪", lang: "Deutsch", unlock: "Engenharia, indústria, economia #1 da Europa" },
-                  { flag: "🇨🇳", lang: "中文", unlock: "China, import/export, a maior economia do futuro" },
-                  { flag: "🇰🇷", lang: "한국어", unlock: "Tech, cultura, mercado asiático em expansão" },
-                  { flag: "🇯🇵", lang: "日本語", unlock: "Tecnologia, negócios, terceira economia global" },
-                ].map((item, i) => (
-                  <LanguageCard key={item.lang} flag={item.flag} lang={item.lang} unlock={item.unlock} delay={i * 60} />
-                ))}
-              </div>
-
-              <Fade>
-                <div className="lang-callout" style={{ padding: "28px 32px", borderRadius: 16, background: "rgba(201,168,76,0.03)", border: "1px solid rgba(201,168,76,0.08)", display: "flex", alignItems: "flex-start", gap: 20, maxWidth: 800, margin: "0 auto" }}>
-                  <div style={{ fontSize: 28, flexShrink: 0, marginTop: 2 }}>🔒</div>
-                  <div>
-                    <div style={{ fontSize: 16, fontWeight: 500, fontFamily: SERIF, color: "white", marginBottom: 8 }}>
-                      A maioria das oportunidades não chega até você em português.
-                    </div>
-                    <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.4)", margin: "0 0 16px" }}>
-                      Contratos na China, networking na Europa, deals nos EUA, fornecedores na Coreia — tudo acontece na língua local. Dentro do DuckDuck Club, cada idioma vem com uma biblioteca completa: cursos estruturados, livros recomendados, PDFs práticos, guias de conversação, vocabulário de negócios e material curado para quem quer operar de verdade — não decorar gramática.
-                    </p>
-                    <div style={{ fontSize: 14, color: "rgba(255,255,255,0.35)", marginBottom: 16 }}>Cada idioma inclui:</div>
-                    <div className="lang-includes-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 16 }}>
-                      {[
-                        "Cursos completos estruturados",
-                        "Livros e audiobooks recomendados",
-                        "PDFs e materiais práticos",
-                        "Guias de conversação para negócios",
-                        "Vocabulário de negociação e contratos",
-                        "Expressões estratégicas por contexto",
-                        "Imersão cultural aplicada a operação",
-                        "Stack de ferramentas e apps curados",
-                      ].map(item => (
-                        <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
-                          <span style={{ color: GOLD, fontSize: 14, marginTop: 1, flexShrink: 0 }}>›</span>
-                          <span style={{ fontSize: 12, lineHeight: 1.5, color: "rgba(255,255,255,0.4)" }}>{item}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                      {["Não é curso genérico", "Foco em operação real", "Material curado e atualizado", "Armamento linguístico"].map(tag => (
-                        <span key={tag} style={{ fontSize: 10, padding: "4px 12px", borderRadius: 20, background: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.1)", color: "rgba(201,168,76,0.5)", letterSpacing: "0.05em" }}>{tag}</span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </Fade>
-
-              <Fade>
-                <div style={{ textAlign: "center", marginTop: 32 }}>
-                  <p style={{ fontSize: 13, color: "rgba(255,255,255,0.3)" }}>
-                    Premium inclui 2 idiomas com acesso completo. Base permite adicionar por +US$5/mês cada.
-                  </p>
-                </div>
-              </Fade>
-            </div>
-          </section>
-
-          <AnimatedDivider />
+          <div className="mobile-hide"><AnimatedDivider /></div>
 
           {/* ═══ 5. COMMUNITY SCREENSHOTS ═══ */}
-          <section style={{ position: "relative", padding: "80px 24px 112px", overflow: "hidden", zIndex: 1 }}>
-            <div style={{ maxWidth: 1024, margin: "0 auto" }}>
+          <section className="mobile-hide" style={{ position: "relative", padding: "80px 24px", overflow: "hidden", zIndex: 1 }}>
+            <div style={{ maxWidth: 1100, margin: "0 auto" }}>
               <Fade>
-                <div style={{ textAlign: "center", marginBottom: 48 }}>
+                <div style={{ textAlign: "center", marginBottom: 40 }}>
                   <Badge>O ambiente</Badge>
                   <BlurReveal>
-                    <h2 style={{ marginTop: 24, fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 16 }}>
+                    <h2 style={{ marginTop: 20, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 12 }}>
                       <TextReveal text="Um ecossistema" delay={0} />
                       {" "}
                       <TextReveal text="real e organizado." gold italic delay={0.3} />
                     </h2>
                   </BlurReveal>
-                  <p style={{ fontSize: 15, maxWidth: 560, margin: "0 auto", lineHeight: 1.7, color: "rgba(255,255,255,0.4)" }}>Canais estruturados, inteligência curada e espaços que funcionam — do onboarding ao nível mais operacional.</p>
+                  <p style={{ fontSize: 15, maxWidth: 600, margin: "0 auto", lineHeight: 1.6, color: "rgba(255,255,255,0.5)" }}>É assim que o clube é organizado por dentro.</p>
                 </div>
               </Fade>
               <Fade delay={200}><CommunityShowcase /></Fade>
@@ -1209,86 +1348,87 @@ export default function Home() {
             </div>
           </section>
 
-          <AnimatedDivider />
+          <div className="mobile-hide"><AnimatedDivider /></div>
 
           {/* ═══ 5. CLASSIFICADO — REDACTED INTEL ═══ */}
-          <section style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
-            <div style={{ maxWidth: 1024, margin: "0 auto" }}>
+          <section style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
+            <div style={{ maxWidth: 900, margin: "0 auto" }}>
               <Fade>
                 <Badge>Classificado</Badge>
-                <h2 style={{ marginTop: 24, fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 16 }}>
+                <h2 style={{ marginTop: 20, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 12 }}>
                   O que está sendo discutido <span className="gold-shimmer" style={{ fontStyle: "italic" }}>agora lá dentro.</span>
                 </h2>
-                <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.4)", marginBottom: 40, maxWidth: 600 }}>
+                <p style={{ fontSize: 15, lineHeight: 1.6, color: "rgba(255,255,255,0.5)", marginBottom: 40, maxWidth: 600 }}>
                   Teasers reais do ecossistema. O conteúdo completo é exclusivo para membros.
                 </p>
               </Fade>
               <div className="redacted-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
-                <Fade delay={0}><RedactedCard classification="Intel · Geopolítica" title="A geoeconomia invisível por trás de toda vantagem competitiva global" preview="A competição real acontece em camadas invisíveis: fluxos de capital, cadeias de suprimento, dados, energia e alianças econômicas que moldam quem ganha e quem perde. Sem entender a geoeconomia subjacente, decisões parecem isoladas — mas não são..." expires="4 dias" /></Fade>
-                <Fade delay={100}><RedactedCard classification="OPSEC · Crypto" title="Como receber pagamentos em carteira descentralizada com privacidade" preview="Quando você recebe via Pix ou cartão no Brasil, tudo é rastreado: quem pagou, quem recebeu, quanto, quando. Seu CPF está vinculado a cada transação. Existe outra forma de operar — com privacidade real e sem intermediários..." expires="2 dias" /></Fade>
-                <Fade delay={200}><RedactedCard classification="Intel · Decisão" title="A matemática invisível por trás de quase toda decisão" preview="Tomamos milhares de decisões por dia. A maioria é irrelevante. Mas as que moldam vida, carreira, dinheiro e posicionamento quase nunca deveriam ser decididas no instinto. Para o trivial, feeling basta. Para o resto..." expires="6 dias" /></Fade>
+                <Fade delay={0}><RedactedCard classification="AI OPS" title="10 workflows de IA que economizam 10+ horas por semana" preview="Prompts, estruturas e sistemas reais que uso pra pesquisa, análise, conteúdo e automação." expires="3 dias" /></Fade>
+                <Fade delay={100}><div className="mobile-hide"><RedactedCard classification="OPSEC · Crypto" title="Como receber pagamentos em carteira descentralizada com privacidade" preview="Sem Pix, sem CPF, sem rastreio. O protocolo completo pra operar com privacidade real." expires="2 dias" /></div></Fade>
+                <Fade delay={200}><div className="mobile-hide"><RedactedCard classification="Intel · Decisão" title="A matemática invisível por trás de quase toda decisão" preview="O framework pra parar de decidir no instinto e começar a decidir com dados." expires="6 dias" /></div></Fade>
               </div>
             </div>
           </section>
 
-          <AnimatedDivider />
+          <div className="mobile-hide"><AnimatedDivider /></div>
 
           {/* ═══ 6. SOBRE O CRIADOR ═══ */}
-          <section style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
-            <div style={{ maxWidth: 1024, margin: "0 auto" }}>
+          <section style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
+            <div style={{ maxWidth: 900, margin: "0 auto" }}>
               <Fade>
                 <Badge>Sobre o criador</Badge>
-                <div className="founder-grid" style={{ marginTop: 32, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 48, alignItems: "start" }}>
+                <div className="founder-grid" style={{ marginTop: 20, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 48, alignItems: "center" }}>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                     <img src="/founder-photo.jpeg" alt="Nando Voyager — Founder" className="founder-photo" style={{ width: 320, height: 320, minWidth: 320, borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(201,168,76,0.3)" }} />
-                    <p style={{ fontSize: 18, fontWeight: 500, fontFamily: SERIF, color: "white", marginTop: 20, marginBottom: 4 }}>Nando Voyager</p>
+                    <p style={{ fontSize: 18, fontWeight: 500, fontFamily: SANS, color: "white", marginTop: 20, marginBottom: 4 }}>Nando Voyager</p>
                     <a href="https://instagram.com/nandovoyager" target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: GOLD, textDecoration: "none", opacity: 0.85, transition: "opacity 0.2s" }}
                       onMouseEnter={e => (e.currentTarget.style.opacity = "1")} onMouseLeave={e => (e.currentTarget.style.opacity = "0.85")}>@nandovoyager</a>
                   </div>
                   <div>
                     <BlurReveal>
-                      <h2 style={{ fontSize: "clamp(22px, 3.5vw, 36px)", fontWeight: 300, lineHeight: 1.2, fontFamily: SERIF, marginBottom: 24 }}>
+                      <h2 style={{ fontSize: "clamp(20px, 3vw, 32px)", fontWeight: 300, lineHeight: 1.2, fontFamily: SERIF, marginBottom: 20 }}>
                         <TextReveal text="A DuckDuck Club nasceu da interseção entre" delay={0} />
                         {" "}
                         <TextReveal text="contexto global, operação real e construção de valor." gold italic delay={0.5} />
                       </h2>
                     </BlurReveal>
                     <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 0 }}>
-                      Depois de viver entre países, operar em ambientes diferentes e perceber como idioma, geopolítica, estrutura, network e execução mudam o nível do jogo, eu decidi reunir tudo isso em um ecossistema privado. A DuckDuck Club foi criada para quem quer deixar de depender de improviso, ruído e informação solta — e começar a operar com mais clareza, mais linguagem e mais capacidade prática.
+                      Saí do Brasil aos 18. Morei nos EUA, Itália, Austrália, China e Coreia. Abri empresa em Hong Kong. Tudo antes dos 22. Criei esse ecossistema pra quem quer parar de improvisar e começar a operar de verdade.
                     </p>
+                    <p className="founder-stats" style={{ fontSize: 13, color: GOLD, letterSpacing: "0.08em", marginTop: 16, marginBottom: 0, opacity: 0.7 }}>22 anos · 6 países · 4 idiomas · 30+ países visitados</p>
                   </div>
                 </div>
               </Fade>
             </div>
           </section>
 
-          <AnimatedDivider />
+          <div className="mobile-hide"><AnimatedDivider /></div>
 
           {/* ═══ 6. PARA VOCÊ SE... ═══ */}
-          <section style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
-            <div style={{ maxWidth: 1024, margin: "0 auto" }}>
+          <section className="mobile-hide" style={{ position: "relative", padding: "80px 24px", zIndex: 1 }}>
+            <div style={{ maxWidth: 900, margin: "0 auto" }}>
               <Fade>
                 <BlurReveal>
-                  <h2 style={{ fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 48 }}>
+                  <h2 style={{ fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 40 }}>
                     <TextReveal text="Isso é para você se" delay={0} />
                     <span className="gold-shimmer">...</span>
                   </h2>
                 </BlurReveal>
               </Fade>
-              <div className="for-you-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+              <div className="for-you-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                 <Fade>
-                  <div style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(201,168,76,0.02)", border: "1px solid rgba(201,168,76,0.1)", height: "100%" }}>
+                  <div style={{ padding: 24, borderRadius: 12, background: "rgba(201,168,76,0.02)", border: "1px solid rgba(201,168,76,0.12)", height: "100%" }}>
                     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-                      {["Quer aumentar o próprio valor antes de aumentar o tamanho do jogo", "Valoriza contexto, curadoria e repertório internacional", "Quer construir networking útil — não só consumir conteúdo", "Quer operar melhor com mais direção, linguagem e alavancas"].map(item => (
+                      {["Quer usar IA pra construir e operar mais rápido", "Quer networking real — deals, parcerias e rev share", "Quer aprender idiomas pra fechar negócios, não pra turismo", "Quer operar global — China, offshore e crypto"].map(item => (
                         <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: 12 }}><Check size={16} color={GOLD} style={{ marginTop: 2, flexShrink: 0 }} /><span style={{ fontSize: 14, lineHeight: 1.6, color: "rgba(255,255,255,0.65)" }}>{item}</span></div>
                       ))}
                     </div>
                   </div>
                 </Fade>
                 <Fade delay={100}>
-                  <div style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(255,255,255,0.015)", border: "1px solid rgba(255,255,255,0.05)", height: "100%" }}>
+                  <div style={{ padding: 24, borderRadius: 12, background: "rgba(255,255,255,0.015)", border: "1px solid rgba(201,168,76,0.12)", height: "100%" }}>
                     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-                      {["Procura hype, promessa fácil ou atalhos mágicos", "Quer só assistir sem aplicar", "Prefere volume em vez de sinal", "Não valoriza contexto, profundidade e execução"].map(item => (
+                      {["Quer fórmula mágica e resultado sem esforço", "Quer só consumir conteúdo sem aplicar nada", "Acha que um curso de R$29 resolve tudo", "Não quer investir tempo em aprender e executar"].map(item => (
                         <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: 12 }}><X size={16} color="rgba(255,255,255,0.1)" style={{ marginTop: 2, flexShrink: 0 }} /><span style={{ fontSize: 14, lineHeight: 1.6, color: "rgba(255,255,255,0.15)", textDecoration: "line-through", textDecorationColor: "rgba(255,255,255,0.08)" }}>{item}</span></div>
                       ))}
                     </div>
@@ -1298,121 +1438,14 @@ export default function Home() {
             </div>
           </section>
 
-          <AnimatedDivider />
-          <IntelTicker />
+          <div className="mobile-hide"><AnimatedDivider /></div>
+          <div className="mobile-hide"><IntelTicker /></div>
 
           {/* ═══ 7. PRICING ═══ */}
-          <section id="pricing" style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
-            <div style={{ maxWidth: 1024, margin: "0 auto" }}>
-              <Fade>
-                <BlurReveal>
-                  <h2 style={{ fontSize: "clamp(24px, 4vw, 48px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 12 }}>
-                    <TextReveal text="Escolha seu nível de" delay={0} />
-                    {" "}
-                    <TextReveal text="acesso" gold italic delay={0.4} />
-                  </h2>
-                </BlurReveal>
-                <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", marginBottom: 48 }}>Entre pelo core ou desbloqueie a camada mais valiosa do clube.</p>
-              </Fade>
-              <div className="pricing-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20 }}>
-                <Fade>
-                  <motion.div
-                    whileHover={{ y: -4, borderColor: "rgba(201,168,76,0.2)" }}
-                    transition={{ duration: 0.2 }}
-                    style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(255,255,255,0.02)", borderWidth: 1, borderStyle: "solid", borderColor: "rgba(255,255,255,0.06)", display: "flex", flexDirection: "column", height: "100%" }}
-                  >
-                    <span style={{ display: "inline-flex", alignSelf: "flex-start", alignItems: "center", fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", padding: "6px 16px", borderRadius: 9999, border: "1px solid rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.6)", fontFamily: SERIF }}>Base</span>
-                    <p style={{ marginTop: 20, fontSize: 14, color: "rgba(255,255,255,0.4)", marginBottom: 4 }}>A camada de direção e posicionamento</p>
-                    <div style={{ marginTop: 12, marginBottom: 4 }}><span style={{ fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 300, fontFamily: SERIF }}>US$15</span><span style={{ fontSize: 14, marginLeft: 4, color: "rgba(255,255,255,0.35)" }}>/mês</span></div>
-                    <p style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", marginBottom: 24 }}>aprox. R$79/mês</p>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32, flex: 1 }}>
-                      {[["The Portal", "onboarding e direção"], ["The Core", "strategy & intel"], ["The Lounge", "networking"], ["Geopolitics", "leitura de cenário"]].map(([name, sub]) => (
-                        <div key={name} style={{ display: "flex", alignItems: "center", gap: 12 }}>{dot()}<span style={{ fontSize: 14, color: "rgba(255,255,255,0.55)" }}>{name} <span style={{ color: "rgba(255,255,255,0.25)", fontSize: 12 }}>({sub})</span></span></div>
-                      ))}
-                    </div>
-                    <OutlineButton onClick={() => setCheckout("base")}>Escolher Base</OutlineButton>
-                  </motion.div>
-                </Fade>
-                <Fade delay={100}>
-                  <motion.div
-                    whileHover={{ y: -4, borderColor: "rgba(201,168,76,0.4)" }}
-                    transition={{ duration: 0.2 }}
-                    style={{ padding: "24px 32px", borderRadius: 16, background: "rgba(201,168,76,0.03)", borderWidth: 1, borderStyle: "solid", borderColor: "rgba(201,168,76,0.2)", display: "flex", flexDirection: "column", height: "100%", position: "relative", overflow: "hidden" }}
-                  >
-                    <div style={{ position: "absolute", top: 0, right: 0, width: 160, height: 160, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%)", transform: "translate(30%, -30%)", pointerEvents: "none" }} />
-                    <div style={{ position: "absolute", top: 16, right: 20, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(201,168,76,0.6)" }}>Mais popular</div>
-                    <span style={{ display: "inline-flex", alignSelf: "flex-start", alignItems: "center", fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", padding: "6px 16px", borderRadius: 9999, border: `1px solid ${GOLD}`, background: "rgba(201,168,76,0.1)", color: GOLD, fontFamily: SERIF }}>Premium</span>
-                    <p style={{ marginTop: 20, fontSize: 14, color: "rgba(201,168,76,0.7)", marginBottom: 4 }}>A camada mais valiosa do clube</p>
-                    <div style={{ marginTop: 12, marginBottom: 4 }}><span style={{ fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 300, fontFamily: SERIF, color: GOLD }}>US$29</span><span style={{ fontSize: 14, marginLeft: 4, color: "rgba(201,168,76,0.5)" }}>/mês</span></div>
-                    <p style={{ fontSize: 12, color: "rgba(201,168,76,0.35)", marginBottom: 24 }}>aprox. R$149/mês</p>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32, flex: 1 }}>
-                      {[["Tudo do Base", null], ["The Sanctum", "offshore, crypto, China"], ["Duck Tank", "deals e projetos"], ["Black Book", "case studies"], ["Global Moves", "vida internacional"], ["2 idiomas incluídos", null]].map(([name, sub]) => (
-                        <div key={name} style={{ display: "flex", alignItems: "center", gap: 12 }}>{dot(true)}<span style={{ fontSize: 14, color: "rgba(255,255,255,0.7)" }}>{name}{sub && <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 12 }}> ({sub})</span>}</span></div>
-                      ))}
-                    </div>
-                    <GoldButton onClick={() => setCheckout("premium")} style={{ width: "100%" }}>Escolher Premium</GoldButton>
-                  </motion.div>
-                </Fade>
-              </div>
-              <Fade delay={200}>
-                <div style={{ marginTop: 32, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: 8 }}>
-                  <p className="pricing-note" style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", margin: 0, whiteSpace: "nowrap" }}>Cobrança internacional via Stripe. Valor final pode variar conforme câmbio.</p>
-                  <p className="pricing-note" style={{ fontSize: 12, color: "rgba(201,168,76,0.5)", margin: 0, whiteSpace: "nowrap" }}>Pagamento também disponível via Pix ou crypto com atendimento direto.</p>
-                </div>
-              </Fade>
-            </div>
-          </section>
+          <PricingSection />
 
           {/* ═══ 8. FAQ ═══ */}
-          <section style={{ position: "relative", padding: "80px 24px 112px", zIndex: 1 }}>
-            <div style={{ maxWidth: 720, margin: "0 auto" }}>
-              <Fade>
-                <BlurReveal>
-                  <h2 style={{ fontSize: "clamp(24px, 3.5vw, 40px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 40 }}>
-                    <TextReveal text="Perguntas" delay={0} />
-                    {" "}
-                    <TextReveal text="frequentes" gold italic delay={0.3} />
-                  </h2>
-                </BlurReveal>
-              </Fade>
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                {[
-                  { q: "O que exatamente eu recebo no Base?", a: "Acesso ao core do ecossistema: leitura de cenário, contexto, sinal e networking leve, sem ruído. Inclui The Portal, The Core, The Lounge e Geopolitics." },
-                  { q: "O que muda no Premium?", a: "O Premium abre a camada mais valiosa do clube: The Sanctum, Duck Tank, Black Book, Global Moves e 2 idiomas incluídos. É onde vive a parte mais estratégica e operacional." },
-                  { q: "Os 2 idiomas do Premium são escolhidos na entrada?", a: "Sim. Ao entrar no Premium, você define seus 2 idiomas. Extras podem ser adicionados depois por US$5/mês cada." },
-                  { q: "Posso adicionar idiomas no Base?", a: "Sim. No Base, idiomas funcionam como extensão opcional por +US$5/mês cada." },
-                  { q: "O que é o Polymarket Lab?", a: "Camada opcional para acompanhar leituras, teses e sinais ligados a prediction markets dentro da lógica do ecossistema. +US$10/mês." },
-                  { q: "Como funciona o acesso depois do pagamento?", a: "Após a confirmação, você recebe o acesso imediato à plataforma e pode começar a navegar pelos canais do seu plano em minutos." },
-                  { q: "O pagamento é mensal?", a: "Sim. Recorrente via Stripe, com cobrança internacional." },
-                  { q: "Posso cancelar?", a: "Sim. Você pode cancelar a qualquer momento direto pela plataforma, sem burocracia." },
-                ].map((item, i) => (
-                  <Fade key={i} delay={i * 40}><FAQItem q={item.q} a={item.a} /></Fade>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* ═══ 9. FINAL CTA ═══ */}
-          <section className="cta-final" style={{ position: "relative", padding: "112px 24px 160px", zIndex: 1, overflow: "hidden" }}>
-            <video autoPlay muted loop playsInline style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.08, zIndex: 0, pointerEvents: "none" }}>
-              <source src="/hero-video.mp4" type="video/mp4" />
-            </video>
-            <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, rgba(10,10,10,0.5) 0%, rgba(10,10,10,0.95) 100%)", zIndex: 1 }} />
-            <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "center", position: "relative", zIndex: 2 }}>
-              <Fade><Logo size={48} /></Fade>
-              <Fade delay={100}>
-                <BlurReveal>
-                  <h2 style={{ marginTop: 32, fontSize: "clamp(28px, 5vw, 52px)", fontWeight: 300, lineHeight: 1.15, fontFamily: SERIF, marginBottom: 24 }}>
-                    <TextReveal text="Seu próximo nível começa" delay={0} />
-                    <br />
-                    <TextReveal text="pelo ambiente certo." gold italic delay={0.4} />
-                  </h2>
-                </BlurReveal>
-              </Fade>
-              <Fade delay={200}><p style={{ fontSize: 15, maxWidth: 480, margin: "0 auto 40px", lineHeight: 1.7, color: "rgba(255,255,255,0.4)" }}>Privado. Curado. Internacional.<br />Feito para quem quer sair do ruído e operar no nível certo.</p></Fade>
-              <Fade delay={300}><GoldButton href="pricing" className="cta-glow">Ver meu acesso</GoldButton></Fade>
-            </div>
-          </section>
+          <FAQSection />
 
           {/* PRIVACY STATEMENT */}
           <div style={{ padding: "16px 24px", borderTop: "1px solid rgba(74,222,128,0.04)", background: "rgba(74,222,128,0.01)", textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
@@ -1423,25 +1456,21 @@ export default function Home() {
           </div>
 
           {/* FOOTER */}
-          <footer style={{ position: "relative", padding: "40px 24px", borderTop: "1px solid rgba(255,255,255,0.04)", zIndex: 1 }}>
-            <div style={{ maxWidth: 1024, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 24 }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}><Logo size={22} /><span style={{ fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)", fontFamily: SERIF }}>DuckDuck Club</span></div>
-                <span style={{ fontSize: 10, letterSpacing: "0.12em", color: "rgba(255,255,255,0.12)", textTransform: "uppercase" }}>Encrypted · Private · International</span>
-              </div>
-              <div className="footer-links" style={{ display: "flex", gap: 24 }}>
+          <footer style={{ position: "relative", padding: "32px 24px", borderTop: "1px solid rgba(255,255,255,0.04)", zIndex: 1 }}>
+            <div style={{ maxWidth: 1024, margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center", gap: 12, textAlign: "center" }}>
+              <span style={{ fontSize: 11, letterSpacing: "0.15em", color: "rgba(255,255,255,0.2)", textTransform: "uppercase" }}>DuckDuck Club · Encrypted · Private · International</span>
+              <div style={{ display: "flex", gap: 20 }}>
                 {[
-                  { label: "Termos", href: "/termos" },
-                  { label: "Instagram", href: "https://instagram.com/duckduck.club", external: true },
-                  { label: "WhatsApp", href: "https://wa.me/15615966097?text=" + encodeURIComponent("Olá, tenho uma dúvida sobre o DuckDuck Club."), external: true },
+                  { label: "Instagram", href: "https://instagram.com/duckduck.club" },
+                  { label: "WhatsApp", href: "https://wa.me/15615966097?text=" + encodeURIComponent("Olá, tenho uma dúvida sobre o DuckDuck Club.") },
                 ].map(item => (
-                  <a key={item.label} href={item.href} target={item.external ? "_blank" : undefined} rel={item.external ? "noopener noreferrer" : undefined} style={{ fontSize: 12, color: "rgba(255,255,255,0.2)", textDecoration: "none", transition: "color 0.3s" }}
+                  <a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", textDecoration: "none", transition: "color 0.3s" }}
                     onMouseEnter={e => (e.currentTarget.style.color = "rgba(255,255,255,0.5)")}
-                    onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.2)")}
+                    onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.25)")}
                   >{item.label}</a>
                 ))}
               </div>
-              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.15)" }}>© 2026 DuckDuck Club</div>
+              <span style={{ fontSize: 11, color: "rgba(255,255,255,0.1)" }}>© 2026 DuckDuck Club · <a href="/termos" style={{ color: "inherit", textDecoration: "none" }}>Termos</a></span>
             </div>
           </footer>
         </motion.div>
