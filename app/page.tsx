@@ -179,21 +179,6 @@ function GoldButton({ children, onClick, href, style: extraStyle = {}, className
   );
 }
 
-function OutlineButton({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) {
-  return (
-    <motion.button
-      onClick={onClick}
-      whileHover={{ scale: 1.03, boxShadow: "0 0 40px rgba(201,168,76,0.2)" }}
-      whileTap={{ scale: 0.97 }}
-      transition={{ duration: 0.2 }}
-      style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "14px 28px", borderRadius: 8, fontSize: 14, letterSpacing: "0.12em", textTransform: "uppercase" as const, fontFamily: SANS, color: GOLD, border: "1px solid rgba(201,168,76,0.3)", background: "transparent", cursor: "pointer", width: "100%" }}
-      onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => { e.currentTarget.style.borderColor = GOLD; e.currentTarget.style.background = "rgba(201,168,76,0.06)"; }}
-      onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => { e.currentTarget.style.borderColor = "rgba(201,168,76,0.3)"; e.currentTarget.style.background = "transparent"; }}
-    >
-      {children}
-    </motion.button>
-  );
-}
 
 function FAQItem({ q, a, open, onToggle }: { q: string; a: string; open: boolean; onToggle: () => void }) {
   return (
@@ -241,13 +226,12 @@ function resolveCheckoutLink(plan: string, extraLanguages: number): string {
 }
 
 const BRL_MAP: Record<number, number> = {
-  15: 79, 20: 99, 25: 129, 29: 149, 34: 179, 39: 199, 44: 229, 49: 249,
+  15: 79, 20: 99, 25: 129, 29: 149, 34: 179,
 };
 
 function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: () => void; onWhatsApp: (plan: string, method: string, totalUSD: number) => void }) {
   const premium = plan === "premium";
   const basePrice = premium ? 29 : 15;
-  const [poly, setPoly] = useState(false);
   const [langs, setLangs] = useState<string[]>([]);
   const [payMethod, setPayMethod] = useState<'card' | 'pix' | 'crypto'>('card');
   const freeIncluded = premium ? 2 : 0;
@@ -516,27 +500,6 @@ function RedactedCard({ title, preview, classification, expires }: { title: stri
 }
 
 /* ─── Language Card with lock/unlock ─── */
-function LanguageCard({ flag, lang, unlock, delay }: { flag: string; lang: string; unlock: string; delay: number }) {
-  const [locked, setLocked] = useState(true);
-  return (
-    <Fade delay={delay}>
-      <div
-        onMouseEnter={() => setLocked(false)}
-        onMouseLeave={() => setLocked(true)}
-        style={{ padding: "20px 18px", borderRadius: 12, background: locked ? "rgba(255,255,255,0.02)" : "rgba(201,168,76,0.03)", border: locked ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(201,168,76,0.2)", textAlign: "center", transition: "all 0.3s", cursor: "default", height: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}
-      >
-        <div style={{ position: "relative", display: "inline-block", marginBottom: 6 }}>
-          <span style={{ fontSize: 32 }}>{flag}</span>
-          <span style={{ position: "absolute", top: -6, right: -12, fontSize: 11, transition: "all 0.3s", transform: locked ? "rotate(0deg)" : "rotate(15deg)" }}>
-            {locked ? "🔒" : "🔓"}
-          </span>
-        </div>
-        <div style={{ fontSize: 15, fontWeight: 500, fontFamily: SANS, color: "white", marginBottom: 6 }}>{lang}</div>
-        <div style={{ fontSize: 11, lineHeight: 1.5, color: locked ? "rgba(255,255,255,0.3)" : "rgba(201,168,76,0.5)", transition: "color 0.3s" }}>{unlock}</div>
-      </div>
-    </Fade>
-  );
-}
 
 /* ─── Pillar Card with intel preview ─── */
 function PillarCard({ num, icon: Icon, title, desc, delay }: { num: string; icon: React.ComponentType<{ size: number; color: string }>; title: string; desc: string; delay: number }) {
@@ -1088,7 +1051,6 @@ export default function Home() {
   const [whatsappForm, setWhatsappForm] = useState<{ plan: string; method: string; totalUSD: number } | null>(null);
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -1103,7 +1065,6 @@ export default function Home() {
     return () => window.removeEventListener("scroll", fn);
   }, []);
 
-  const dot = (gold = false) => <div style={{ width: 6, height: 6, borderRadius: 3, background: gold ? GOLD : "rgba(255,255,255,0.25)", flexShrink: 0 }} />;
 
   if (!mounted) return null;
 
@@ -1235,7 +1196,7 @@ export default function Home() {
               transition={{ duration: 2, delay: 0.5 }}
               style={{ position: "absolute", inset: 0, zIndex: 0, overflow: "hidden" }}
             >
-              <video ref={videoRef} autoPlay muted loop playsInline preload="auto" poster="/hero-poster.jpg" style={{ width: "100%", height: "100%", objectFit: "cover", background: "#0A0A0A" }}>
+              <video autoPlay muted loop playsInline preload="metadata" poster="/hero-poster.jpg" style={{ width: "100%", height: "100%", objectFit: "cover", background: "#0A0A0A" }}>
                 <source src="/hero-video.mp4" type="video/mp4" />
               </video>
             </motion.div>
