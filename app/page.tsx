@@ -247,6 +247,7 @@ const BRL_MAP: Record<number, number> = {
 };
 
 function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: () => void; onWhatsApp: (plan: string, method: string, totalUSD: number) => void }) {
+  const { t } = useLang();
   const premium = plan === "premium";
   const basePrice = premium ? 29 : 15;
   const [langs, setLangs] = useState<string[]>([]);
@@ -287,13 +288,13 @@ function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: (
 
         {/* Badge */}
         <div style={{ display: "inline-flex", fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", padding: "4px 14px", borderRadius: 9999, color: GOLD, background: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.15)", marginBottom: 20 }}>
-          Plano {premium ? "Premium" : "Base"}
+          {t.checkoutPlan} {premium ? "Premium" : "Base"}
         </div>
 
         {/* Headline */}
-        <h3 style={{ fontSize: 28, fontWeight: 300, fontFamily: SANS, marginBottom: 8, marginTop: 0 }}>Personalize seu acesso</h3>
+        <h3 style={{ fontSize: 28, fontWeight: 300, fontFamily: SANS, marginBottom: 8, marginTop: 0 }}>{t.checkoutTitle}</h3>
         <p style={{ fontSize: 14, lineHeight: 1.6, color: "rgba(255,255,255,0.4)", marginBottom: 0 }}>
-          {premium ? "Seus 2 primeiros idiomas estão incluídos. Adicione extras se quiser." : "Nenhum idioma incluído. Escolha até 2 por +US$5/mês cada."}
+          {premium ? t.checkoutSubPremium : t.checkoutSubBase}
         </p>
 
         {/* Divider */}
@@ -302,7 +303,7 @@ function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: (
         {/* Total em destaque */}
         <div style={{ textAlign: "center", marginBottom: 24 }}>
           <div style={{ fontSize: 48, fontWeight: 300, fontFamily: SANS, lineHeight: 1 }}>US${total}</div>
-          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginTop: 6 }}>aprox. R${brl}/mês</div>
+          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginTop: 6 }}>{t.checkoutApprox} R${brl}{t.perMonth}</div>
         </div>
 
         {/* Divider */}
@@ -311,11 +312,11 @@ function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: (
         {/* Idiomas */}
         <div style={block}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
-            <div style={{ fontSize: 14, fontWeight: 500, fontFamily: SANS }}>{premium ? "Escolha seus idiomas" : "Idiomas disponíveis"}</div>
-            {premium && <div style={{ fontSize: 11, color: GOLD, opacity: 0.7 }}>{Math.min(langs.length, freeIncluded)}/{freeIncluded} incluídos</div>}
+            <div style={{ fontSize: 14, fontWeight: 500, fontFamily: SANS }}>{premium ? t.checkoutLangsTitle : t.checkoutLangsAvailable}</div>
+            {premium && <div style={{ fontSize: 11, color: GOLD, opacity: 0.7 }}>{Math.min(langs.length, freeIncluded)}/{freeIncluded} {t.checkoutIncluded}</div>}
           </div>
           <p style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginBottom: 14, marginTop: 0 }}>
-            {premium ? "2 incluídos · adicione até 1 extra por +US$5/mês" : "+US$5/mês por idioma · aprox. R$25/mês cada"}
+            {premium ? t.checkoutLangsPremiumNote : t.checkoutLangsBaseNote}
           </p>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
             {LANGS.map(l => {
@@ -336,9 +337,9 @@ function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: (
 
         {/* Método de pagamento */}
         <div style={{ marginBottom: 12 }}>
-          <div style={{ fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", marginBottom: 12 }}>Método de pagamento</div>
+          <div style={{ fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", marginBottom: 12 }}>{t.checkoutPayMethod}</div>
           <div style={{ display: "flex", gap: 8 }}>
-            {([["card", "Cartão"], ["pix", "Pix"], ["crypto", "Crypto"]] as const).map(([method, label]) => (
+            {([["card", t.checkoutCard], ["pix", "Pix"], ["crypto", "Crypto"]] as [string, string][]).map(([method, label]) => (
               <button key={method} onClick={() => setPayMethod(method)}
                 style={{ flex: 1, padding: "12px 0", borderRadius: 10, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase", fontFamily: SANS, cursor: "pointer", transition: "all 0.3s ease", background: payMethod === method ? "rgba(201,168,76,0.08)" : "rgba(255,255,255,0.02)", border: `1px solid ${payMethod === method ? GOLD : "rgba(255,255,255,0.07)"}`, color: payMethod === method ? GOLD : "rgba(255,255,255,0.4)", boxShadow: payMethod === method ? "0 0 20px rgba(201,168,76,0.1)" : "none" }}>
                 {label}
@@ -350,9 +351,9 @@ function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: (
         {/* Resumo compacto */}
         <div style={{ ...block, marginBottom: 20 }}>
           {[
-            ["Plano", premium ? "Premium" : "Base"],
-            ["Idiomas", langs.length > 0 ? langs.join(", ") : "Nenhum"],
-            ["Extras", extraLanguages > 0 ? `${extraLanguages} idioma(s) extra(s)` : "Nenhum"],
+            [t.checkoutSummaryPlan, premium ? "Premium" : "Base"],
+            [t.checkoutSummaryLangs, langs.length > 0 ? langs.join(", ") : t.checkoutNone],
+            [t.checkoutSummaryExtras, extraLanguages > 0 ? `${extraLanguages} ${t.checkoutExtraLangs}` : t.checkoutNone],
           ].map(([label, value], i) => (
             <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", paddingTop: i > 0 ? 10 : 0, marginTop: i > 0 ? 10 : 0, borderTop: i > 0 ? "1px solid rgba(255,255,255,0.04)" : "none" }}>
               <span style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.15em", color: "rgba(255,255,255,0.25)" }}>{label}</span>
@@ -368,12 +369,12 @@ function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: (
           onMouseEnter={e => (e.currentTarget.style.opacity = "0.9")}
           onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
         >
-          {payMethod === "card" ? "Continuar para checkout" : payMethod === "pix" ? "Gerar pagamento Pix" : "Pagar com crypto"}
+          {payMethod === "card" ? t.checkoutCtaCard : payMethod === "pix" ? t.checkoutCtaPix : t.checkoutCtaCrypto}
         </button>
 
         {/* Nota */}
         <p style={{ fontSize: 11, marginTop: 16, textAlign: "center", color: "rgba(255,255,255,0.2)", lineHeight: 1.6, margin: "16px 0 0" }}>
-          Cobrança via Stripe. Valor pode variar conforme câmbio.
+          {t.checkoutNote}
         </p>
       </motion.div>
     </motion.div>
@@ -382,6 +383,7 @@ function CheckoutModal({ plan, onClose, onWhatsApp }: { plan: string; onClose: (
 
 /* ═══ WHATSAPP FORM MODAL ═══ */
 function WhatsAppFormModal({ plan, method, totalUSD, onClose }: { plan: string; method: string; totalUSD: number; onClose: () => void }) {
+  const { t } = useLang();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const planLabel = plan === "premium" ? "Premium" : "Base";
@@ -396,26 +398,26 @@ function WhatsAppFormModal({ plan, method, totalUSD, onClose }: { plan: string; 
     <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 60, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, background: "rgba(0,0,0,0.85)", backdropFilter: "blur(16px)" }}>
       <div onClick={e => e.stopPropagation()} className="whatsapp-modal" style={{ maxWidth: 480, width: "100%", borderRadius: 16, background: "#111", border: "1px solid rgba(255,255,255,0.08)", padding: 32, position: "relative" }}>
         <button onClick={onClose} style={{ position: "absolute", top: 16, right: 16, width: 32, height: 32, borderRadius: 9999, background: "rgba(255,255,255,0.05)", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><X size={16} color="rgba(255,255,255,0.6)" /></button>
-        <h3 style={{ fontSize: 24, fontWeight: 300, fontFamily: SANS, marginBottom: 8 }}>Finalize seu acesso</h3>
-        <p style={{ fontSize: 14, color: "rgba(255,255,255,0.45)", marginBottom: 28 }}>Pix e crypto com atendimento direto via WhatsApp.</p>
+        <h3 style={{ fontSize: 24, fontWeight: 300, fontFamily: SANS, marginBottom: 8 }}>{t.waTitle}</h3>
+        <p style={{ fontSize: 14, color: "rgba(255,255,255,0.45)", marginBottom: 28 }}>{t.waSubtitle}</p>
         <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
           <div style={{ flex: 1, padding: 14, borderRadius: 10, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
-            <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.15em", color: "rgba(255,255,255,0.3)", marginBottom: 6 }}>Plano</div>
-            <div style={{ fontSize: 15, color: "white", fontFamily: SANS }}>{planLabel} · US${totalUSD}/mês</div>
+            <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.15em", color: "rgba(255,255,255,0.3)", marginBottom: 6 }}>{t.checkoutPlan}</div>
+            <div style={{ fontSize: 15, color: "white", fontFamily: SANS }}>{planLabel} · US${totalUSD}{t.perMonth}</div>
           </div>
           <div style={{ flex: 1, padding: 14, borderRadius: 10, background: "rgba(201,168,76,0.04)", border: "1px solid rgba(201,168,76,0.12)" }}>
-            <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.15em", color: "rgba(255,255,255,0.3)", marginBottom: 6 }}>Pagamento</div>
+            <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.15em", color: "rgba(255,255,255,0.3)", marginBottom: 6 }}>{t.waPayment}</div>
             <div style={{ fontSize: 15, color: GOLD, fontFamily: SANS }}>{methodLabel}</div>
           </div>
         </div>
         <div style={{ marginBottom: 12 }}>
-          <input value={name} onChange={e => setName(e.target.value)} placeholder="Seu nome" style={{ width: "100%", padding: "14px 16px", borderRadius: 8, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "white", fontSize: 14, outline: "none", boxSizing: "border-box", fontFamily: "'DM Sans', sans-serif" }} />
+          <input value={name} onChange={e => setName(e.target.value)} placeholder={t.waName} style={{ width: "100%", padding: "14px 16px", borderRadius: 8, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "white", fontSize: 14, outline: "none", boxSizing: "border-box", fontFamily: "'DM Sans', sans-serif" }} />
         </div>
         <div style={{ marginBottom: 24 }}>
-          <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Seu melhor email" type="email" style={{ width: "100%", padding: "14px 16px", borderRadius: 8, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "white", fontSize: 14, outline: "none", boxSizing: "border-box", fontFamily: "'DM Sans', sans-serif" }} />
+          <input value={email} onChange={e => setEmail(e.target.value)} placeholder={t.waEmail} type="email" style={{ width: "100%", padding: "14px 16px", borderRadius: 8, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "white", fontSize: 14, outline: "none", boxSizing: "border-box", fontFamily: "'DM Sans', sans-serif" }} />
         </div>
-        <button onClick={handleSubmit} disabled={!name.trim() || !email.trim()} style={{ width: "100%", padding: "16px 0", borderRadius: 8, background: (!name.trim() || !email.trim()) ? "rgba(201,168,76,0.3)" : `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", fontSize: 14, fontWeight: 600, fontFamily: SANS, letterSpacing: "0.12em", textTransform: "uppercase", cursor: (!name.trim() || !email.trim()) ? "not-allowed" : "pointer", border: "none", opacity: (!name.trim() || !email.trim()) ? 0.5 : 1, transition: "opacity 0.3s" }}>Continuar no WhatsApp</button>
-        <p style={{ fontSize: 11, color: "rgba(255,255,255,0.2)", textAlign: "center", marginTop: 14 }}>Você será redirecionado para o WhatsApp para finalizar.</p>
+        <button onClick={handleSubmit} disabled={!name.trim() || !email.trim()} style={{ width: "100%", padding: "16px 0", borderRadius: 8, background: (!name.trim() || !email.trim()) ? "rgba(201,168,76,0.3)" : `linear-gradient(135deg, ${GOLD}, ${GOLD_DIM})`, color: "#0A0A0A", fontSize: 14, fontWeight: 600, fontFamily: SANS, letterSpacing: "0.12em", textTransform: "uppercase", cursor: (!name.trim() || !email.trim()) ? "not-allowed" : "pointer", border: "none", opacity: (!name.trim() || !email.trim()) ? 0.5 : 1, transition: "opacity 0.3s" }}>{t.waCta}</button>
+        <p style={{ fontSize: 11, color: "rgba(255,255,255,0.2)", textAlign: "center", marginTop: 14 }}>{t.waRedirect}</p>
       </div>
     </div>
   );
@@ -467,6 +469,7 @@ function CommunityShowcase() {
 
 /* ─── Redacted Intel Card ─── */
 function RedactedCard({ title, preview, classification, expires }: { title: string; preview: string; classification: string; expires?: string }) {
+  const { t } = useLang();
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -485,7 +488,7 @@ function RedactedCard({ title, preview, classification, expires }: { title: stri
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
         <span style={{ fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(201,168,76,0.4)" }}>{classification}</span>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {expires && <span style={{ fontSize: 9, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,80,80,0.6)", padding: "2px 7px", borderRadius: 4, border: "1px solid rgba(255,80,80,0.15)", background: "rgba(255,80,80,0.04)" }}>expira em {expires}</span>}
+          {expires && <span style={{ fontSize: 9, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,80,80,0.6)", padding: "2px 7px", borderRadius: 4, border: "1px solid rgba(255,80,80,0.15)", background: "rgba(255,80,80,0.04)" }}>{t.expiresIn} {expires}</span>}
           <Lock size={12} color="rgba(201,168,76,0.3)" />
         </div>
       </div>
@@ -508,7 +511,7 @@ function RedactedCard({ title, preview, classification, expires }: { title: stri
           paddingBottom: 4,
         }}>
           <span style={{ fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", color: hovered ? "rgba(201,168,76,0.5)" : "rgba(255,255,255,0.2)", transition: "color 0.3s" }}>
-            {hovered ? "Entre no clube para desbloquear" : "Conteúdo classificado"}
+            {hovered ? t.joinToUnlock : t.classifiedContent}
           </span>
         </div>
       </div>
@@ -656,6 +659,7 @@ function IntelTicker() {
 
 /* ─── Geo Intelligence Badge ─── */
 function GeoIntel() {
+  const { t } = useLang();
   const [location, setLocation] = useState<string | null>(null);
 
   useEffect(() => {
@@ -698,7 +702,7 @@ function GeoIntel() {
         <div style={{ position: "absolute", inset: 0, width: 6, height: 6, borderRadius: "50%", background: "#4ADE80", animation: "geoPing 2s infinite" }} />
       </div>
       <span style={{ fontSize: 11, letterSpacing: "0.08em", color: "rgba(255,255,255,0.35)" }}>
-        Conexão segura de {location}
+        {t.geoSecure} {location}
       </span>
     </motion.div>
   );
@@ -918,9 +922,9 @@ function PricingSection() {
 
               <div style={{ marginTop: 20, marginBottom: 4 }}>
                 <span style={{ fontSize: "clamp(32px, 4vw, 44px)", fontWeight: 600, fontFamily: SANS }}>US$15</span>
-                <span style={{ fontSize: 14, marginLeft: 4, color: "rgba(255,255,255,0.35)" }}>/mês</span>
+                <span style={{ fontSize: 14, marginLeft: 4, color: "rgba(255,255,255,0.35)" }}>{t.perMonth}</span>
               </div>
-              <p style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", marginBottom: 24, marginTop: 0 }}>aprox. R$79/mês</p>
+              <p style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", marginBottom: 24, marginTop: 0 }}>{t.approxBrl79}</p>
 
               <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 28, flex: 1 }}>
                 {baseFeatures.map(([n, s]) => featureRow(n, s, false))}
@@ -965,9 +969,9 @@ function PricingSection() {
 
               <div style={{ marginTop: 20, marginBottom: 4 }}>
                 <span style={{ fontSize: "clamp(32px, 4vw, 44px)", fontWeight: 600, fontFamily: SANS, color: GOLD }}>US$29</span>
-                <span style={{ fontSize: 14, marginLeft: 4, color: "rgba(201,168,76,0.5)" }}>/mês</span>
+                <span style={{ fontSize: 14, marginLeft: 4, color: "rgba(201,168,76,0.5)" }}>{t.perMonth}</span>
               </div>
-              <p style={{ fontSize: 12, color: "rgba(201,168,76,0.35)", marginBottom: 24, marginTop: 0 }}>aprox. R$149/mês</p>
+              <p style={{ fontSize: 12, color: "rgba(201,168,76,0.35)", marginBottom: 24, marginTop: 0 }}>{t.approxBrl149}</p>
 
               <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 28, flex: 1 }}>
                 {premiumFeatures.map(([n, s]) => featureRow(n, s, true))}
@@ -1008,7 +1012,7 @@ function PricingSection() {
             <span style={{ color: "#F7931A", fontWeight: 600 }}>Crypto</span>
             {" — "}{t.pricingPix}{" "}
             <a
-              href={`https://wa.me/15615966097?text=${encodeURIComponent("Olá! Quero entrar no DuckDuck Club e pagar com Pix ou crypto.")}`}
+              href={`https://wa.me/15615966097?text=${encodeURIComponent(t.whatsappPix)}`}
               target="_blank"
               rel="noopener noreferrer"
               style={{ color: "#32BCAD", textDecoration: "none", transition: "opacity 0.2s" }}
@@ -1379,9 +1383,9 @@ export default function Home() {
                 </p>
               </Fade>
               <div className="redacted-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
-                <Fade delay={600}><RedactedCard classification="AI OPS" title={t.classCard1} preview={t.classCard1d} expires="3 dias" /></Fade>
-                <Fade delay={700}><div className="mobile-hide"><RedactedCard classification="OPSEC · Crypto" title={t.classCard2} preview={t.classCard2d} expires="2 dias" /></div></Fade>
-                <Fade delay={800}><div className="mobile-hide"><RedactedCard classification="Intel · Decisão" title={t.classCard3} preview={t.classCard3d} expires="6 dias" /></div></Fade>
+                <Fade delay={600}><RedactedCard classification="AI OPS" title={t.classCard1} preview={t.classCard1d} expires={`3 ${t.days}`} /></Fade>
+                <Fade delay={700}><div className="mobile-hide"><RedactedCard classification="OPSEC · Crypto" title={t.classCard2} preview={t.classCard2d} expires={`2 ${t.days}`} /></div></Fade>
+                <Fade delay={800}><div className="mobile-hide"><RedactedCard classification="Intel · Decisão" title={t.classCard3} preview={t.classCard3d} expires={`6 ${t.days}`} /></div></Fade>
               </div>
             </div>
           </section>
@@ -1484,7 +1488,7 @@ export default function Home() {
               <div style={{ display: "flex", gap: 20 }}>
                 {[
                   { label: "Instagram", href: "https://instagram.com/duckduck.club" },
-                  { label: "WhatsApp", href: "https://wa.me/15615966097?text=" + encodeURIComponent("Olá, tenho uma dúvida sobre o DuckDuck Club.") },
+                  { label: "WhatsApp", href: "https://wa.me/15615966097?text=" + encodeURIComponent(t.whatsappDefault) },
                 ].map(item => (
                   <a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", textDecoration: "none", transition: "color 0.3s" }}
                     onMouseEnter={e => (e.currentTarget.style.color = "rgba(255,255,255,0.5)")}
@@ -1492,7 +1496,7 @@ export default function Home() {
                   >{item.label}</a>
                 ))}
               </div>
-              <span style={{ fontSize: 11, color: "rgba(255,255,255,0.1)" }}>© 2026 DuckDuck Club · <a href="/termos" style={{ color: "inherit", textDecoration: "none" }}>Termos</a></span>
+              <span style={{ fontSize: 11, color: "rgba(255,255,255,0.1)" }}>© 2026 DuckDuck Club · <a href="/termos" style={{ color: "inherit", textDecoration: "none" }}>{t.terms}</a></span>
             </div>
           </footer>
         </motion.div>
